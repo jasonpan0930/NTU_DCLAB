@@ -19,14 +19,14 @@ always_ff @(posedge i_bclk or negedge i_rst_n) begin
     end
     else if (i_en) begin
         // 檢測DACLRCK的變化
-        if (i_daclrck != prev_daclrck) begin
+        if ((i_daclrck != prev_daclrck) && (i_daclrck == 1'b1)) begin
             // DACLRCK改變時，載入新的數據
             shift_reg <= i_dac_data;
             bit_counter <= 5'd0;
         end
         else begin
             // 在BCLK的每個時鐘週期移位輸出
-            if (bit_counter < 16) begin
+            if (bit_counter < 16 && i_daclrck == 1'b1) begin
                 shift_reg <= {shift_reg[14:0], 1'b0};
                 bit_counter <= bit_counter + 1;
             end

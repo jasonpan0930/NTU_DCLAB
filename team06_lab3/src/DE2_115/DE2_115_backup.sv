@@ -177,11 +177,7 @@ Top top0(
 	.i_key_0(key0down),
 	.i_key_1(key1down),
 	.i_key_2(key2down),
-	// design how user can decide mode on your own
-	.i_sw(SW[17:0]),
-
-	.i_clk_100k(CLK_100K),
-	.i_clk_12m(CLK_12M),
+	// .i_speed(SW[3:0]), // design how user can decide mode on your own
 	
 	// AudDSP and SRAM
 	.o_SRAM_ADDR(SRAM_ADDR), // [19:0]
@@ -193,7 +189,7 @@ Top top0(
 	.o_SRAM_UB_N(SRAM_UB_N),
 	
 	// I2C
-	// .i_clk_100k(CLK_100K),
+	.i_clk_100k(CLK_100K),
 	.o_I2C_SCLK(I2C_SCLK),
 	.io_I2C_SDAT(I2C_SDAT),
 	
@@ -202,13 +198,24 @@ Top top0(
 	.i_AUD_ADCLRCK(AUD_ADCLRCK),
 	.i_AUD_BCLK(AUD_BCLK),
 	.i_AUD_DACLRCK(AUD_DACLRCK),
-	.o_AUD_DACDAT(AUD_DACDAT),
+	.o_AUD_DACDAT(AUD_DACDAT)
 
-	// LEDs
-	.o_LEDG_recording(LEDG[7]),
-	.o_LEDR_rec_overflow(LEDR[0]),
-	.o_LEDR_ack_in_i2C_init(LEDR[1]),
-	.o_LEDG_state(LEDG[5:0])  // State indicator: LEDG[0]=IDLE, [1]=I2C, [2]=RECORD, [3]=REC_PAUSE, [4]=PLAY, [5]=PLAY_PAUSE
+	// SEVENDECODER (optional display)
+	// .o_record_time(recd_time),
+	// .o_play_time(play_time),
+
+	// LCD (optional display)
+	// .i_clk_800k(CLK_800K),
+	// .o_LCD_DATA(LCD_DATA), // [7:0]
+	// .o_LCD_EN(LCD_EN),
+	// .o_LCD_RS(LCD_RS),
+	// .o_LCD_RW(LCD_RW),
+	// .o_LCD_ON(LCD_ON),
+	// .o_LCD_BLON(LCD_BLON),
+
+	// LED
+	// .o_ledg(LEDG), // [8:0]
+	// .o_ledr(LEDR) // [17:0]
 );
 
 // SevenHexDecoder seven_dec0(
