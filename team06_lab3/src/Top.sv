@@ -226,8 +226,8 @@ module Top (
     LCD lcd0 (
         .i_rst_n   (i_rst_n),
         .i_clk     (i_clk),
-        // .i_addr_current(lcd_addr_current),
-        // .i_addr_max(lcd_addr_max),
+        .i_addr_current(lcd_addr_current),
+        .i_addr_max(lcd_addr_max),
         .i_mode(lcd_mode),
         .o_LCD_BLON(o_LCD_BLON),
         .o_LCD_DATA(o_LCD_DATA),

@@ -2,6 +2,8 @@ module LCD(
 	input			 i_rst_n,
 	input			 i_clk,
     input [1:0] i_mode,
+	input [19:0] i_addr_current,
+	input [19:0] i_addr_max,
 	output		 o_LCD_BLON,
 	output	[7:0] o_LCD_DATA,
 	output		 o_LCD_EN,
@@ -35,7 +37,7 @@ module LCD(
 	// ----------------------------------------------------------------
 	// Internal registers
 	// ----------------------------------------------------------------
-	typedef enum logic [3:0] {
+	typedef enum logic [4:0] {
 		S_PWR_WAIT,
 		S_FUNC_SET_1,
 		S_FUNC_SET_2,
@@ -45,6 +47,8 @@ module LCD(
 		S_ENTRY_MODE,
 		S_SET_LINE1,
 		S_WRITE_DATA,
+		S_SET_LINE2,
+		S_WRITE_ADDR_DATA,
 		S_DONE
 	} state_t;
 
@@ -57,12 +61,17 @@ module LCD(
 	logic [7:0]  text_rom_record [0:31];
 	logic [7:0]  text_rom_play [0:31];
 	logic [5:0]  text_idx_r, text_idx_w; // supports up to 32 chars
+	logic [5:0]  addr_text_idx_r, addr_text_idx_w; // index for address text
+	logic [7:0]  addr_text_rom [0:31]; // buffer for address text on line 2
 	logic [7:0]  current_byte;
 	logic        start_pulse_r, start_pulse_w; // begin an EN pulse
 	logic [15:0] en_pulse_cnt_r, en_pulse_cnt_w;
 	logic        en_pulsing;
 	logic [1:0]  i_mode_r, i_mode_w; // track i_mode changes
 	logic  [1:0]      last_mode_r, last_mode_w; // track if text was written
+	logic [4:0]  last_addr_current_r, last_addr_current_w; // track address changes
+	logic [4:0]  last_addr_max_r, last_addr_max_w;
+	logic [15:0] refresh_timer_r, refresh_timer_w; // Timer to limit refresh rate
 
 	assign o_LCD_DATA = data_bus_r;
 	assign o_LCD_RS   = rs_r;
@@ -125,7 +134,17 @@ module LCD(
 			start_pulse_next  = 1'b1; // begin EN pulse
 			delay_cnt_next    = wait_us * CYCLES_PER_US;
 		end
-	endtask
+		endtask
+
+	// Helper to convert number (0-99) to 2 decimal ASCII chars
+	function automatic logic [15:0] num_to_decimal_ascii(input logic [7:0] num);
+		begin
+			// Extract tens and ones digits
+			automatic logic [3:0] tens = num / 10;
+			automatic logic [3:0] ones = num % 10;
+			num_to_decimal_ascii = {8'h30 + tens, 8'h30 + ones};
+		end
+	endfunction
 
 	// ----------------------------------------------------------------
 	// Combinational FSM
@@ -137,10 +156,30 @@ module LCD(
 		rs_w           = rs_r;
 		en_w           = en_r;
 		text_idx_w     = text_idx_r;
+		addr_text_idx_w = addr_text_idx_r;
 		start_pulse_w  = 1'b0;
 		en_pulse_cnt_w = en_pulse_cnt_r;
 		i_mode_w       = i_mode;
 		last_mode_w    = last_mode_r;
+		// Default: keep previous address values unless updated by state
+		last_addr_current_w = last_addr_current_r;
+		last_addr_max_w = last_addr_max_r;
+		refresh_timer_w = refresh_timer_r;
+		
+		// Prepare address text for line 2: (current>>15) "/" (max>>15)
+		// Format like "12/34"
+		begin
+			automatic logic [7:0] current_val = i_addr_current[19:15];
+			automatic logic [7:0] max_val = i_addr_max[19:15];
+			automatic logic [15:0] current_ascii = num_to_decimal_ascii(current_val);
+			automatic logic [15:0] max_ascii = num_to_decimal_ascii(max_val);
+			
+			addr_text_rom[0] = current_ascii[15:8]; // tens digit of current
+			addr_text_rom[1] = current_ascii[7:0];  // ones digit of current
+			addr_text_rom[2] = "/"; // 0x2F
+			addr_text_rom[3] = max_ascii[15:8];    // tens digit of max
+			addr_text_rom[4] = max_ascii[7:0];     // ones digit of max
+		end
 
 		// Default: EN low unless we are pulsing
 		en_w = (en_pulsing) ? 1'b1 : 1'b0;
@@ -231,6 +270,25 @@ module LCD(
 								issue_byte(1'b1, text_rom_play[text_idx_w], T_CMD_US, data_bus_w, rs_w, start_pulse_w, delay_cnt_w);
 							end
 						end else begin
+							// Move to line 2 to show address info
+							state_w = S_SET_LINE2;
+						end
+					end
+					S_SET_LINE2: begin
+						// Set DDRAM to line 2 start (0xC0)
+						issue_byte(1'b0, 8'hC0, T_CMD_US, data_bus_w, rs_w, start_pulse_w, delay_cnt_w);
+						addr_text_idx_w = 6'd0;
+						state_w = S_WRITE_ADDR_DATA;
+					end
+					S_WRITE_ADDR_DATA: begin
+						// Write address info: 5 chars (e.g., "12/34")
+						if (addr_text_idx_r < 6'd4) begin
+							addr_text_idx_w = addr_text_idx_r + 6'd1;
+							issue_byte(1'b1, addr_text_rom[addr_text_idx_w], T_CMD_US, data_bus_w, rs_w, start_pulse_w, delay_cnt_w);
+						end else begin
+							// Update last_addr registers to prevent immediate re-trigger
+							last_addr_current_w = i_addr_current[19:15];
+							last_addr_max_w = i_addr_max[19:15];
 							state_w = S_DONE;
 						end
 					end
@@ -248,6 +306,21 @@ module LCD(
 								issue_byte(1'b0, 8'h80, T_CMD_US, data_bus_w, rs_w, start_pulse_w, delay_cnt_w);
 								state_w = S_SET_LINE1;
 								last_mode_w = i_mode_r;
+							end
+						end else if (i_mode_r != 2'b00) begin
+							// In record/play mode, check if addresses changed (throttled by timer)
+							if (refresh_timer_r == 16'd0) begin
+								logic [4:0] current_val, max_val;
+								current_val = i_addr_current[19:15];
+								max_val = i_addr_max[19:15];
+								if (current_val != last_addr_current_r || max_val != last_addr_max_r) begin
+									// Address changed, refresh line 2
+									issue_byte(1'b0, 8'hC0, T_CMD_US, data_bus_w, rs_w, start_pulse_w, delay_cnt_w);
+									addr_text_idx_w = 6'd0;
+									state_w = S_WRITE_ADDR_DATA;
+									// Reload timer (~0.5ms at 12MHz = 6000 cycles)
+									refresh_timer_w = 16'd6000;
+								end
 							end
 						end
 						// else idle
@@ -269,25 +342,38 @@ module LCD(
 			rs_r           <= 1'b0;
 			en_r           <= 1'b0;
 			text_idx_r     <= 6'd0;
+			addr_text_idx_r <= 6'd0;
 			start_pulse_r  <= 1'b0;
 			en_pulse_cnt_r <= 16'd0;
 			i_mode_r       <= 2'b00;
 			last_mode_r    <= 2'b00;
+			last_addr_current_r <= 5'd0;
+			last_addr_max_r <= 5'd0;
+			refresh_timer_r <= 16'd6000; // Start timer
 		end else begin
 			state_r        <= state_w;
 			data_bus_r      <= data_bus_w;
 			rs_r            <= rs_w;
 			en_r            <= en_w;
 			text_idx_r      <= text_idx_w;
+			addr_text_idx_r <= addr_text_idx_w;
 			start_pulse_r   <= start_pulse_w;
 			i_mode_r        <= i_mode_w;
 			last_mode_r     <= last_mode_w;
+			last_addr_current_r <= last_addr_current_w;
+			last_addr_max_r <= last_addr_max_w;
 
 			// Delay counter
 			if (delay_cnt_r != 0)
 				delay_cnt_r <= delay_cnt_r - 1;
 			else
 				delay_cnt_r <= delay_cnt_w; // reloaded when issuing next byte
+
+			// Refresh timer - decrement when in DONE state, otherwise use combo value
+			if (state_r == S_DONE && refresh_timer_r > 0)
+				refresh_timer_r <= refresh_timer_r - 1;
+			else
+				refresh_timer_r <= refresh_timer_w;
 
 			// Start EN pulse when requested
 			if (start_pulse_w) begin
