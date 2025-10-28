@@ -1,59 +1,109 @@
-# Lab3 Guideline
+# 錄音播音機使用說明
 
-The roadmap of this lab:
+## 系統簡介
 
-1. Implement I2C to initlize the WM8731 chip.
-2. Control the DAT/CLK signals of WM8731 chip to make a recorder.
+這是一個基於 FPGA 實現的數位錄音播音系統，能夠錄製與播放 16 位元音訊資料。系統使用 SRAM 作為音訊暫存區，支援快慢速播放模式，並提供多種播放效果。
 
-## Implement the I2C Module
-You have to use I2C to initialize the WM8731 chip,
-and we have provided recommended booting sequence for you.
-Since we cannot build circuit with a fixed-perioded clock with SystemVerilog,
-we need a reference clock to build the SCLK/SDAT of I2C.
+## 功能特色
 
-The reference clock (again, not SCLK) should be 100kHz or less,
-and you should use PLL to make a slower clock from a 50MHz (default clock) or
-12MHz (BCLK) clock.
-This job is left to you intentionally.
-(You should NEVER use a counter to make a slower clock from a faster clock!)
+- ✅ 16 位元音訊錄製與播放
+- ✅ 支援錄製約 30 秒的音訊
+- ✅ 快速播放模式：1x 到 8x 播放速度
+- ✅ 慢速播放模式：1/2x 到 1/8x 播放速度
+- ✅ 慢速播放提供常數插值與線性插值
+- ✅ 錄製/播放暫停與恢復功能
+- ✅ 即時狀態指示 LED
 
-## Implement Your Recorder
-Ideally, you have to enable this part only after the I2C initialization.
-However, in a real world, passing between different clock domains is not trivial.
-So we just assume that the initialization is done right after the reset.
+## 硬體介面
 
-You should use the 12MHz BCLK instead of the 50MHz default clock since it would be simpler.
-Both ADCCLK and DACCLK are inverted every hundreds of cycle,
-and you can read/write the ADCDAT/DACDAT to record/play sound.
-You should read the specification for more details.
+### 按鍵控制（依 Top.sv 狀態機）
 
-Should we take care of XCLK in this lab?
-Try to figure it out from the *power down modes* register of WM8731.
+- KEY0：待機時開始播放；播放中切換「暫停/恢復」
+- KEY1：待機時開始錄製；錄製中切換「暫停/恢復」
+- KEY2：在任何時刻「停止」並回到待機
 
-# Requirements
-Lab requirements are:
+### 開關控制（速度與模式）
 
-* Implement a audio recorder/player with 16-bit resolution with FPGA,
-  which should be able to record for 30 seconds.
-* You have to support 2x\~8x faster and 2\~8x slower play mode as well.
-* For slow play mode, you have to support piecewise-constant and linear interpolation
-  (You should have learned that in Signal and System).
+- SW[2:0]：速度選擇（0=1x, 1=2x, ..., 7=8x）
+- SW[17]：快速播放模式（啟用後依 SW[2:0] 跳樣加速）
+- SW[16]：慢速模式－常數插值（Piecewise-Constant）
+- SW[15]：慢速模式－線性插值（Linear Interpolation）
 
-## Bonus
-You can record for 30 minutes with the SDRAM or build GUI with the touch panel.
-If you try to do so, then Qsys and built-in IPs may help you.
+注意：慢速與快速模式為互斥使用；未啟用時為正常 1x 播放。
 
-# Appendix
-## File Structure
+### LED 指示燈
 
-* src/DE2\_115
-	* All files related to the FPGA, note that the sdc file is different from previous labs.
+- LEDG[0]：待機（S_IDLE）
+- LEDG[1]：I2C 初始化（S_I2C）
+- LEDG[2]：錄製中（S_RECD）
+- LEDG[3]：錄製暫停（S_RECD_PAUSE）
+- LEDG[4]：播放中（S_PLAY）
+- LEDG[5]：播放暫停（S_PLAY_PAUSE）
 
-## nLint
-The same as lab1 and 2, just copy the lint/ directory.
+頂層額外輸出：
+- o_LEDG_recording：錄製指示（錄製進行時亮起）
+- o_LEDR_rec_overflow：錄製溢位（SRAM 寫滿時亮起）
+- o_LEDR_ack_in_i2C_init：I2C 初始化 NACK 指示
 
-## Simulation
-We don't provide a testbench in this lab.
-For the first part, the I2C protocol is quite simple.
-And it's hard to simulate owing to the limitation (you must play audio through SSH).
+## 操作流程
 
+### 1) 開機初始化
+
+- 上電或重置後，自動依序進行：I2C 初始化 → SRAM 清除 → 回到待機
+- 初始化中 LEDG[1] 亮；完成後 LEDG[0] 亮
+
+### 2) 錄製音訊（KEY1）
+
+- 在待機狀態按 KEY1 進入錄製，LEDG[2] 與 o_LEDG_recording 亮
+- 再按 KEY1 進入錄製暫停（LEDG[3] 亮）；再按一次恢復錄製
+- 按 KEY2 隨時停止錄製並回到待機
+- 若 SRAM 寫滿，o_LEDR_rec_overflow 亮，並自動結束錄製
+
+### 3) 播放音訊（KEY0）
+
+- 在待機狀態按 KEY0 開始播放（LEDG[4] 亮）
+- 播放中再按 KEY0 可暫停/恢復（LEDG[5] 顯示暫停狀態）
+- 按 KEY2 隨時停止播放並回到待機
+- 播放達錄製最大位址時會自動停止並回到待機
+
+## 速度與模式
+
+### 快速播放（SW[17]=1）
+
+依 SW[2:0] 設定跳樣倍速：
+- 000=1x、001=2x、010=3x、011=4x、100=5x、101=6x、110=7x、111=8x
+
+### 慢速播放（SW[16] 或 SW[15]=1）
+
+- 常數插值（SW[16]=1）：維持前一取樣值，階梯式音色
+- 線性插值（SW[15]=1）：前後取樣線性內插，較平滑
+- SW[2:0] 設定：001=1/2x、010=1/3x、011=1/4x、100=1/5x、101=1/6x、110=1/7x、111=1/8x；000=1x
+
+## 系統架構模組
+
+- Top.sv：頂層整合與狀態機（初始化、錄製、播放、清除）
+- I2cInitializer.sv：WM8731 設定（I2C，100kHz 時脈）
+- AudRecorder.sv：I2S 接收，寫入 SRAM，溢位偵測
+- AudDSP.sv：播放位址與資料處理、快慢速與插值
+- AudPlayer.sv：I2S 發送至 DAC
+- Clean_sram.sv：SRAM 初始清除
+
+## 使用建議
+
+- 錄製環境盡量安靜以降低噪聲
+- 慢速播放建議使用線性插值以獲得較佳音質
+- 錄製長度建議控制在 30 秒內避免溢位
+
+## 故障排除
+
+- o_LEDR_rec_overflow 亮：錄製超時或記憶體滿，請縮短錄製時間
+- o_LEDR_ack_in_i2C_init 亮：I2C 初始化 NACK，請重新上電或檢查連線
+- 無聲音：確認已完成錄製、播放狀態 LED、耳機/喇叭連線
+
+## 技術規格
+
+- 取樣深度：16 位元
+- 記憶體時間：約 30 秒（視實際錄音條件）
+- I2C 參考時鐘：100 kHz
+- 音訊位時鐘（BCLK）：12 MHz
+- 介面：I2S

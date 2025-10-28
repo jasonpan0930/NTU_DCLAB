@@ -53,6 +53,7 @@ module Top (
     localparam S_RECD_PAUSE = 3'd3;
     localparam S_PLAY       = 3'd4;
     localparam S_PLAY_PAUSE = 3'd5;
+    localparam S_CLEAN      = 3'd6; // Clean SRAM after I2C
 
     // I2C wires
     logic i2c_oen, i2c_sdat;
@@ -60,11 +61,13 @@ module Top (
     logic i2c_ledr_nack;  // NACK detection LED from I2C initializer
 
     // SRAM / Audio buffers
-    logic [19:0] addr_record, addr_play;
-    logic [15:0] data_record, data_play, dac_data;
+    logic [19:0] addr_record, addr_play, addr_clean, record_max_addr_r;
+    logic [15:0] data_record, data_play, dac_data, data_clean;
+
 
     // FSM regs
     logic [2:0] state_r, state_next;
+    logic       boot_done_r, boot_done_w; // run I2C + CLEAN once after reset
     
     // LED state indicators
     logic [5:0] ledg_state;
@@ -73,6 +76,9 @@ module Top (
     logic dsp_start, dsp_pause, dsp_stop;
     logic dsp_fast, dsp_slow_0, dsp_slow_1;
 	logic [2:0] dsp_speed;
+
+    // Clean control signals
+    logic clean_start, clean_done;
 
     // Keys are already debounced and pulsed in DE2_115.sv
     // Use them directly without additional edge detection
@@ -85,11 +91,14 @@ module Top (
     assign io_I2C_SDAT = (i2c_oen) ? i2c_sdat : 1'bz;
 
     // ---- SRAM wiring ----
-    assign o_SRAM_ADDR = (state_r == S_RECD || state_r == S_RECD_PAUSE) ? addr_record : addr_play;
-    assign io_SRAM_DQ  = (state_r == S_RECD) ? data_record : 16'hzzzz;
+    assign o_SRAM_ADDR = (state_r == S_RECD || state_r == S_RECD_PAUSE) ? addr_record :
+                         (state_r == S_CLEAN)                           ? addr_clean  :
+                                                                          addr_play;
+    assign io_SRAM_DQ  = (state_r == S_RECD) ? data_record :
+                         (state_r == S_CLEAN) ? data_clean : 16'hzzzz;
     assign data_play   = io_SRAM_DQ;
 
-    assign o_SRAM_WE_N = (state_r == S_RECD) ? 1'b0 : 1'b1;  // Write during record
+    assign o_SRAM_WE_N = (state_r == S_RECD || state_r == S_CLEAN) ? 1'b0 : 1'b1;  // Write during record
     assign o_SRAM_CE_N = 1'b0;
     assign o_SRAM_OE_N = 1'b0;
     assign o_SRAM_LB_N = 1'b0;
@@ -178,6 +187,20 @@ module Top (
     );
 
     // ----------------------------------------------------------------
+    // Clean SRAM
+    // ----------------------------------------------------------------
+    Clean_sram clean0 (
+        .i_rst_n   (i_rst_n),
+        .i_clk     (i_clk),
+        .i_start   (clean_start),
+        .o_done    (clean_done),
+        .o_address (addr_clean),
+        .o_data    (data_clean)
+    );
+
+    
+
+    // ----------------------------------------------------------------
     // FSM Control Logic
     // ----------------------------------------------------------------
     always_comb begin
@@ -198,48 +221,61 @@ module Top (
         rec_start  = 1'b0;
         rec_pause  = 1'b0;
         rec_stop   = 1'b0;
+        // Clean control
+        clean_start = 1'b0;
 
         case (state_r)
             S_IDLE: begin
-                if (i_key_0) begin
-                    state_next = S_I2C;  // Initialize codec
+                // After reset, perform boot sequence once: I2C -> CLEAN -> IDLE
+                if (!boot_done_r) begin
+                    state_next = S_I2C;
+                end else if (i_key_0) begin
+                    // KEY0: start playback
+                    state_next = S_PLAY;
+                end else if (i_key_1) begin
+                    // KEY1: start recording
+                    state_next = S_RECD;
                 end
             end
 
             S_I2C: begin
                 i2c_start = 1'b1;
                 if (i2c_finished) begin
-                    state_next = S_RECD;  // Start recording after init
+                    state_next = S_CLEAN;  // Clean SRAM after init
+                end
+            end
+
+            S_CLEAN: begin
+                // Hold start high while in clean state; Clean_sram will only trigger once
+                clean_start = 1'b1;
+                // Transition to record when clean completes
+                if (clean_done) begin
+                    // Mark boot as done and go back to IDLE
+                    state_next = S_IDLE;
                 end
             end
 
             S_RECD: begin
-                rec_start = 1'b1;
-                
+                rec_start = 1'b1; // enable recorder
                 if (i_key_2) begin
                     state_next = S_IDLE;
                     rec_stop = 1'b1;
-                end else if (i_key_0) begin
+                end else if (i_key_1) begin
+                    // KEY1 toggles record pause
                     state_next = S_RECD_PAUSE;
                     rec_pause = 1'b1;
-                end else if (i_key_1) begin
-                    state_next = S_PLAY;  // Switch to playback
-                    rec_stop = 1'b1;
                 end
             end
 
             S_RECD_PAUSE: begin
                 rec_pause = 1'b1;
-                
                 if (i_key_2) begin
                     state_next = S_IDLE;
                     rec_stop = 1'b1;
-                end else if (i_key_0) begin
-                    state_next = S_RECD;  // Resume recording
-                    rec_start = 1'b1;
                 end else if (i_key_1) begin
-                    state_next = S_PLAY;
-                    rec_stop = 1'b1;
+                    // KEY1 resumes recording
+                    state_next = S_RECD;
+                    rec_start = 1'b1;
                 end
             end
 
@@ -258,26 +294,25 @@ module Top (
                     state_next = S_IDLE;
                     dsp_stop = 1'b1;
                 end else if (i_key_0) begin
+                    // KEY0 toggles play pause
                     state_next = S_PLAY_PAUSE;
                     dsp_pause = 1'b1;
-                end else if (i_key_1) begin
-                    state_next = S_RECD;  // Switch back to recording
+                end
+                if (addr_play >= record_max_addr_r) begin
+                    state_next = S_IDLE;
                     dsp_stop = 1'b1;
                 end
             end
 
             S_PLAY_PAUSE: begin
                 dsp_pause = 1'b1;
-                
                 if (i_key_2) begin
                     state_next = S_IDLE;
                     dsp_stop = 1'b1;
                 end else if (i_key_0) begin
-                    state_next = S_PLAY;  // Resume playback
+                    // KEY0 resumes playback
+                    state_next = S_PLAY;
                     dsp_start = 1'b1;
-                end else if (i_key_1) begin
-                    state_next = S_RECD;
-                    dsp_stop = 1'b1;
                 end
             end
 
@@ -291,8 +326,19 @@ module Top (
     always_ff @(posedge i_clk or negedge i_rst_n) begin
         if (!i_rst_n) begin
             state_r <= S_IDLE;
+            boot_done_r <= 1'b0;
+            record_max_addr_r <= 20'd0;
         end else begin
+            // Record max address
+            if (state_r == S_RECD && addr_record > record_max_addr_r)
+                record_max_addr_r <= addr_record;
+
             state_r <= state_next;
+            // Mark boot as done after we complete CLEAN and return to IDLE
+            if (state_r == S_CLEAN && state_next == S_IDLE)
+                boot_done_r <= 1'b1;
+            
+            
         end
     end
 
