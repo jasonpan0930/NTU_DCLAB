@@ -208,7 +208,15 @@ Top top0(
 	.o_LEDG_recording(LEDG[7]),
 	.o_LEDR_rec_overflow(LEDR[0]),
 	.o_LEDR_ack_in_i2C_init(LEDR[1]),
-	.o_LEDG_state(LEDG[5:0])  // State indicator: LEDG[0]=IDLE, [1]=I2C, [2]=RECORD, [3]=REC_PAUSE, [4]=PLAY, [5]=PLAY_PAUSE
+	.o_LEDG_state(LEDG[5:0]),  // State indicator: LEDG[0]=IDLE, [1]=I2C, [2]=RECORD, [3]=REC_PAUSE, [4]=PLAY, [5]=PLAY_PAUSE
+
+	//LCDs
+	.o_LCD_BLON(LCD_BLON),
+	.o_LCD_DATA(LCD_DATA),
+	.o_LCD_EN(LCD_EN),
+	.o_LCD_ON(LCD_ON),
+	.o_LCD_RS(LCD_RS),
+	.o_LCD_RW(LCD_RW)
 );
 
 // SevenHexDecoder seven_dec0(

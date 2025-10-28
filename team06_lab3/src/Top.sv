@@ -40,7 +40,15 @@ module Top (
 	output o_LEDG_recording,
 	output o_LEDR_rec_overflow,
 	output o_LEDR_ack_in_i2C_init,
-	output [5:0] o_LEDG_state  // State indicator LEDs
+	output [5:0] o_LEDG_state,  // State indicator LEDs
+
+    // ==== LCD ====
+    output o_LCD_BLON,
+    output [7:0] o_LCD_DATA,
+    output o_LCD_EN,
+    output o_LCD_ON,
+    output o_LCD_RS,
+    output o_LCD_RW
 );
 
 
@@ -80,6 +88,10 @@ module Top (
     // Clean control signals
     logic clean_start, clean_done;
 
+    // LCD control signals
+    logic [1:0] lcd_mode;
+    logic [19:0] lcd_addr_current, lcd_addr_max;
+
     // Keys are already debounced and pulsed in DE2_115.sv
     // Use them directly without additional edge detection
 
@@ -107,6 +119,16 @@ module Top (
     assign o_LEDG_recording = rec_start;
     assign o_LEDR_rec_overflow = rec_overflow;
     assign o_LEDR_ack_in_i2C_init = i2c_ledr_nack;
+
+    assign lcd_mode = (state_r == S_RECD) ? 2'b01 :
+                      (state_r == S_PLAY) ? 2'b10 :
+                      2'b00;
+    assign lcd_addr_current = (state_r == S_RECD) ? addr_record :
+                              (state_r == S_PLAY) ? addr_play :
+                              20'd0;
+    assign lcd_addr_max = (state_r == S_RECD) ? 20'hFFFFF :
+                          (state_r == S_PLAY) ? record_max_addr_r :
+                          20'd0;
     
     // State indicator LEDs
     // LEDG[0]: S_IDLE - Idle state
@@ -196,6 +218,23 @@ module Top (
         .o_done    (clean_done),
         .o_address (addr_clean),
         .o_data    (data_clean)
+    );
+
+    // ----------------------------------------------------------------
+    // LCD - Display
+    // ----------------------------------------------------------------
+    LCD lcd0 (
+        .i_rst_n   (i_rst_n),
+        .i_clk     (i_clk),
+        // .i_addr_current(lcd_addr_current),
+        // .i_addr_max(lcd_addr_max),
+        .i_mode(lcd_mode),
+        .o_LCD_BLON(o_LCD_BLON),
+        .o_LCD_DATA(o_LCD_DATA),
+        .o_LCD_EN(o_LCD_EN),
+        .o_LCD_ON(o_LCD_ON),
+        .o_LCD_RS(o_LCD_RS),
+        .o_LCD_RW(o_LCD_RW)
     );
 
     
