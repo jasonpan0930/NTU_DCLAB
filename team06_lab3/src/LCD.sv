@@ -15,7 +15,8 @@ module LCD(
 	// ----------------------------------------------------------------
 	// Parameters
 	// ----------------------------------------------------------------
-	parameter int CLK_HZ = 12_000_000; // Default 12 MHz
+parameter int CLK_HZ = 12_000_000; // Default 12 MHz
+parameter int SAMPLES_PER_SEC = 32_000; // Audio sample rate (LRCK). Use 48_000 if 48 kHz
 
 	// LCD timing (conservative)
 	localparam int T_POWERON_US   = 15_000; // 15 ms
@@ -69,8 +70,8 @@ module LCD(
 	logic        en_pulsing;
 	logic [1:0]  i_mode_r, i_mode_w; // track i_mode changes
 	logic  [1:0]      last_mode_r, last_mode_w; // track if text was written
-	logic [4:0]  last_addr_current_r, last_addr_current_w; // track address changes
-	logic [4:0]  last_addr_max_r, last_addr_max_w;
+logic [9:0]  last_addr_current_r, last_addr_current_w; // track seconds changes (0..1023s)
+logic [9:0]  last_addr_max_r, last_addr_max_w;
 	logic [15:0] refresh_timer_r, refresh_timer_w; // Timer to limit refresh rate
 
 	assign o_LCD_DATA = data_bus_r;
@@ -136,15 +137,22 @@ module LCD(
 		end
 		endtask
 
-	// Helper to convert number (0-99) to 2 decimal ASCII chars
-	function automatic logic [15:0] num_to_decimal_ascii(input logic [7:0] num);
-		begin
-			// Extract tens and ones digits
-			automatic logic [3:0] tens = num / 10;
-			automatic logic [3:0] ones = num % 10;
-			num_to_decimal_ascii = {8'h30 + tens, 8'h30 + ones};
-		end
-	endfunction
+// Helper to convert 0..999 to 3 ASCII digits (leading spaces)
+function automatic logic [23:0] num_to_decimal_ascii3(input logic [15:0] num);
+    logic [9:0] n;
+    logic [9:0] hundreds_val, tens_val, ones_val;
+    logic [7:0] d2, d1, d0;
+    begin
+        n = (num > 16'd999) ? 10'd999 : num[9:0];
+        hundreds_val = n / 10'd100;
+        tens_val     = (n % 10'd100) / 10'd10;
+        ones_val     = n % 10'd10;
+        d2 = (hundreds_val == 0) ? 8'h20 : (8'h30 + hundreds_val[7:0]);
+        d1 = ((hundreds_val == 0) && (tens_val == 0)) ? 8'h20 : (8'h30 + tens_val[7:0]);
+        d0 = 8'h30 + ones_val[7:0];
+        num_to_decimal_ascii3 = {d2, d1, d0};
+    end
+endfunction
 
 	// ----------------------------------------------------------------
 	// Combinational FSM
@@ -166,19 +174,22 @@ module LCD(
 		last_addr_max_w = last_addr_max_r;
 		refresh_timer_w = refresh_timer_r;
 		
-		// Prepare address text for line 2: (current>>15) "/" (max>>15)
-		// Format like "12/34"
+        // Prepare line 2 as seconds: curr_sec/max_sec (3 digits each), e.g., "123/456"
 		begin
-			automatic logic [7:0] current_val = i_addr_current[19:15];
-			automatic logic [7:0] max_val = i_addr_max[19:15];
-			automatic logic [15:0] current_ascii = num_to_decimal_ascii(current_val);
-			automatic logic [15:0] max_ascii = num_to_decimal_ascii(max_val);
-			
-			addr_text_rom[0] = current_ascii[15:8]; // tens digit of current
-			addr_text_rom[1] = current_ascii[7:0];  // ones digit of current
-			addr_text_rom[2] = "/"; // 0x2F
-			addr_text_rom[3] = max_ascii[15:8];    // tens digit of max
-			addr_text_rom[4] = max_ascii[7:0];     // ones digit of max
+            automatic logic [19:0] curr_addr = i_addr_current;
+            automatic logic [19:0] max_addr  = i_addr_max;
+            automatic logic [15:0] curr_sec = curr_addr / SAMPLES_PER_SEC;
+            automatic logic [15:0] max_sec  = max_addr  / SAMPLES_PER_SEC;
+            automatic logic [23:0] curr_ascii3 = num_to_decimal_ascii3(curr_sec);
+            automatic logic [23:0] max_ascii3  = num_to_decimal_ascii3(max_sec);
+
+            addr_text_rom[0] = curr_ascii3[23:16]; // hundreds
+            addr_text_rom[1] = curr_ascii3[15:8];  // tens
+            addr_text_rom[2] = curr_ascii3[7:0];   // ones
+            addr_text_rom[3] = "/"; // 0x2F
+            addr_text_rom[4] = max_ascii3[23:16];
+            addr_text_rom[5] = max_ascii3[15:8];
+            addr_text_rom[6] = max_ascii3[7:0];
 		end
 
 		// Default: EN low unless we are pulsing
@@ -281,14 +292,14 @@ module LCD(
 						state_w = S_WRITE_ADDR_DATA;
 					end
 					S_WRITE_ADDR_DATA: begin
-						// Write address info: 5 chars (e.g., "12/34")
-						if (addr_text_idx_r < 6'd4) begin
+                    // Write time info: 7 chars (e.g., "123/456")
+                    if (addr_text_idx_r < 6'd6) begin
 							addr_text_idx_w = addr_text_idx_r + 6'd1;
 							issue_byte(1'b1, addr_text_rom[addr_text_idx_w], T_CMD_US, data_bus_w, rs_w, start_pulse_w, delay_cnt_w);
 						end else begin
 							// Update last_addr registers to prevent immediate re-trigger
-							last_addr_current_w = i_addr_current[19:15];
-							last_addr_max_w = i_addr_max[19:15];
+                        last_addr_current_w = (i_addr_current / SAMPLES_PER_SEC);
+                        last_addr_max_w     = (i_addr_max     / SAMPLES_PER_SEC);
 							state_w = S_DONE;
 						end
 					end
@@ -309,10 +320,10 @@ module LCD(
 							end
 						end else if (i_mode_r != 2'b00) begin
 							// In record/play mode, check if addresses changed (throttled by timer)
-							if (refresh_timer_r == 16'd0) begin
-								logic [4:0] current_val, max_val;
-								current_val = i_addr_current[19:15];
-								max_val = i_addr_max[19:15];
+                            if (refresh_timer_r == 16'd0) begin
+                                logic [9:0] current_val, max_val;
+                                current_val = (i_addr_current / SAMPLES_PER_SEC);
+                                max_val     = (i_addr_max     / SAMPLES_PER_SEC);
 								if (current_val != last_addr_current_r || max_val != last_addr_max_r) begin
 									// Address changed, refresh line 2
 									issue_byte(1'b0, 8'hC0, T_CMD_US, data_bus_w, rs_w, start_pulse_w, delay_cnt_w);

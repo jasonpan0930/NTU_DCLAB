@@ -120,14 +120,14 @@ module Top (
     assign o_LEDR_rec_overflow = rec_overflow;
     assign o_LEDR_ack_in_i2C_init = i2c_ledr_nack;
 
-    assign lcd_mode = (state_r == S_RECD) ? 2'b01 :
-                      (state_r == S_PLAY) ? 2'b10 :
+    assign lcd_mode = (state_r == S_RECD || state_r == S_RECD_PAUSE) ? 2'b01 :
+                      (state_r == S_PLAY || state_r == S_PLAY_PAUSE) ? 2'b10 :
                       2'b00;
-    assign lcd_addr_current = (state_r == S_RECD) ? addr_record :
-                              (state_r == S_PLAY) ? addr_play :
+    assign lcd_addr_current = (state_r == S_RECD || state_r == S_RECD_PAUSE) ? addr_record :
+                              (state_r == S_PLAY || state_r == S_PLAY_PAUSE) ? addr_play :
                               20'd0;
-    assign lcd_addr_max = (state_r == S_RECD) ? 20'hFFFFF :
-                          (state_r == S_PLAY) ? record_max_addr_r :
+    assign lcd_addr_max = (state_r == S_RECD || state_r == S_RECD_PAUSE) ? 20'hFFFFF :
+                          (state_r == S_PLAY || state_r == S_PLAY_PAUSE) ? record_max_addr_r :
                           20'd0;
     
     // State indicator LEDs
@@ -174,6 +174,9 @@ module Top (
         .i_fast      (dsp_fast),         // Fast playback mode
         .i_slow_0    (dsp_slow_0),       // Slow with constant interpolation
         .i_slow_1    (dsp_slow_1),       // Slow with linear interpolation
+        .i_voice_robot (i_sw[12]),       // SW12 controls robot effect
+        .i_play_backward (i_sw[11]),     // SW11 controls backward playback
+        .i_max_addr  (record_max_addr_r),
         .i_daclrck   (i_AUD_DACLRCK),
         .i_sram_data (data_play),
         .o_dac_data  (dac_data),
@@ -337,7 +340,7 @@ module Top (
                     state_next = S_PLAY_PAUSE;
                     dsp_pause = 1'b1;
                 end
-                if (addr_play >= record_max_addr_r) begin
+                if ((i_sw[11] && (addr_play == 20'd0)) || (!i_sw[11] && (addr_play >= record_max_addr_r))) begin
                     state_next = S_IDLE;
                     dsp_stop = 1'b1;
                 end
