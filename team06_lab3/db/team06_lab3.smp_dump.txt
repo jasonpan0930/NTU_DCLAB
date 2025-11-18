@@ -1,0 +1,70 @@
+
+State Machine - |DE2_115|Top:top0|state_r
+Name state_r.S_CLEAN state_r.S_PLAY_PAUSE state_r.S_PLAY state_r.S_RECD_PAUSE state_r.S_RECD state_r.S_I2C state_r.S_IDLE 
+state_r.S_IDLE 0 0 0 0 0 0 0 
+state_r.S_I2C 0 0 0 0 0 1 1 
+state_r.S_RECD 0 0 0 0 1 0 1 
+state_r.S_RECD_PAUSE 0 0 0 1 0 0 1 
+state_r.S_PLAY 0 0 1 0 0 0 1 
+state_r.S_PLAY_PAUSE 0 1 0 0 0 0 1 
+state_r.S_CLEAN 1 0 0 0 0 0 1 
+
+State Machine - |DE2_115|Top:top0|LCD:lcd0|state_r
+Name state_r.S_DONE state_r.S_WRITE_ADDR_DATA state_r.S_SET_LINE2 state_r.S_WRITE_DATA state_r.S_SET_LINE1 state_r.S_ENTRY_MODE state_r.S_CLEAR state_r.S_DISP_ON state_r.S_FUNC_SET_3 state_r.S_FUNC_SET_2 state_r.S_FUNC_SET_1 state_r.S_PWR_WAIT 
+state_r.S_PWR_WAIT 0 0 0 0 0 0 0 0 0 0 0 0 
+state_r.S_FUNC_SET_1 0 0 0 0 0 0 0 0 0 0 1 1 
+state_r.S_FUNC_SET_2 0 0 0 0 0 0 0 0 0 1 0 1 
+state_r.S_FUNC_SET_3 0 0 0 0 0 0 0 0 1 0 0 1 
+state_r.S_DISP_ON 0 0 0 0 0 0 0 1 0 0 0 1 
+state_r.S_CLEAR 0 0 0 0 0 0 1 0 0 0 0 1 
+state_r.S_ENTRY_MODE 0 0 0 0 0 1 0 0 0 0 0 1 
+state_r.S_SET_LINE1 0 0 0 0 1 0 0 0 0 0 0 1 
+state_r.S_WRITE_DATA 0 0 0 1 0 0 0 0 0 0 0 1 
+state_r.S_SET_LINE2 0 0 1 0 0 0 0 0 0 0 0 1 
+state_r.S_WRITE_ADDR_DATA 0 1 0 0 0 0 0 0 0 0 0 1 
+state_r.S_DONE 1 0 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |DE2_115|Top:top0|Clean_sram:clean0|state_r
+Name state_r.S_WRITE 
+state_r.S_IDLE 0 
+state_r.S_WRITE 1 
+
+State Machine - |DE2_115|Top:top0|AudRecorder:recorder0|state_r
+Name state_r.IDLE state_r.PAUSED state_r.RECORDING 
+state_r.IDLE 0 0 0 
+state_r.RECORDING 1 0 1 
+state_r.PAUSED 1 1 0 
+
+State Machine - |DE2_115|Top:top0|AudDSP:dsp0|state
+Name state.S_IDLE state.S_PAUSE state.S_PLAY 
+state.S_IDLE 0 0 0 
+state.S_PLAY 1 0 1 
+state.S_PAUSE 1 1 0 
+
+State Machine - |DE2_115|Top:top0|I2cInitializer:init0|state
+Name state.ST_DONE state.ST_NEXT state.ST_STOP_B state.ST_STOP_A state.ST_ACK2_DONE state.ST_ACK2_READ state.ST_ACK2_CHECK state.ST_BIT_B2_CLK state.ST_BIT_B2_SET state.ST_LOAD_B2 state.ST_ACK1_DONE state.ST_ACK1_READ state.ST_ACK1_CHECK state.ST_BIT_B1_CLK state.ST_BIT_B1_SET state.ST_LOAD_B1 state.ST_ACK0_DONE state.ST_ACK0_READ state.ST_ACK0_CHECK state.ST_BIT_B0_CLK state.ST_BIT_B0_SET state.ST_LOAD_B0 state.ST_START_B state.ST_START_A state.ST_IDLE 
+state.ST_IDLE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+state.ST_START_A 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+state.ST_START_B 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 
+state.ST_LOAD_B0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 
+state.ST_BIT_B0_SET 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 
+state.ST_BIT_B0_CLK 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 
+state.ST_ACK0_CHECK 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 
+state.ST_ACK0_READ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 
+state.ST_ACK0_DONE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 
+state.ST_LOAD_B1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 
+state.ST_BIT_B1_SET 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 
+state.ST_BIT_B1_CLK 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_ACK1_CHECK 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_ACK1_READ 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_ACK1_DONE 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_LOAD_B2 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_BIT_B2_SET 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_BIT_B2_CLK 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_ACK2_CHECK 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_ACK2_READ 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_ACK2_DONE 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_STOP_A 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_STOP_B 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_NEXT 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_DONE 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
