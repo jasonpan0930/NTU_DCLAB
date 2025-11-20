@@ -23,20 +23,9 @@ module VGA_Image_Overlay_Combined (
 	output logic o_bg_sram_ub_n,
 	output logic o_bg_sram_we_n,
 	
-	// Background palette BRAM interface
-	output logic [7:0] o_bg_palette_addr,
-	output logic o_bg_palette_wren,
-	input logic [15:0] i_bg_palette_data,
-	
-	// Zombie BRAM interface (image data)
-	output logic [13:0] o_zombie_bram_addr,
-	output logic o_zombie_bram_wren,
-	input logic [7:0] i_zombie_bram_data,
-	
-	// Zombie palette BRAM interface
-	output logic [7:0] o_zombie_palette_addr,
-	output logic o_zombie_palette_wren,
-	input logic [15:0] i_zombie_palette_data,
+	// Background palette BRAM - instantiated internally
+	// Zombie BRAM - instantiated internally
+	// Zombie palette BRAM - instantiated internally
 	
 	// VGA RGB output
 	output logic [7:0] o_vga_r,
@@ -76,18 +65,50 @@ module VGA_Image_Overlay_Combined (
 	                            14'd0;
 	
 	// ============================================================
-	// Sequential Logic: Pipeline Stage 1 - Read Image Data (_r)
+	// BRAM Instantiations (must be before pipeline stages)
 	// ============================================================
 	
-	// Background SRAM address and control (registered)
-	logic [20:0] bg_pixel_byte_addr_r;
-	logic [7:0] bg_pixel_index_r;
-	logic in_zombie_area_r;
-	logic [7:0] zombie_pixel_index_r;
-	logic [7:0] bg_palette_addr_w;
-	logic [7:0] zombie_palette_addr_w;
+	// Background palette BRAM
+	logic [7:0] bg_palette_addr_reg;
+	logic [15:0] bg_palette_data;
 	
-	// Background SRAM control signals
+	background_palette bg_palette_bram(
+		.address(bg_palette_addr_reg),
+		.clock(i_clk),
+		.data(16'd0),
+		.wren(1'b0),
+		.q(bg_palette_data)
+	);
+	
+	// Zombie image BRAM
+	logic [13:0] zombie_bram_addr_reg;
+	logic [7:0] zombie_bram_data;
+	
+	zombie_1x zombie_bram(
+		.address(zombie_bram_addr_reg),
+		.clock(i_clk),
+		.data(8'd0),
+		.wren(1'b0),
+		.q(zombie_bram_data)
+	);
+	
+	// Zombie palette BRAM
+	logic [7:0] zombie_palette_addr_reg;
+	logic [15:0] zombie_palette_data;
+	
+	zombie_1x_palette zombie_palette_bram(
+		.address(zombie_palette_addr_reg),
+		.clock(i_clk),
+		.data(16'd0),
+		.wren(1'b0),
+		.q(zombie_palette_data)
+	);
+	
+	// ============================================================
+	// Sequential Logic: Pipeline Stage 0 - Register Addresses (_r)
+	// ============================================================
+	
+	// Background SRAM control signals (combinational, output immediately)
 	assign o_bg_sram_ce_n = 1'b0;
 	assign o_bg_sram_oe_n = 1'b0;
 	assign o_bg_sram_we_n = 1'b1;  // Read mode
@@ -96,57 +117,102 @@ module VGA_Image_Overlay_Combined (
 	assign o_bg_sram_ub_n = ~bg_pixel_byte_addr_w[0];    // High byte select
 	assign io_bg_sram_dq = 16'hZZZZ;  // High-Z for read
 	
-	// Zombie BRAM control signals
-	assign o_zombie_bram_wren = 1'b0;  // Read mode
-	assign o_zombie_bram_addr = zombie_pixel_addr_w;
+	// Register addresses for SRAM and BRAM (Stage 0)
+	// SRAM needs 2 cycles, so we register the address twice
+	logic [20:0] bg_pixel_byte_addr_r0;  // First cycle: register address
+	logic [20:0] bg_pixel_byte_addr_r1;  // Second cycle: SRAM data ready
+	logic [13:0] zombie_pixel_addr_r0;
+	logic in_zombie_area_r0;
+	logic active_video_r0;
 	
-	// Pipeline stage 1: Register addresses and read pixel indices
+	// Register zombie BRAM address (BRAM requires registered address, 1 cycle delay)
+	always_ff @(posedge i_clk) begin
+		if (~i_rst_n) begin
+			zombie_bram_addr_reg <= 14'd0;
+			bg_pixel_byte_addr_r0 <= 21'd0;
+			bg_pixel_byte_addr_r1 <= 21'd0;
+			zombie_pixel_addr_r0 <= 14'd0;
+			in_zombie_area_r0 <= 1'b0;
+			active_video_r0 <= 1'b0;
+		end else begin
+			// Register addresses for pipeline
+			bg_pixel_byte_addr_r0 <= bg_pixel_byte_addr_w;  // Stage 0: register SRAM address
+			bg_pixel_byte_addr_r1 <= bg_pixel_byte_addr_r0;  // Stage 1: SRAM data will be ready next cycle
+			zombie_bram_addr_reg <= zombie_pixel_addr_w;    // BRAM address (1 cycle delay)
+			zombie_pixel_addr_r0 <= zombie_pixel_addr_w;
+			in_zombie_area_r0 <= in_zombie_area_w;
+			active_video_r0 <= i_active_video;
+		end
+	end
+	
+	// ============================================================
+	// Sequential Logic: Pipeline Stage 1 - Read Image Data (_r)
+	// ============================================================
+	
+	// SRAM has 2-cycle delay, so we latch SRAM data here
+	// bg_pixel_byte_addr_r1 was set 2 cycles ago, so SRAM data is ready now
+	logic [15:0] sram_dq_r;  // Latch SRAM data
+	
+	always_ff @(posedge i_clk) begin
+		if (~i_rst_n) begin
+			sram_dq_r <= 16'd0;
+		end else begin
+			sram_dq_r <= io_bg_sram_dq;  // Latch SRAM output (after 2 cycles)
+		end
+	end
+	
+	logic [7:0] bg_pixel_index_r;
+	logic in_zombie_area_r;
+	logic [7:0] zombie_pixel_index_r;
 	logic active_video_r1;  // First stage pipeline for active_video
 	
 	always_ff @(posedge i_clk) begin
 		if (~i_rst_n) begin
-			bg_pixel_byte_addr_r <= 21'd0;
 			bg_pixel_index_r <= 8'd0;
 			in_zombie_area_r <= 1'b0;
 			zombie_pixel_index_r <= 8'd0;
 			active_video_r1 <= 1'b0;
 		end else begin
-			// Register background address
-			bg_pixel_byte_addr_r <= bg_pixel_byte_addr_w;
-			
-			// Read background pixel index from SRAM
-			if (bg_pixel_byte_addr_r[0] == 1'b0) begin
-				bg_pixel_index_r <= io_bg_sram_dq[7:0];   // Low byte
+			// Read background pixel index from SRAM (using latched data after 2 cycles)
+			// bg_pixel_byte_addr_r1 corresponds to the address we sent 2 cycles ago
+			if (bg_pixel_byte_addr_r1[0] == 1'b0) begin
+				bg_pixel_index_r <= sram_dq_r[7:0];   // Low byte
 			end else begin
-				bg_pixel_index_r <= io_bg_sram_dq[15:8];  // High byte
+				bg_pixel_index_r <= sram_dq_r[15:8];  // High byte
 			end
 			
-			// Register zombie area flag
-			in_zombie_area_r <= in_zombie_area_w;
+			// Pipeline zombie area flag (sync with background)
+			in_zombie_area_r <= in_zombie_area_r0;
 			
-			// Read zombie pixel index from BRAM (BRAM has registered output)
-			zombie_pixel_index_r <= i_zombie_bram_data;
+			// Read zombie pixel index from BRAM (BRAM has registered output, 1 cycle delay)
+			// zombie_bram_addr_reg was set 1 cycle ago, so data is ready now
+			zombie_pixel_index_r <= zombie_bram_data;
 			
 			// Pipeline active video signal (stage 1)
-			active_video_r1 <= i_active_video;
+			active_video_r1 <= active_video_r0;
 		end
 	end
 	
 	// Calculate palette addresses (combinational)
+	logic [7:0] bg_palette_addr_w;
+	logic [7:0] zombie_palette_addr_w;
 	assign bg_palette_addr_w = bg_pixel_index_r;
 	assign zombie_palette_addr_w = zombie_pixel_index_r;
+	
+	// Register palette BRAM addresses (BRAM requires registered addresses)
+	always_ff @(posedge i_clk) begin
+		if (~i_rst_n) begin
+			bg_palette_addr_reg <= 8'd0;
+			zombie_palette_addr_reg <= 8'd0;
+		end else begin
+			bg_palette_addr_reg <= bg_palette_addr_w;
+			zombie_palette_addr_reg <= zombie_palette_addr_w;
+		end
+	end
 	
 	// ============================================================
 	// Sequential Logic: Pipeline Stage 2 - Read Palette Data (_r)
 	// ============================================================
-	
-	// Background palette BRAM control
-	assign o_bg_palette_wren = 1'b0;  // Read mode
-	assign o_bg_palette_addr = bg_palette_addr_w;
-	
-	// Zombie palette BRAM control
-	assign o_zombie_palette_wren = 1'b0;  // Read mode
-	assign o_zombie_palette_addr = zombie_palette_addr_w;
 	
 	// Registered palette addresses and data
 	logic [7:0] bg_palette_addr_r;
@@ -172,8 +238,8 @@ module VGA_Image_Overlay_Combined (
 			zombie_palette_addr_r <= zombie_palette_addr_w;
 			
 			// Read palette data (BRAM has registered output, 1 cycle delay)
-			bg_rgb565_r <= i_bg_palette_data;
-			zombie_rgb565_r <= i_zombie_palette_data;
+			bg_rgb565_r <= bg_palette_data;
+			zombie_rgb565_r <= zombie_palette_data;
 			
 			// Pipeline zombie area flag and pixel index
 			in_zombie_area_r2 <= in_zombie_area_r;

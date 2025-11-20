@@ -136,15 +136,7 @@ module DE2_115 (
 	inout [6:0] EX_IO
 );
 
-logic keydown;
-logic [12:0] random_value;
-assign random_value = 13'd0;
-
 // VGA signals
-logic [9:0] vga_h_count;
-logic [9:0] vga_v_count;
-logic vga_active_video;
-logic vga_clock_25;   // 25MHz clock from PLL
 logic vga_clock_74_25; // 74.25MHz clock from PLL
 
 // VGA 720p signals
@@ -152,23 +144,9 @@ logic [10:0] vga_720p_h_count;
 logic [9:0] vga_720p_v_count;
 logic vga_720p_active_video;
 
-// SRAM Reader signals (for debugging)
-logic [7:0] sram_byte_data;
-logic [19:0] sram_reader_addr;
-logic sram_reader_ce_n, sram_reader_lb_n, sram_reader_oe_n, sram_reader_ub_n, sram_reader_we_n;
-
-// BRAM Reader signals (for debugging)
-logic [7:0] bram_debug_addr;
-logic bram_debug_wren;
-logic [15:0] bram_data_out;
-logic [15:0] palette_data;
-
-// VGA Image Display signals
+// VGA Image Overlay signals (SRAM interface)
 logic [19:0] vga_sram_addr;
 logic vga_sram_ce_n, vga_sram_lb_n, vga_sram_oe_n, vga_sram_ub_n, vga_sram_we_n;
-logic [7:0] vga_bram_addr;
-logic vga_bram_wren;
-logic [7:0] bg_r, bg_g, bg_b;  // Background RGB output
 
 // Zombie position and size
 logic [10:0] zombie_x1;
@@ -176,160 +154,42 @@ logic [9:0] zombie_y1;
 logic [10:0] zombie_size_x;
 logic [9:0] zombie_size_y;
 
-// Initialize zombie position and size
-assign zombie_x1 = 11'd0;
-assign zombie_y1 = 10'd0;
+// Initialize zombie size
 assign zombie_size_x = 11'd102;  // Zombie width
 assign zombie_size_y = 10'd149;   // Zombie height
 
-// Zombie BRAM signals
-logic [13:0] zombie_bram_addr;
-logic zombie_bram_wren;
-logic [7:0] zombie_bram_data_out;
+// Zombie Position Test Controller
+// SW[0]: move right (increase x1)
+// SW[1]: move left (decrease x1)
+// SW[17]: move down (increase y1)
+// SW[16]: move up (decrease y1)
+Zombie_Position_Test_Controller zombie_pos_test_ctrl(
+	.i_clk(vga_clock_74_25),
+	.i_rst_n(KEY[1]),
+	.i_sw_right(SW[0]),      // SW[0]: move right
+	.i_sw_left(SW[1]),       // SW[1]: move left
+	.i_sw_down(SW[17]),      // SW[17]: move down
+	.i_sw_up(SW[16]),        // SW[16]: move up
+	.i_zombie_size_x(zombie_size_x),
+	.i_zombie_size_y(zombie_size_y),
+	.i_screen_width(11'd1280),
+	.i_screen_height(10'd720),
+	.o_zombie_x1(zombie_x1),
+	.o_zombie_y1(zombie_y1)
+);
 
-// Zombie palette BRAM signals
-logic [7:0] zombie_palette_addr;
-logic zombie_palette_wren;
-logic [15:0] zombie_palette_data_out;
-
-// VGA Overlay output
+// VGA output
 logic [7:0] vga_r, vga_g, vga_b;
 
-// Mode selection: SW[17] = 0 for VGA display, SW[17] = 1 for debug mode
-logic debug_mode;
-assign debug_mode = SW[17];
-
-Debounce deb0(
-	.i_in(KEY[0]),
-	.i_rst_n(KEY[1]),
-	.i_clk(CLOCK_50),
-	.o_neg(keydown)
-);
-
-// SRAM Reader module (for debugging, only active when debug_mode = 1)
-SRAM_Reader sram_reader0(
-	.i_clk(CLOCK_50),
-	.i_rst_n(KEY[1]),
-	.i_keydown(keydown),
-	.o_sram_addr(sram_reader_addr),
-	.o_sram_ce_n(sram_reader_ce_n),
-	.io_sram_dq(SRAM_DQ),
-	.o_sram_lb_n(sram_reader_lb_n),
-	.o_sram_oe_n(sram_reader_oe_n),
-	.o_sram_ub_n(sram_reader_ub_n),
-	.o_sram_we_n(sram_reader_we_n),
-	.o_byte_data(sram_byte_data)
-);
-
-// SRAM address/control multiplexer: VGA display has priority
-assign SRAM_ADDR = debug_mode ? sram_reader_addr : vga_sram_addr;
-assign SRAM_CE_N = debug_mode ? sram_reader_ce_n : vga_sram_ce_n;
-assign SRAM_LB_N = debug_mode ? sram_reader_lb_n : vga_sram_lb_n;
-assign SRAM_OE_N = debug_mode ? sram_reader_oe_n : vga_sram_oe_n;
-assign SRAM_UB_N = debug_mode ? sram_reader_ub_n : vga_sram_ub_n;
-assign SRAM_WE_N = debug_mode ? sram_reader_we_n : vga_sram_we_n;
-
-// Display byte data on HEX0 and HEX1 using HexTo7Seg
-HexTo7Seg hex_decoder_low(
-	.i_hex(sram_byte_data[3:0]),  // Low 4 bits
-	.o_seg(HEX0)
-);
-
-HexTo7Seg hex_decoder_high(
-	.i_hex(sram_byte_data[7:4]),  // High 4 bits
-	.o_seg(HEX1)
-);
-
-// BRAM module - need two instances: one for VGA (74.25MHz) and one for debug (50MHz)
-// VGA BRAM instance
-logic [7:0] vga_bram_addr_reg;
-logic [15:0] vga_bram_data_out;
-
-background_palette bram_vga(
-	.address(vga_bram_addr_reg),
-	.clock(vga_clock_74_25),  // VGA clock domain
-	.data(16'd0),
-	.wren(1'b0),
-	.q(vga_bram_data_out)
-);
-
-// Debug BRAM instance
-background_palette bram_debug(
-	.address(bram_debug_addr),
-	.clock(CLOCK_50),  // Debug clock domain
-	.data(16'd0),
-	.wren(bram_debug_wren),
-	.q(bram_data_out)
-);
-
-// BRAM Reader module (for debugging)
-BRAM_Reader bram_reader0(
-	.i_clk(CLOCK_50),
-	.i_rst_n(KEY[1]),
-	.i_keydown(keydown),
-	.o_bram_addr(bram_debug_addr),
-	.o_bram_wren(bram_debug_wren),
-	.i_bram_data(bram_data_out),
-	.o_palette_data(palette_data)
-);
-
-// Display palette data on HEX7~HEX4 (16-bit value, 4 hex digits)
-HexTo7Seg hex_palette_0(
-	.i_hex(palette_data[3:0]),   // Least significant 4 bits
-	.o_seg(HEX4)
-);
-
-HexTo7Seg hex_palette_1(
-	.i_hex(palette_data[7:4]),
-	.o_seg(HEX5)
-);
-
-HexTo7Seg hex_palette_2(
-	.i_hex(palette_data[11:8]),
-	.o_seg(HEX6)
-);
-
-HexTo7Seg hex_palette_3(
-	.i_hex(palette_data[15:12]), // Most significant 4 bits
-	.o_seg(HEX7)
-);
 
 
-
-// VGA Clock PLL (50MHz -> 25MHz and 74.25MHz)
+// VGA Clock PLL (50MHz -> 74.25MHz)
 vga_clock vga_clk_pll(
 	.clk_clk(CLOCK_50),
 	.reset_reset_n(KEY[1]),
-	.vga_clock_25_clk(vga_clock_25),
+	.vga_clock_25_clk(),  // Not used
 	.vga_clock_74_25_clk(vga_clock_74_25)
 );
-
-// // VGA Controller
-// VGA_Controller vga_ctrl0(
-// 	.i_clk(vga_clock_25),  // Use PLL-generated 25MHz clock
-// 	.i_rst_n(KEY[1]),
-// 	.o_vga_clk(VGA_CLK),
-// 	.o_hsync(VGA_HS),
-// 	.o_vsync(VGA_VS),
-// 	.o_blank_n(VGA_BLANK_N),
-// 	.o_sync_n(VGA_SYNC_N),
-// 	.o_h_count(vga_h_count),
-// 	.o_v_count(vga_v_count),
-// 	.o_active_video(vga_active_video)
-// );
-
-// // VGA Pattern Generator (640x480)
-// VGA_Pattern vga_pattern0(
-// 	.i_clk(CLOCK_50),
-// 	.i_rst_n(KEY[1]),
-// 	.i_h_count(vga_h_count),
-// 	.i_v_count(vga_v_count),
-// 	.i_active_video(vga_active_video),
-// 	.i_rgb_enable({SW[2], SW[1], SW[0]}), // SW[0]=R, SW[1]=G, SW[2]=B
-// 	.o_vga_r(VGA_R),
-// 	.o_vga_g(VGA_G),
-// 	.o_vga_b(VGA_B)
-// );
 
 // VGA Controller 720p
 VGA_Controller_720p vga_ctrl_720p(
@@ -345,84 +205,41 @@ VGA_Controller_720p vga_ctrl_720p(
 	.o_active_video(vga_720p_active_video)
 );
 
-// VGA Image Display module (for background)
-VGA_Image_Display vga_image_display(
+// VGA Image Overlay Combined module (handles background + zombie overlay)
+VGA_Image_Overlay_Combined vga_image_overlay_combined(
 	.i_clk(vga_clock_74_25),
 	.i_rst_n(KEY[1]),
 	.i_h_count(vga_720p_h_count),
 	.i_v_count(vga_720p_v_count),
 	.i_active_video(vga_720p_active_video),
-	.o_sram_addr(vga_sram_addr),
-	.o_sram_ce_n(vga_sram_ce_n),
-	.io_sram_dq(SRAM_DQ),
-	.o_sram_lb_n(vga_sram_lb_n),
-	.o_sram_oe_n(vga_sram_oe_n),
-	.o_sram_ub_n(vga_sram_ub_n),
-	.o_sram_we_n(vga_sram_we_n),
-	.o_bram_addr(vga_bram_addr),
-	.o_bram_wren(vga_bram_wren),
-	.i_bram_data(vga_bram_data_out),
-	.o_vga_r(bg_r),
-	.o_vga_g(bg_g),
-	.o_vga_b(bg_b)
-);
-
-// Zombie BRAM instance
-zombie_1x zombie_bram(
-	.address(zombie_bram_addr),
-	.clock(vga_clock_74_25),
-	.data(8'd0),
-	.wren(1'b0),
-	.q(zombie_bram_data_out)
-);
-
-// Zombie palette BRAM instance
-zombie_1x_palette zombie_palette_bram(
-	.address(zombie_palette_addr),
-	.clock(vga_clock_74_25),
-	.data(16'd0),
-	.wren(1'b0),
-	.q(zombie_palette_data_out)
-);
-
-// VGA Image Overlay module (overlays zombie on background)
-VGA_Image_Overlay vga_image_overlay(
-	.i_clk(vga_clock_74_25),
-	.i_rst_n(KEY[1]),
-	.i_h_count(vga_720p_h_count),
-	.i_v_count(vga_720p_v_count),
-	.i_active_video(vga_720p_active_video),
-	.i_bg_r(bg_r),
-	.i_bg_g(bg_g),
-	.i_bg_b(bg_b),
 	.i_zombie_x1(zombie_x1),
 	.i_zombie_y1(zombie_y1),
 	.i_zombie_size_x(zombie_size_x),
 	.i_zombie_size_y(zombie_size_y),
-	.o_zombie_bram_addr(zombie_bram_addr),
-	.o_zombie_bram_wren(zombie_bram_wren),
-	.i_zombie_bram_data(zombie_bram_data_out),
-	.o_zombie_palette_addr(zombie_palette_addr),
-	.o_zombie_palette_wren(zombie_palette_wren),
-	.i_zombie_palette_data(zombie_palette_data_out),
+	.o_bg_sram_addr(vga_sram_addr),
+	.o_bg_sram_ce_n(vga_sram_ce_n),
+	.io_bg_sram_dq(SRAM_DQ),
+	.o_bg_sram_lb_n(vga_sram_lb_n),
+	.o_bg_sram_oe_n(vga_sram_oe_n),
+	.o_bg_sram_ub_n(vga_sram_ub_n),
+	.o_bg_sram_we_n(vga_sram_we_n),
 	.o_vga_r(vga_r),
 	.o_vga_g(vga_g),
 	.o_vga_b(vga_b)
 );
 
-// Register VGA BRAM address (BRAM needs registered address)
-always_ff @(posedge vga_clock_74_25) begin
-	if (~KEY[1]) begin
-		vga_bram_addr_reg <= 8'd0;
-	end else begin
-		vga_bram_addr_reg <= vga_bram_addr;
-	end
-end
+// SRAM interface connections (for background image data)
+assign SRAM_ADDR = vga_sram_addr;
+assign SRAM_CE_N = vga_sram_ce_n;
+assign SRAM_LB_N = vga_sram_lb_n;
+assign SRAM_OE_N = vga_sram_oe_n;
+assign SRAM_UB_N = vga_sram_ub_n;
+assign SRAM_WE_N = vga_sram_we_n;
 
-// VGA RGB output multiplexer: use image display when not in debug mode
-assign VGA_R = debug_mode ? 8'd0 : vga_r;
-assign VGA_G = debug_mode ? 8'd0 : vga_g;
-assign VGA_B = debug_mode ? 8'd0 : vga_b;
+// VGA RGB output
+assign VGA_R = vga_r;
+assign VGA_G = vga_g;
+assign VGA_B = vga_b;
 
 `ifdef DUT_LAB1
 	initial begin

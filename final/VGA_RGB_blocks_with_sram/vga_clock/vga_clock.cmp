@@ -1,0 +1,9 @@
+	component vga_clock is
+		port (
+			clk_clk             : in  std_logic := 'X'; -- clk
+			reset_reset_n       : in  std_logic := 'X'; -- reset_n
+			vga_clock_25_clk    : out std_logic;        -- clk
+			vga_clock_74_25_clk : out std_logic         -- clk
+		);
+	end component vga_clock;
+
