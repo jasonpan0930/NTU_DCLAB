@@ -19,7 +19,7 @@
 #
 # Quartus II 64-Bit
 # Version 15.0.0 Build 145 04/22/2015 SJ Full Version
-# Date created = 12:45:31  November 19, 2025
+# Date created = 22:12:08  November 20, 2025
 #
 # -------------------------------------------------------------------------- #
 #
@@ -41,7 +41,7 @@ set_global_assignment -name FAMILY "Cyclone IV E"
 set_global_assignment -name DEVICE EP4CE115F29C7
 set_global_assignment -name TOP_LEVEL_ENTITY DE2_115
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 15.0.0
-set_global_assignment -name PROJECT_CREATION_TIME_DATE "12:45:31  NOVEMBER 19, 2025"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "22:12:08  NOVEMBER 20, 2025"
 set_global_assignment -name LAST_QUARTUS_VERSION 15.0.0
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
@@ -50,7 +50,14 @@ set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
 set_global_assignment -name DEVICE_FILTER_PIN_COUNT 780
 set_global_assignment -name DEVICE_FILTER_SPEED_GRADE 7
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
-set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
+set_global_assignment -name ENABLE_OCT_DONE OFF
+set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
+set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
+set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK_50
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK2_50
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLOCK3_50
@@ -1101,24 +1108,25 @@ set_instance_assignment -name IO_MAXIMUM_TOGGLE_RATE "0 MHz" -to SW
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name ENABLE_OCT_DONE OFF
-set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
-set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
-set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
-set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
-set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
-set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
-set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name SYSTEMVERILOG_FILE VGA_Pattern_720p.sv
-set_global_assignment -name SYSTEMVERILOG_FILE VGA_Controller_720p.sv
-set_global_assignment -name SYSTEMVERILOG_FILE VGA_Pattern.sv
-set_global_assignment -name SYSTEMVERILOG_FILE VGA_Controller.sv
-set_global_assignment -name VERILOG_FILE VGA_clock/synthesis/vga_clock.v -library vga_clock
-set_global_assignment -name QIP_FILE VGA_clock/synthesis/vga_clock.qip
-set_global_assignment -name SYSTEMVERILOG_FILE DE2_115/SevenHexDecoder.sv
-set_global_assignment -name SYSTEMVERILOG_FILE DE2_115/Debounce.sv
-set_global_assignment -name SYSTEMVERILOG_FILE DE2_115/DE2_115.sv
-set_global_assignment -name SDC_FILE DE2_115/DE2_115.sdc
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Image_Overlay.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Image_Display.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/BRAM_Reader.sv
+set_global_assignment -name VERILOG_FILE vga_clock/synthesis/vga_clock.v -library vga_clock
+set_global_assignment -name QIP_FILE vga_clock/synthesis/vga_clock.qip
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Pattern_720p.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Pattern.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Controller_720p.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/SRAM_Reader.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/SevenHexDecoder.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/HexTo7Seg.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/Debounce.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/DE2_115/DE2_115.sv
+set_global_assignment -name SDC_FILE src/DE2_115/DE2_115.sdc
+set_global_assignment -name QIP_FILE BRAM.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x_palette.qip
+set_global_assignment -name QIP_FILE BRAMs/background/background_palette.qip
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

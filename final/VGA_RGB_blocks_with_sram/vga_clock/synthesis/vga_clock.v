@@ -4,10 +4,10 @@
 
 `timescale 1 ps / 1 ps
 module vga_clock (
-		input  wire  clk_clk,         //         clk.clk
-		output wire  clock_25_clk,    //    clock_25.clk
-		output wire  clock_74_25_clk, // clock_74_25.clk
-		input  wire  reset_reset_n    //       reset.reset_n
+		input  wire  clk_clk,             //             clk.clk
+		input  wire  reset_reset_n,       //           reset.reset_n
+		output wire  vga_clock_25_clk,    //    vga_clock_25.clk
+		output wire  vga_clock_74_25_clk  // vga_clock_74_25.clk
 	);
 
 	wire    rst_controller_reset_out_reset; // rst_controller:reset_out -> altpll_0:reset
@@ -20,8 +20,8 @@ module vga_clock (
 		.address   (),                               //                      .address
 		.readdata  (),                               //                      .readdata
 		.writedata (),                               //                      .writedata
-		.c0        (clock_25_clk),                   //                    c0.clk
-		.c1        (clock_74_25_clk),                //                    c1.clk
+		.c0        (vga_clock_25_clk),               //                    c0.clk
+		.c1        (vga_clock_74_25_clk),            //                    c1.clk
 		.areset    (),                               //        areset_conduit.export
 		.locked    (),                               //        locked_conduit.export
 		.phasedone ()                                //     phasedone_conduit.export

@@ -64,7 +64,7 @@ def write_mif(filename, byte_list):
         f.write(f"DEPTH={depth};\n")
         f.write("ADDRESS_RADIX=HEX;\n")
         f.write("DATA_RADIX=HEX;\n\n")
-        f.write("BEGIN\n")
+        f.write("CONTENT BEGIN\n")
 
         for addr, data in enumerate(byte_list):
             f.write(f"{addr:06X} : {data:02X};\n")
@@ -80,7 +80,7 @@ def write_palette_mif(filename, palette_rgb565):
         f.write(f"DEPTH={depth};\n")
         f.write("ADDRESS_RADIX=HEX;\n")
         f.write("DATA_RADIX=HEX;\n\n")
-        f.write("BEGIN\n")
+        f.write("CONTENT BEGIN\n")
 
         for addr, data in enumerate(palette_rgb565):
             f.write(f"{addr:04X} : {data:04X};\n")
