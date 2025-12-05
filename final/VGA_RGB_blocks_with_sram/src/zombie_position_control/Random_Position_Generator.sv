@@ -1,0 +1,221 @@
+// Random Position Generator (Optimized / Timing Safe / Syntax Fixed)
+module Random_Position_Generator #(
+	parameter SCREEN_WIDTH = 1280,
+	parameter SCREEN_HEIGHT = 720,
+	parameter TARGET_X = 640,
+	parameter TARGET_Y = 719,
+	parameter MAX_POSITIONS = 3,
+	parameter VELOCITY = 16'd2,
+	parameter CLOCK_FREQ = 32'd74250000,
+	parameter UPDATE_RATE = 32'd60,
+	parameter GENERATION_RATE = 32'd1
+)(
+	input logic i_clk,
+	input logic i_rst_n,
+	
+	output logic [10:0] o_x [0:MAX_POSITIONS-1],
+	output logic [9:0] o_y [0:MAX_POSITIONS-1],
+	output logic o_valid [0:MAX_POSITIONS-1],
+	output logic [31:0] o_distance [0:MAX_POSITIONS-1],
+	output logic [3:0] o_active_count
+);
+
+	// ============================================================
+	// Internal State & Signals
+	// ============================================================
+	logic signed [31:0] pos_x [0:MAX_POSITIONS-1];
+	logic signed [31:0] pos_y [0:MAX_POSITIONS-1];
+	logic position_valid [0:MAX_POSITIONS-1];
+	
+	// Error Accumulator for Bresenham movement
+	logic signed [31:0] error_acc [0:MAX_POSITIONS-1]; 
+
+	// Timing Counters
+	localparam UPDATE_DIVIDER = CLOCK_FREQ / UPDATE_RATE;
+	localparam GEN_DIVIDER = CLOCK_FREQ / GENERATION_RATE;
+	logic [23:0] update_counter;
+	logic update_tick;
+	logic [31:0] gen_counter;
+	logic gen_tick;
+
+	// Random Number Generator (LFSR)
+	logic [31:0] lfsr_state;
+	
+	// Helper signals
+	logic [3:0] available_slot;
+	logic slot_found;
+
+	// ============================================================
+	// Clock Dividers & LFSR
+	// ============================================================
+	always_ff @(posedge i_clk or negedge i_rst_n) begin
+		if (!i_rst_n) begin
+			update_counter <= 24'd0;
+			update_tick <= 1'b0;
+			gen_counter <= 32'd0;
+			gen_tick <= 1'b0;
+			lfsr_state <= 32'hACE1;
+		end else begin
+			// Update Tick (60Hz)
+			if (update_counter >= UPDATE_DIVIDER - 1) begin
+				update_counter <= 24'd0;
+				update_tick <= 1'b1;
+			end else begin
+				update_counter <= update_counter + 24'd1;
+				update_tick <= 1'b0;
+			end
+
+			// Generation Tick (1Hz)
+			if (gen_counter >= GEN_DIVIDER - 1) begin
+				gen_counter <= 32'd0;
+				gen_tick <= 1'b1;
+			end else begin
+				gen_counter <= gen_counter + 32'd1;
+				gen_tick <= 1'b0;
+			end
+
+			// LFSR Advance
+			if (gen_tick || update_tick) begin
+				lfsr_state <= {lfsr_state[30:0], lfsr_state[31] ^ lfsr_state[21] ^ lfsr_state[1] ^ lfsr_state[0]};
+			end
+		end
+	end
+
+	// Find available slot
+	always_comb begin
+		slot_found = 1'b0;
+		available_slot = 4'd0;
+		for (int k = 0; k < MAX_POSITIONS; k++) begin
+			if (!slot_found && !position_valid[k]) begin
+				slot_found = 1'b1;
+				available_slot = k[3:0];
+			end
+		end
+	end
+
+	// ============================================================
+	// Main Movement Logic
+	// ============================================================
+	
+	genvar i;
+	generate
+		for (i = 0; i < MAX_POSITIONS; i++) begin : pos_logic
+			
+			// Temporary variables declarations must be OUTSIDE the procedural block or at the top
+			logic signed [31:0] dx, dy, abs_dx, abs_dy;
+			logic signed [31:0] target_x_fixed;
+			logic signed [31:0] target_y_fixed;
+			
+			// Use assign for constants inside generate to be safe
+			assign target_x_fixed = TARGET_X;
+			assign target_y_fixed = TARGET_Y;
+			
+			always_comb begin
+				dx = target_x_fixed - pos_x[i];
+				dy = target_y_fixed - pos_y[i];
+				abs_dx = (dx >= 0) ? dx : -dx;
+				abs_dy = (dy >= 0) ? dy : -dy;
+			end
+
+			always_ff @(posedge i_clk or negedge i_rst_n) begin
+				if (!i_rst_n) begin
+					pos_x[i] <= 32'(SCREEN_WIDTH / 2);
+					pos_y[i] <= 32'(SCREEN_HEIGHT / 2);
+					position_valid[i] <= 1'b0;
+					error_acc[i] <= 32'd0;
+				end else begin
+					
+					// 1. SPAWN NEW ZOMBIE
+					if (gen_tick && (available_slot == i) && slot_found) begin
+						pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH);
+						pos_y[i] <= ((lfsr_state[21:11]) % SCREEN_HEIGHT);
+						position_valid[i] <= 1'b1;
+						error_acc[i] <= 32'd0;
+					end 
+					
+					// 2. MOVE ZOMBIE (Bresenham-like Logic)
+					else if (update_tick && position_valid[i]) begin
+						// Check arrival
+						if ((abs_dx + abs_dy) <= VELOCITY) begin
+							position_valid[i] <= 1'b0; // Disappear
+						end else begin
+							if (abs_dx >= abs_dy) begin
+								// Move X (Major)
+								pos_x[i] <= (dx > 0) ? (pos_x[i] + VELOCITY) : (pos_x[i] - VELOCITY);
+								// Check Y error
+								if ((error_acc[i] + abs_dy) >= abs_dx) begin
+									pos_y[i] <= (dy > 0) ? (pos_y[i] + VELOCITY) : (pos_y[i] - VELOCITY);
+									error_acc[i] <= (error_acc[i] + abs_dy) - abs_dx;
+								end else begin
+									error_acc[i] <= error_acc[i] + abs_dy;
+								end
+							end else begin
+								// Move Y (Major)
+								pos_y[i] <= (dy > 0) ? (pos_y[i] + VELOCITY) : (pos_y[i] - VELOCITY);
+								// Check X error
+								if ((error_acc[i] + abs_dx) >= abs_dy) begin
+									pos_x[i] <= (dx > 0) ? (pos_x[i] + VELOCITY) : (pos_x[i] - VELOCITY);
+									error_acc[i] <= (error_acc[i] + abs_dx) - abs_dy;
+								end else begin
+									error_acc[i] <= error_acc[i] + abs_dx;
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	endgenerate
+
+	// ============================================================
+	// Outputs
+	// ============================================================
+	
+	// Active Count
+	always_comb begin
+		o_active_count = 4'd0;
+		for (int k = 0; k < MAX_POSITIONS; k++) begin
+			if (position_valid[k]) o_active_count = o_active_count + 4'd1;
+		end
+	end
+
+	// Position and Distance Output
+	generate
+		for (i = 0; i < MAX_POSITIONS; i++) begin : pos_out
+			always_comb begin
+				// FIX: Declarations moved to the very top of the block
+				logic signed [31:0] d_out_x;
+				logic signed [31:0] d_out_y;
+				
+				// Initialize them to avoid latch warnings (good practice)
+				d_out_x = 32'd0;
+				d_out_y = 32'd0;
+
+				if (!position_valid[i]) begin
+					o_x[i] = TARGET_X[10:0];
+					o_y[i] = TARGET_Y[9:0];
+					o_valid[i] = 1'b0;
+					o_distance[i] = 32'd0;
+				end else begin
+					// Clamp X
+					if (pos_x[i] < 0) o_x[i] = 11'd0;
+					else if (pos_x[i] >= SCREEN_WIDTH) o_x[i] = SCREEN_WIDTH[10:0] - 11'd1;
+					else o_x[i] = pos_x[i][10:0];
+
+					// Clamp Y
+					if (pos_y[i] < 0) o_y[i] = 10'd0;
+					else if (pos_y[i] >= SCREEN_HEIGHT) o_y[i] = SCREEN_HEIGHT[9:0] - 10'd1;
+					else o_y[i] = pos_y[i][9:0];
+
+					o_valid[i] = 1'b1;
+					
+					// Recalculate distance for output
+					d_out_x = TARGET_X - pos_x[i];
+					d_out_y = TARGET_Y - pos_y[i];
+					o_distance[i] = ((d_out_x>=0)?d_out_x:-d_out_x) + ((d_out_y>=0)?d_out_y:-d_out_y);
+				end
+			end
+		end
+	endgenerate
+
+endmodule

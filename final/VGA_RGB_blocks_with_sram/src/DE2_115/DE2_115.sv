@@ -148,9 +148,14 @@ logic vga_720p_active_video;
 logic [19:0] vga_sram_addr;
 logic vga_sram_ce_n, vga_sram_lb_n, vga_sram_oe_n, vga_sram_ub_n, vga_sram_we_n;
 
-// Zombie position and size
-logic [10:0] zombie_x1;
-logic [9:0] zombie_y1;
+// Zombie position arrays (for multiple zombies)
+logic [10:0] zombie_x [0:9];  // Array of X positions (MAX_ZOMBIES = 10)
+logic [9:0] zombie_y [0:9];   // Array of Y positions
+logic zombie_valid [0:9];     // Array of valid flags
+logic [31:0] zombie_distance [0:9];  // Distance to target for each zombie
+logic [3:0] active_zombie_count;     // Number of active zombies
+
+// Zombie size
 logic [10:0] zombie_size_x;
 logic [9:0] zombie_size_y;
 
@@ -158,25 +163,144 @@ logic [9:0] zombie_size_y;
 assign zombie_size_x = 11'd102;  // Zombie width
 assign zombie_size_y = 10'd149;   // Zombie height
 
-// Zombie Position Test Controller
-// SW[0]: move right (increase x1)
-// SW[1]: move left (decrease x1)
-// SW[17]: move down (increase y1)
-// SW[16]: move up (decrease y1)
-Zombie_Position_Test_Controller zombie_pos_test_ctrl(
+// Aim position (controlled by switches for testing)
+logic [10:0] aim_x;
+logic [9:0] aim_y;
+
+// Aim size
+localparam AIM_SIZE_X = 200;
+localparam AIM_SIZE_Y = 200;
+
+/*******************************test code*******************************/
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+// // Clock divider for aim movement (74.25MHz / 580078 ≈ 128 Hz)
+
+localparam AIM_MOVEMENT_DIVIDER = 26'd580078;  // ~128 movements per second
+logic [25:0] aim_movement_counter;
+logic aim_movement_tick;
+
+// Clock divider: generate movement tick
+always_ff @(posedge vga_clock_74_25 or negedge KEY[1]) begin
+	if (!KEY[1]) begin
+		aim_movement_counter <= 26'd0;
+		aim_movement_tick <= 1'b0;
+	end else begin
+		if (aim_movement_counter >= AIM_MOVEMENT_DIVIDER - 1) begin
+			aim_movement_counter <= 26'd0;
+			aim_movement_tick <= 1'b1;
+		end else begin
+			aim_movement_counter <= aim_movement_counter + 26'd1;
+			aim_movement_tick <= 1'b0;
+		end
+	end
+end
+
+// Aim position control with switches
+// SW[0]: move right
+// SW[1]: move left
+// SW[2]: move down
+// SW[3]: move up
+always_ff @(posedge vga_clock_74_25 or negedge KEY[1]) begin
+	if (!KEY[1]) begin
+		// aim_x, aim_y is the center of the aim
+		aim_x <= 11'd640;  // Center X: 1280/2 = 640
+		aim_y <= 10'd360;  // Center Y: 720/2 = 360
+	end else if (aim_movement_tick) begin
+		// X position control (SW[0] = right, SW[1] = left)
+		if (SW[0] && !SW[1]) begin
+			// Move right (increase x)
+			if (aim_x < (11'd1280 - 100)) begin
+				aim_x <= aim_x + 11'd1;
+			end
+		end else if (SW[1] && !SW[0]) begin
+			// Move left (decrease x)
+			if (aim_x > 100) begin
+				aim_x <= aim_x - 11'd1;
+			end
+		end
+		
+		// Y position control (SW[2] = down, SW[3] = up)
+		if (SW[2] && !SW[3]) begin
+			// Move down (increase y)
+			if (aim_y < (10'd720 - 100)) begin
+				aim_y <= aim_y + 10'd1;
+			end
+		end else if (SW[3] && !SW[2]) begin
+			// Move up (decrease y)
+			if (aim_y > 100) begin
+				aim_y <= aim_y - 10'd1;
+			end
+		end
+	end
+end
+
+// Show current X on HEX[3:0] and current Y on HEX[7:4] with decimal display
+// HEX0: X ones digit
+// HEX1: X tens digit
+// HEX2: X hundreds digit
+// HEX3: X thousands digit
+// HEX4: Y ones digit
+// HEX5: Y tens digit
+// HEX6: Y hundreds digit
+// HEX7: blank (Y is 0-719, so no thousands)
+
+// Extract decimal digits from aim_x (0-1279)
+logic [3:0] aim_x_ones, aim_x_tens, aim_x_hundreds, aim_x_thousands;
+logic [3:0] aim_y_ones, aim_y_tens, aim_y_hundreds;
+
+// X position digit extraction (combinational)
+always_comb begin
+	aim_x_ones = (aim_x % 10);
+	aim_x_tens = ((aim_x / 10) % 10);
+	aim_x_hundreds = ((aim_x / 100) % 10);
+	aim_x_thousands = (aim_x / 1000);
+end
+
+// Y position digit extraction (combinational)
+always_comb begin
+	aim_y_ones = (aim_y % 10);
+	aim_y_tens = ((aim_y / 10) % 10);
+	aim_y_hundreds = (aim_y / 100);
+end
+
+// 7-segment decoders for X position
+HexTo7Seg hex_x0(.i_hex(aim_x_ones), .o_seg(HEX0));
+HexTo7Seg hex_x1(.i_hex(aim_x_tens), .o_seg(HEX1));
+HexTo7Seg hex_x2(.i_hex(aim_x_hundreds), .o_seg(HEX2));
+HexTo7Seg hex_x3(.i_hex(aim_x_thousands), .o_seg(HEX3));
+
+// 7-segment decoders for Y position
+HexTo7Seg hex_y0(.i_hex(aim_y_ones), .o_seg(HEX4));
+HexTo7Seg hex_y1(.i_hex(aim_y_tens), .o_seg(HEX5));
+HexTo7Seg hex_y2(.i_hex(aim_y_hundreds), .o_seg(HEX6));
+assign HEX7 = 7'b1111111;  // Blank (Y position is 0-719, no thousands digit)
+
+/****************************test code end*****************************/
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+
+
+
+// Random Position Generator - DISABLED FOR TESTING
+// Assign all zombie positions to 0 for testing
+Random_Position_Generator #(
+	.MAX_POSITIONS(10),  // Must match MAX_ZOMBIES in VGA_Image_Overlay_Combined
+	.CLOCK_FREQ(32'd74250000)  // 74.25MHz
+) zombie_gen(
 	.i_clk(vga_clock_74_25),
 	.i_rst_n(KEY[1]),
-	.i_sw_right(SW[0]),      // SW[0]: move right
-	.i_sw_left(SW[1]),       // SW[1]: move left
-	.i_sw_down(SW[17]),      // SW[17]: move down
-	.i_sw_up(SW[16]),        // SW[16]: move up
-	.i_zombie_size_x(zombie_size_x),
-	.i_zombie_size_y(zombie_size_y),
-	.i_screen_width(11'd1280),
-	.i_screen_height(10'd720),
-	.o_zombie_x1(zombie_x1),
-	.o_zombie_y1(zombie_y1)
+	.o_x(zombie_x),
+	.o_y(zombie_y),
+	.o_valid(zombie_valid),
+	.o_distance(zombie_distance),
+	.o_active_count(active_zombie_count)
 );
+
 
 // VGA output
 logic [7:0] vga_r, vga_g, vga_b;
@@ -205,17 +329,22 @@ VGA_Controller_720p vga_ctrl_720p(
 	.o_active_video(vga_720p_active_video)
 );
 
-// VGA Image Overlay Combined module (handles background + zombie overlay)
-VGA_Image_Overlay_Combined vga_image_overlay_combined(
+// VGA Image Overlay Combined module (handles background + multiple zombie overlays)
+VGA_Image_Overlay_Combined #(
+	.MAX_ZOMBIES(10)  // Must match MAX_POSITIONS in Random_Position_Generator
+) vga_image_overlay_combined(
 	.i_clk(vga_clock_74_25),
 	.i_rst_n(KEY[1]),
 	.i_h_count(vga_720p_h_count),
 	.i_v_count(vga_720p_v_count),
 	.i_active_video(vga_720p_active_video),
-	.i_zombie_x1(zombie_x1),
-	.i_zombie_y1(zombie_y1),
+	.i_zombie_x(zombie_x),          // Array of X positions
+	.i_zombie_y(zombie_y),          // Array of Y positions
+	.i_zombie_valid(zombie_valid),  // Array of valid flags
 	.i_zombie_size_x(zombie_size_x),
 	.i_zombie_size_y(zombie_size_y),
+	.i_aim_x(aim_x - 100),                   // Aim X position
+	.i_aim_y(aim_y - 100),                   // Aim Y position
 	.o_bg_sram_addr(vga_sram_addr),
 	.o_bg_sram_ce_n(vga_sram_ce_n),
 	.io_bg_sram_dq(SRAM_DQ),

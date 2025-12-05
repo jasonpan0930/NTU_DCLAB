@@ -1,5 +1,5 @@
 Analysis & Synthesis report for DE2_115
-Fri Nov 21 02:54:09 2025
+Fri Dec 05 19:16:15 2025
 Quartus II 64-Bit Version 15.0.0 Build 145 04/22/2015 SJ Full Version
 
 
@@ -18,37 +18,55 @@ Quartus II 64-Bit Version 15.0.0 Build 145 04/22/2015 SJ Full Version
  10. Registers Removed During Synthesis
  11. Removed Registers Triggering Further Register Optimizations
  12. General Register Statistics
- 13. Multiplexer Restructuring Statistics (Restructuring Performed)
- 14. Source assignments for vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0
- 15. Source assignments for vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0|vga_clock_altpll_0_stdsync_sv6:stdsync2|vga_clock_altpll_0_dffpipe_l2c:dffpipe3
- 16. Source assignments for vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_sync_uq1
- 17. Source assignments for vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_req_sync_uq1
- 18. Source assignments for VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component|altsyncram_e1m1:auto_generated
- 19. Source assignments for VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x:zombie_bram|altsyncram:altsyncram_component|altsyncram_gsk1:auto_generated
- 20. Source assignments for VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram|altsyncram:altsyncram_component|altsyncram_ljl1:auto_generated
- 21. Parameter Settings for User Entity Instance: vga_clock:vga_clk_pll|altera_reset_controller:rst_controller
- 22. Parameter Settings for User Entity Instance: vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_sync_uq1
- 23. Parameter Settings for User Entity Instance: vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_req_sync_uq1
- 24. Parameter Settings for User Entity Instance: VGA_Controller_720p:vga_ctrl_720p
- 25. Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component
- 26. Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x:zombie_bram|altsyncram:altsyncram_component
- 27. Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram|altsyncram:altsyncram_component
- 28. Parameter Settings for Inferred Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|lpm_mult:Mult0
- 29. altsyncram Parameter Settings by Entity Instance
- 30. lpm_mult Parameter Settings by Entity Instance
- 31. Port Connectivity Checks: "VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram"
- 32. Port Connectivity Checks: "VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x:zombie_bram"
- 33. Port Connectivity Checks: "VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram"
- 34. Port Connectivity Checks: "vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_req_sync_uq1"
- 35. Port Connectivity Checks: "vga_clock:vga_clk_pll|altera_reset_controller:rst_controller"
- 36. Port Connectivity Checks: "vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0|vga_clock_altpll_0_altpll_9ua2:sd1"
- 37. Port Connectivity Checks: "vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0"
- 38. Port Connectivity Checks: "vga_clock:vga_clk_pll"
- 39. Port Connectivity Checks: "Zombie_Position_Test_Controller:zombie_pos_test_ctrl"
- 40. Post-Synthesis Netlist Statistics for Top Partition
- 41. Elapsed Time Per Partition
- 42. Analysis & Synthesis Messages
- 43. Analysis & Synthesis Suppressed Messages
+ 13. Inverted Register Statistics
+ 14. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 15. Source assignments for vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0
+ 16. Source assignments for vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0|vga_clock_altpll_0_stdsync_sv6:stdsync2|vga_clock_altpll_0_dffpipe_l2c:dffpipe3
+ 17. Source assignments for vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_sync_uq1
+ 18. Source assignments for vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_req_sync_uq1
+ 19. Source assignments for VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component|altsyncram_e1m1:auto_generated
+ 20. Source assignments for VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x:zombie_bram|altsyncram:altsyncram_component|altsyncram_gsk1:auto_generated
+ 21. Source assignments for VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram|altsyncram:altsyncram_component|altsyncram_ljl1:auto_generated
+ 22. Source assignments for VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated
+ 23. Parameter Settings for User Entity Instance: Random_Position_Generator:zombie_gen
+ 24. Parameter Settings for User Entity Instance: vga_clock:vga_clk_pll|altera_reset_controller:rst_controller
+ 25. Parameter Settings for User Entity Instance: vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_sync_uq1
+ 26. Parameter Settings for User Entity Instance: vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_req_sync_uq1
+ 27. Parameter Settings for User Entity Instance: VGA_Controller_720p:vga_ctrl_720p
+ 28. Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined
+ 29. Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component
+ 30. Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x:zombie_bram|altsyncram:altsyncram_component
+ 31. Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram|altsyncram:altsyncram_component
+ 32. Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component
+ 33. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod0
+ 34. Parameter Settings for Inferred Entity Instance: lpm_divide:Div0
+ 35. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod1
+ 36. Parameter Settings for Inferred Entity Instance: lpm_divide:Div1
+ 37. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod2
+ 38. Parameter Settings for Inferred Entity Instance: lpm_divide:Div2
+ 39. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod3
+ 40. Parameter Settings for Inferred Entity Instance: lpm_divide:Div3
+ 41. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod4
+ 42. Parameter Settings for Inferred Entity Instance: lpm_divide:Div4
+ 43. Parameter Settings for Inferred Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|lpm_mult:Mult0
+ 44. Parameter Settings for Inferred Entity Instance: Random_Position_Generator:zombie_gen|lpm_divide:Mod0
+ 45. Parameter Settings for Inferred Entity Instance: Random_Position_Generator:zombie_gen|lpm_divide:Mod1
+ 46. altsyncram Parameter Settings by Entity Instance
+ 47. lpm_mult Parameter Settings by Entity Instance
+ 48. Port Connectivity Checks: "VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram"
+ 49. Port Connectivity Checks: "VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x:zombie_bram"
+ 50. Port Connectivity Checks: "VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram"
+ 51. Port Connectivity Checks: "VGA_Image_Overlay_Combined:vga_image_overlay_combined"
+ 52. Port Connectivity Checks: "vga_clock:vga_clk_pll|altera_reset_controller:rst_controller|altera_reset_synchronizer:alt_rst_req_sync_uq1"
+ 53. Port Connectivity Checks: "vga_clock:vga_clk_pll|altera_reset_controller:rst_controller"
+ 54. Port Connectivity Checks: "vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0|vga_clock_altpll_0_altpll_9ua2:sd1"
+ 55. Port Connectivity Checks: "vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0"
+ 56. Port Connectivity Checks: "vga_clock:vga_clk_pll"
+ 57. Port Connectivity Checks: "Random_Position_Generator:zombie_gen"
+ 58. Post-Synthesis Netlist Statistics for Top Partition
+ 59. Elapsed Time Per Partition
+ 60. Analysis & Synthesis Messages
+ 61. Analysis & Synthesis Suppressed Messages
 
 
 
@@ -75,18 +93,18 @@ agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Fri Nov 21 02:54:09 2025       ;
+; Analysis & Synthesis Status        ; Successful - Fri Dec 05 19:16:15 2025       ;
 ; Quartus II 64-Bit Version          ; 15.0.0 Build 145 04/22/2015 SJ Full Version ;
 ; Revision Name                      ; DE2_115                                     ;
 ; Top-level Entity Name              ; DE2_115                                     ;
 ; Family                             ; Cyclone IV E                                ;
-; Total logic elements               ; 424                                         ;
-;     Total combinational functions  ; 414                                         ;
-;     Dedicated logic registers      ; 218                                         ;
-; Total registers                    ; 218                                         ;
+; Total logic elements               ; 9,183                                       ;
+;     Total combinational functions  ; 9,145                                       ;
+;     Dedicated logic registers      ; 1,307                                       ;
+; Total registers                    ; 1307                                        ;
 ; Total pins                         ; 480                                         ;
 ; Total virtual pins                 ; 0                                           ;
-; Total memory bits                  ; 129,776                                     ;
+; Total memory bits                  ; 209,776                                     ;
 ; Embedded Multiplier 9-bit elements ; 0                                           ;
 ; Total PLLs                         ; 1                                           ;
 +------------------------------------+---------------------------------------------+
@@ -188,11 +206,11 @@ agreement for further details.
 ; Maximum allowed            ; 8           ;
 ;                            ;             ;
 ; Average used               ; 1.00        ;
-; Maximum used               ; 1           ;
+; Maximum used               ; 8           ;
 ;                            ;             ;
 ; Usage by Processor         ; % Time Used ;
 ;     Processor 1            ; 100.0%      ;
-;     Processors 2-8         ;   0.0%      ;
+;     Processors 2-8         ; < 0.1%      ;
 +----------------------------+-------------+
 
 
@@ -201,7 +219,8 @@ agreement for further details.
 +-----------------------------------------------------------------------------------------+-----------------+----------------------------------------+--------------------------------------------------------------------------------------------------------------------------+-----------+
 ; File Name with User-Entered Path                                                        ; Used in Netlist ; File Type                              ; File Name with Absolute Path                                                                                             ; Library   ;
 +-----------------------------------------------------------------------------------------+-----------------+----------------------------------------+--------------------------------------------------------------------------------------------------------------------------+-----------+
-; src/Zombie_Position_Test_Controller.sv                                                  ; yes             ; User SystemVerilog HDL File            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/src/Zombie_Position_Test_Controller.sv                     ;           ;
+; BRAMs/aim/aim.v                                                                         ; yes             ; User Wizard-Generated File             ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/BRAMs/aim/aim.v                                            ;           ;
+; src/zombie_position_control/Random_Position_Generator.sv                                ; yes             ; User SystemVerilog HDL File            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/src/zombie_position_control/Random_Position_Generator.sv   ;           ;
 ; src/VGA_Image_Overlay_Combined.sv                                                       ; yes             ; User SystemVerilog HDL File            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/src/VGA_Image_Overlay_Combined.sv                          ;           ;
 ; src/BRAM_Reader.sv                                                                      ; yes             ; User SystemVerilog HDL File            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/src/BRAM_Reader.sv                                         ;           ;
 ; vga_clock/synthesis/vga_clock.v                                                         ; yes             ; User Verilog HDL File                  ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/vga_clock/synthesis/vga_clock.v                            ; vga_clock ;
@@ -209,6 +228,7 @@ agreement for further details.
 ; vga_clock/synthesis/submodules/altera_reset_synchronizer.v                              ; yes             ; User Verilog HDL File                  ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/vga_clock/synthesis/submodules/altera_reset_synchronizer.v ; vga_clock ;
 ; vga_clock/synthesis/submodules/vga_clock_altpll_0.v                                     ; yes             ; User Verilog HDL File                  ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/vga_clock/synthesis/submodules/vga_clock_altpll_0.v        ; vga_clock ;
 ; src/VGA_Controller_720p.sv                                                              ; yes             ; User SystemVerilog HDL File            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/src/VGA_Controller_720p.sv                                 ;           ;
+; src/HexTo7Seg.sv                                                                        ; yes             ; User SystemVerilog HDL File            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/src/HexTo7Seg.sv                                           ;           ;
 ; src/DE2_115/DE2_115.sv                                                                  ; yes             ; User SystemVerilog HDL File            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/src/DE2_115/DE2_115.sv                                     ;           ;
 ; BRAMs/zombies/zombie_1x.v                                                               ; yes             ; User Wizard-Generated File             ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/BRAMs/zombies/zombie_1x.v                                  ;           ;
 ; BRAMs/zombies/zombie_1x_palette.v                                                       ; yes             ; User Wizard-Generated File             ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/BRAMs/zombies/zombie_1x_palette.v                          ;           ;
@@ -231,6 +251,32 @@ agreement for further details.
 ; db/mux_3nb.tdf                                                                          ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/mux_3nb.tdf                                             ;           ;
 ; db/altsyncram_ljl1.tdf                                                                  ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/altsyncram_ljl1.tdf                                     ;           ;
 ; /users/user/desktop/dclab_hw/final/kmeans_comp/zombies/output/zombie_1x_palette.mif     ; yes             ; Auto-Found Memory Initialization File  ; /users/user/desktop/dclab_hw/final/kmeans_comp/zombies/output/zombie_1x_palette.mif                                      ;           ;
+; db/altsyncram_0qb1.tdf                                                                  ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/altsyncram_0qb1.tdf                                     ;           ;
+; /users/user/desktop/dclab_hw/final/kmeans_comp/aim/output/aim_200.mif                   ; yes             ; Auto-Found Memory Initialization File  ; /users/user/desktop/dclab_hw/final/kmeans_comp/aim/output/aim_200.mif                                                    ;           ;
+; db/decode_h8a.tdf                                                                       ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/decode_h8a.tdf                                          ;           ;
+; db/mux_2nb.tdf                                                                          ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/mux_2nb.tdf                                             ;           ;
+; lpm_divide.tdf                                                                          ; yes             ; Megafunction                           ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_divide.tdf                                                            ;           ;
+; abs_divider.inc                                                                         ; yes             ; Megafunction                           ; c:/altera/15.0/quartus/libraries/megafunctions/abs_divider.inc                                                           ;           ;
+; sign_div_unsign.inc                                                                     ; yes             ; Megafunction                           ; c:/altera/15.0/quartus/libraries/megafunctions/sign_div_unsign.inc                                                       ;           ;
+; db/lpm_divide_0bm.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_0bm.tdf                                      ;           ;
+; db/sign_div_unsign_llh.tdf                                                              ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/sign_div_unsign_llh.tdf                                 ;           ;
+; db/alt_u_div_u6f.tdf                                                                    ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/alt_u_div_u6f.tdf                                       ;           ;
+; db/add_sub_7pc.tdf                                                                      ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/add_sub_7pc.tdf                                         ;           ;
+; db/add_sub_8pc.tdf                                                                      ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/add_sub_8pc.tdf                                         ;           ;
+; db/lpm_divide_tim.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_tim.tdf                                      ;           ;
+; db/lpm_divide_0jm.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_0jm.tdf                                      ;           ;
+; db/sign_div_unsign_olh.tdf                                                              ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/sign_div_unsign_olh.tdf                                 ;           ;
+; db/alt_u_div_47f.tdf                                                                    ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/alt_u_div_47f.tdf                                       ;           ;
+; db/lpm_divide_akm.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_akm.tdf                                      ;           ;
+; db/sign_div_unsign_2nh.tdf                                                              ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/sign_div_unsign_2nh.tdf                                 ;           ;
+; db/alt_u_div_o9f.tdf                                                                    ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/alt_u_div_o9f.tdf                                       ;           ;
+; db/lpm_divide_vam.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_vam.tdf                                      ;           ;
+; db/sign_div_unsign_klh.tdf                                                              ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/sign_div_unsign_klh.tdf                                 ;           ;
+; db/alt_u_div_s6f.tdf                                                                    ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/alt_u_div_s6f.tdf                                       ;           ;
+; db/lpm_divide_sim.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_sim.tdf                                      ;           ;
+; db/lpm_divide_vim.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_vim.tdf                                      ;           ;
+; db/sign_div_unsign_nlh.tdf                                                              ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/sign_div_unsign_nlh.tdf                                 ;           ;
+; db/alt_u_div_27f.tdf                                                                    ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/alt_u_div_27f.tdf                                       ;           ;
 ; lpm_mult.tdf                                                                            ; yes             ; Megafunction                           ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_mult.tdf                                                              ;           ;
 ; lpm_add_sub.inc                                                                         ; yes             ; Megafunction                           ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_add_sub.inc                                                           ;           ;
 ; multcore.inc                                                                            ; yes             ; Megafunction                           ; c:/altera/15.0/quartus/libraries/megafunctions/multcore.inc                                                              ;           ;
@@ -253,6 +299,10 @@ agreement for further details.
 ; db/add_sub_kgh.tdf                                                                      ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/add_sub_kgh.tdf                                         ;           ;
 ; db/add_sub_ogh.tdf                                                                      ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/add_sub_ogh.tdf                                         ;           ;
 ; altshift.tdf                                                                            ; yes             ; Megafunction                           ; c:/altera/15.0/quartus/libraries/megafunctions/altshift.tdf                                                              ;           ;
+; db/lpm_divide_ecm.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_ecm.tdf                                      ;           ;
+; db/sign_div_unsign_3nh.tdf                                                              ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/sign_div_unsign_3nh.tdf                                 ;           ;
+; db/alt_u_div_q9f.tdf                                                                    ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/alt_u_div_q9f.tdf                                       ;           ;
+; db/lpm_divide_dcm.tdf                                                                   ; yes             ; Auto-Generated Megafunction            ; C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/db/lpm_divide_dcm.tdf                                      ;           ;
 +-----------------------------------------------------------------------------------------+-----------------+----------------------------------------+--------------------------------------------------------------------------------------------------------------------------+-----------+
 
 
@@ -261,24 +311,24 @@ agreement for further details.
 +---------------------------------------------+-------------------------------------------------------------------------------------------------------+
 ; Resource                                    ; Usage                                                                                                 ;
 +---------------------------------------------+-------------------------------------------------------------------------------------------------------+
-; Estimated Total logic elements              ; 424                                                                                                   ;
+; Estimated Total logic elements              ; 9,183                                                                                                 ;
 ;                                             ;                                                                                                       ;
-; Total combinational functions               ; 414                                                                                                   ;
+; Total combinational functions               ; 9145                                                                                                  ;
 ; Logic element usage by number of LUT inputs ;                                                                                                       ;
-;     -- 4 input functions                    ; 71                                                                                                    ;
-;     -- 3 input functions                    ; 132                                                                                                   ;
-;     -- <=2 input functions                  ; 211                                                                                                   ;
+;     -- 4 input functions                    ; 1796                                                                                                  ;
+;     -- 3 input functions                    ; 4980                                                                                                  ;
+;     -- <=2 input functions                  ; 2369                                                                                                  ;
 ;                                             ;                                                                                                       ;
 ; Logic elements by mode                      ;                                                                                                       ;
-;     -- normal mode                          ; 216                                                                                                   ;
-;     -- arithmetic mode                      ; 198                                                                                                   ;
+;     -- normal mode                          ; 3774                                                                                                  ;
+;     -- arithmetic mode                      ; 5371                                                                                                  ;
 ;                                             ;                                                                                                       ;
-; Total registers                             ; 218                                                                                                   ;
-;     -- Dedicated logic registers            ; 218                                                                                                   ;
+; Total registers                             ; 1307                                                                                                  ;
+;     -- Dedicated logic registers            ; 1307                                                                                                  ;
 ;     -- I/O registers                        ; 0                                                                                                     ;
 ;                                             ;                                                                                                       ;
 ; I/O pins                                    ; 480                                                                                                   ;
-; Total memory bits                           ; 129776                                                                                                ;
+; Total memory bits                           ; 209776                                                                                                ;
 ;                                             ;                                                                                                       ;
 ; Embedded Multiplier 9-bit elements          ; 0                                                                                                     ;
 ;                                             ;                                                                                                       ;
@@ -286,9 +336,9 @@ agreement for further details.
 ;     -- PLLs                                 ; 1                                                                                                     ;
 ;                                             ;                                                                                                       ;
 ; Maximum fan-out node                        ; vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0|vga_clock_altpll_0_altpll_9ua2:sd1|wire_pll7_clk[0] ;
-; Maximum fan-out                             ; 268                                                                                                   ;
-; Total fan-out                               ; 2966                                                                                                  ;
-; Average fan-out                             ; 1.66                                                                                                  ;
+; Maximum fan-out                             ; 1367                                                                                                  ;
+; Total fan-out                               ; 33778                                                                                                 ;
+; Average fan-out                             ; 2.91                                                                                                  ;
 +---------------------------------------------+-------------------------------------------------------------------------------------------------------+
 
 
@@ -297,9 +347,30 @@ agreement for further details.
 +------------------------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------+
 ; Compilation Hierarchy Node                                 ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                                                                                                   ; Library Name ;
 +------------------------------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------+
-; |DE2_115                                                   ; 414 (1)           ; 218 (0)      ; 129776      ; 0            ; 0       ; 0         ; 480  ; 0            ; |DE2_115                                                                                                                                                                              ; work         ;
+; |DE2_115                                                   ; 9145 (93)         ; 1307 (48)    ; 209776      ; 0            ; 0       ; 0         ; 480  ; 0            ; |DE2_115                                                                                                                                                                              ; work         ;
+;    |HexTo7Seg:hex_x0|                                      ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex_x0                                                                                                                                                             ; work         ;
+;    |HexTo7Seg:hex_x1|                                      ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex_x1                                                                                                                                                             ; work         ;
+;    |HexTo7Seg:hex_x2|                                      ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex_x2                                                                                                                                                             ; work         ;
+;    |HexTo7Seg:hex_x3|                                      ; 3 (3)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex_x3                                                                                                                                                             ; work         ;
+;    |HexTo7Seg:hex_y0|                                      ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex_y0                                                                                                                                                             ; work         ;
+;    |HexTo7Seg:hex_y1|                                      ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex_y1                                                                                                                                                             ; work         ;
+;    |HexTo7Seg:hex_y2|                                      ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex_y2                                                                                                                                                             ; work         ;
+;    |Random_Position_Generator:zombie_gen|                  ; 7103 (7049)       ; 1060 (1060)  ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen                                                                                                                                         ; work         ;
+;       |lpm_divide:Mod0|                                    ; 7 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen|lpm_divide:Mod0                                                                                                                         ; work         ;
+;          |lpm_divide_ecm:auto_generated|                   ; 7 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen|lpm_divide:Mod0|lpm_divide_ecm:auto_generated                                                                                           ; work         ;
+;             |sign_div_unsign_3nh:divider|                  ; 7 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen|lpm_divide:Mod0|lpm_divide_ecm:auto_generated|sign_div_unsign_3nh:divider                                                               ; work         ;
+;                |alt_u_div_q9f:divider|                     ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen|lpm_divide:Mod0|lpm_divide_ecm:auto_generated|sign_div_unsign_3nh:divider|alt_u_div_q9f:divider                                         ; work         ;
+;       |lpm_divide:Mod1|                                    ; 47 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen|lpm_divide:Mod1                                                                                                                         ; work         ;
+;          |lpm_divide_dcm:auto_generated|                   ; 47 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen|lpm_divide:Mod1|lpm_divide_dcm:auto_generated                                                                                           ; work         ;
+;             |sign_div_unsign_2nh:divider|                  ; 47 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen|lpm_divide:Mod1|lpm_divide_dcm:auto_generated|sign_div_unsign_2nh:divider                                                               ; work         ;
+;                |alt_u_div_o9f:divider|                     ; 47 (47)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Random_Position_Generator:zombie_gen|lpm_divide:Mod1|lpm_divide_dcm:auto_generated|sign_div_unsign_2nh:divider|alt_u_div_o9f:divider                                         ; work         ;
 ;    |VGA_Controller_720p:vga_ctrl_720p|                     ; 75 (75)           ; 42 (42)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Controller_720p:vga_ctrl_720p                                                                                                                                            ; work         ;
-;    |VGA_Image_Overlay_Combined:vga_image_overlay_combined| ; 263 (229)         ; 128 (126)    ; 129776      ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined                                                                                                                        ; work         ;
+;    |VGA_Image_Overlay_Combined:vga_image_overlay_combined| ; 1125 (1082)       ; 157 (149)    ; 209776      ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined                                                                                                                        ; work         ;
+;       |aim:aim_bram|                                       ; 9 (0)             ; 6 (0)        ; 80000       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram                                                                                                           ; work         ;
+;          |altsyncram:altsyncram_component|                 ; 9 (0)             ; 6 (0)        ; 80000       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component                                                                           ; work         ;
+;             |altsyncram_0qb1:auto_generated|               ; 9 (0)             ; 6 (6)        ; 80000       ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated                                            ; work         ;
+;                |decode_h8a:rden_decode|                    ; 5 (5)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated|decode_h8a:rden_decode                     ; work         ;
+;                |mux_2nb:mux2|                              ; 4 (4)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated|mux_2nb:mux2                               ; work         ;
 ;       |background_palette:bg_palette_bram|                 ; 0 (0)             ; 0 (0)        ; 4096        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram                                                                                     ; work         ;
 ;          |altsyncram:altsyncram_component|                 ; 0 (0)             ; 0 (0)        ; 4096        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component                                                     ; work         ;
 ;             |altsyncram_e1m1:auto_generated|               ; 0 (0)             ; 0 (0)        ; 4096        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component|altsyncram_e1m1:auto_generated                      ; work         ;
@@ -317,7 +388,46 @@ agreement for further details.
 ;       |zombie_1x_palette:zombie_palette_bram|              ; 0 (0)             ; 0 (0)        ; 4096        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram                                                                                  ; work         ;
 ;          |altsyncram:altsyncram_component|                 ; 0 (0)             ; 0 (0)        ; 4096        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram|altsyncram:altsyncram_component                                                  ; work         ;
 ;             |altsyncram_ljl1:auto_generated|               ; 0 (0)             ; 0 (0)        ; 4096        ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram|altsyncram:altsyncram_component|altsyncram_ljl1:auto_generated                   ; work         ;
-;    |Zombie_Position_Test_Controller:zombie_pos_test_ctrl|  ; 75 (75)           ; 48 (48)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|Zombie_Position_Test_Controller:zombie_pos_test_ctrl                                                                                                                         ; work         ;
+;    |lpm_divide:Div0|                                       ; 96 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0                                                                                                                                                              ; work         ;
+;       |lpm_divide_tim:auto_generated|                      ; 96 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_tim:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_llh:divider|                     ; 96 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_tim:auto_generated|sign_div_unsign_llh:divider                                                                                                    ; work         ;
+;             |alt_u_div_u6f:divider|                        ; 96 (96)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_tim:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider                                                                              ; work         ;
+;    |lpm_divide:Div1|                                       ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1                                                                                                                                                              ; work         ;
+;       |lpm_divide_0jm:auto_generated|                      ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_0jm:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_olh:divider|                     ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_0jm:auto_generated|sign_div_unsign_olh:divider                                                                                                    ; work         ;
+;             |alt_u_div_47f:divider|                        ; 91 (91)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_0jm:auto_generated|sign_div_unsign_olh:divider|alt_u_div_47f:divider                                                                              ; work         ;
+;    |lpm_divide:Div2|                                       ; 33 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2                                                                                                                                                              ; work         ;
+;       |lpm_divide_akm:auto_generated|                      ; 33 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_akm:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_2nh:divider|                     ; 33 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_akm:auto_generated|sign_div_unsign_2nh:divider                                                                                                    ; work         ;
+;             |alt_u_div_o9f:divider|                        ; 33 (33)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_akm:auto_generated|sign_div_unsign_2nh:divider|alt_u_div_o9f:divider                                                                              ; work         ;
+;    |lpm_divide:Div3|                                       ; 85 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div3                                                                                                                                                              ; work         ;
+;       |lpm_divide_sim:auto_generated|                      ; 85 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div3|lpm_divide_sim:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_klh:divider|                     ; 85 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div3|lpm_divide_sim:auto_generated|sign_div_unsign_klh:divider                                                                                                    ; work         ;
+;             |alt_u_div_s6f:divider|                        ; 85 (85)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div3|lpm_divide_sim:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider                                                                              ; work         ;
+;    |lpm_divide:Div4|                                       ; 70 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div4                                                                                                                                                              ; work         ;
+;       |lpm_divide_vim:auto_generated|                      ; 70 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div4|lpm_divide_vim:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_nlh:divider|                     ; 70 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div4|lpm_divide_vim:auto_generated|sign_div_unsign_nlh:divider                                                                                                    ; work         ;
+;             |alt_u_div_27f:divider|                        ; 70 (70)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div4|lpm_divide_vim:auto_generated|sign_div_unsign_nlh:divider|alt_u_div_27f:divider                                                                              ; work         ;
+;    |lpm_divide:Mod0|                                       ; 99 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0                                                                                                                                                              ; work         ;
+;       |lpm_divide_0bm:auto_generated|                      ; 99 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_0bm:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_llh:divider|                     ; 99 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider                                                                                                    ; work         ;
+;             |alt_u_div_u6f:divider|                        ; 99 (99)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider                                                                              ; work         ;
+;    |lpm_divide:Mod1|                                       ; 66 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1                                                                                                                                                              ; work         ;
+;       |lpm_divide_0bm:auto_generated|                      ; 66 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_0bm:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_llh:divider|                     ; 66 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider                                                                                                    ; work         ;
+;             |alt_u_div_u6f:divider|                        ; 66 (66)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider                                                                              ; work         ;
+;    |lpm_divide:Mod2|                                       ; 24 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2                                                                                                                                                              ; work         ;
+;       |lpm_divide_0bm:auto_generated|                      ; 24 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_0bm:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_llh:divider|                     ; 24 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider                                                                                                    ; work         ;
+;             |alt_u_div_u6f:divider|                        ; 24 (24)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider                                                                              ; work         ;
+;    |lpm_divide:Mod3|                                       ; 88 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod3                                                                                                                                                              ; work         ;
+;       |lpm_divide_vam:auto_generated|                      ; 88 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod3|lpm_divide_vam:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_klh:divider|                     ; 88 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod3|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider                                                                                                    ; work         ;
+;             |alt_u_div_s6f:divider|                        ; 88 (88)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod3|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider                                                                              ; work         ;
+;    |lpm_divide:Mod4|                                       ; 52 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod4                                                                                                                                                              ; work         ;
+;       |lpm_divide_vam:auto_generated|                      ; 52 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod4|lpm_divide_vam:auto_generated                                                                                                                                ; work         ;
+;          |sign_div_unsign_klh:divider|                     ; 52 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod4|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider                                                                                                    ; work         ;
+;             |alt_u_div_s6f:divider|                        ; 52 (52)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod4|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider                                                                              ; work         ;
 ;    |vga_clock:vga_clk_pll|                                 ; 0 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|vga_clock:vga_clk_pll                                                                                                                                                        ; vga_clock    ;
 ;       |vga_clock_altpll_0:altpll_0|                        ; 0 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0                                                                                                                            ; vga_clock    ;
 ;          |vga_clock_altpll_0_altpll_9ua2:sd1|              ; 0 (0)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0|vga_clock_altpll_0_altpll_9ua2:sd1                                                                                         ; vga_clock    ;
@@ -330,6 +440,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------+-------------+--------------+--------------+--------------+--------------+--------+------------------------------------------------------------+
 ; Name                                                                                                                                                                  ; Type ; Mode        ; Port A Depth ; Port A Width ; Port B Depth ; Port B Width ; Size   ; MIF                                                        ;
 +-----------------------------------------------------------------------------------------------------------------------------------------------------------------------+------+-------------+--------------+--------------+--------------+--------------+--------+------------------------------------------------------------+
+; VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated|ALTSYNCRAM                          ; AUTO ; ROM         ; 40000        ; 2            ; --           ; --           ; 80000  ; ../../Kmeans_comp/aim/output/aim_200.mif                   ;
 ; VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component|altsyncram_e1m1:auto_generated|ALTSYNCRAM    ; AUTO ; Single Port ; 256          ; 16           ; --           ; --           ; 4096   ; ../../Kmeans_comp/background/output/background_palette.mif ;
 ; VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x:zombie_bram|altsyncram:altsyncram_component|altsyncram_gsk1:auto_generated|ALTSYNCRAM                 ; AUTO ; Single Port ; 15198        ; 8            ; --           ; --           ; 121584 ; ../../Kmeans_comp/zombies/output/zombie_1x.mif             ;
 ; VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram|altsyncram:altsyncram_component|altsyncram_ljl1:auto_generated|ALTSYNCRAM ; AUTO ; Single Port ; 256          ; 16           ; --           ; --           ; 4096   ; ../../Kmeans_comp/zombies/output/zombie_1x_palette.mif     ;
@@ -344,6 +455,7 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 ; N/A    ; Qsys                    ; 15.0    ; N/A          ; N/A          ; |DE2_115|vga_clock:vga_clk_pll                                                                       ; vga_clock.qsys                        ;
 ; Altera ; altpll                  ; 15.0    ; N/A          ; N/A          ; |DE2_115|vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0                                           ; vga_clock.qsys                        ;
 ; Altera ; altera_reset_controller ; 15.0    ; N/A          ; N/A          ; |DE2_115|vga_clock:vga_clk_pll|altera_reset_controller:rst_controller                                ; vga_clock.qsys                        ;
+; Altera ; ROM: 1-PORT             ; 15.0    ; N/A          ; N/A          ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram                          ; BRAMs/aim/aim.v                       ;
 ; Altera ; RAM: 1-PORT             ; 15.0    ; N/A          ; N/A          ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram    ; BRAMs/background/background_palette.v ;
 ; Altera ; RAM: 1-PORT             ; 15.0    ; N/A          ; N/A          ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x:zombie_bram                 ; BRAMs/zombies/zombie_1x.v             ;
 ; Altera ; RAM: 1-PORT             ; 15.0    ; N/A          ; N/A          ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram ; BRAMs/zombies/zombie_1x_palette.v     ;
@@ -386,29 +498,210 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 218   ;
-; Number of registers using Synchronous Clear  ; 72    ;
-; Number of registers using Synchronous Load   ; 0     ;
-; Number of registers using Asynchronous Clear ; 90    ;
+; Total registers                              ; 1307  ;
+; Number of registers using Synchronous Clear  ; 895   ;
+; Number of registers using Synchronous Load   ; 12    ;
+; Number of registers using Asynchronous Clear ; 1150  ;
 ; Number of registers using Asynchronous Load  ; 0     ;
-; Number of registers using Clock Enable       ; 31    ;
+; Number of registers using Clock Enable       ; 1022  ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
 
-+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                                                       ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------------------------------------------------+
-; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                                             ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------------------------------------------------+
-; 3:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_pixel_index_r[7] ;
-; 3:1                ; 14 bits   ; 28 LEs        ; 14 LEs               ; 14 LEs                 ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_bram_addr_reg[0] ;
-; 3:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|bg_pixel_index_r[3]     ;
-; 4:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|o_vga_g[2]              ;
-; 5:1                ; 11 bits   ; 33 LEs        ; 11 LEs               ; 22 LEs                 ; Yes        ; |DE2_115|Zombie_Position_Test_Controller:zombie_pos_test_ctrl|o_zombie_x1[10]          ;
-; 5:1                ; 10 bits   ; 30 LEs        ; 10 LEs               ; 20 LEs                 ; Yes        ; |DE2_115|Zombie_Position_Test_Controller:zombie_pos_test_ctrl|o_zombie_y1[4]           ;
-; 4:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; No         ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|o_vga_r                 ;
-+--------------------+-----------+---------------+----------------------+------------------------+------------+----------------------------------------------------------------------------------------+
++---------------------------------------------------------------+
+; Inverted Register Statistics                                  ;
++-----------------------------------------------------+---------+
+; Inverted Register                                   ; Fan out ;
++-----------------------------------------------------+---------+
+; aim_x[9]                                            ; 14      ;
+; aim_x[7]                                            ; 15      ;
+; aim_y[8]                                            ; 13      ;
+; aim_y[6]                                            ; 13      ;
+; aim_y[5]                                            ; 14      ;
+; aim_y[3]                                            ; 13      ;
+; Random_Position_Generator:zombie_gen|pos_y[8][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[8][6]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[8][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[8][3]    ; 6       ;
+; Random_Position_Generator:zombie_gen|pos_x[8][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[8][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[9][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[9][6]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[9][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[9][3]    ; 6       ;
+; Random_Position_Generator:zombie_gen|pos_x[9][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[9][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[4][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[4][6]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_y[4][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[4][3]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_x[4][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[4][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[5][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[5][6]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[5][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[5][3]    ; 6       ;
+; Random_Position_Generator:zombie_gen|pos_x[5][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[5][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[6][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[6][6]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[6][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[6][3]    ; 6       ;
+; Random_Position_Generator:zombie_gen|pos_x[6][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[6][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[0][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[0][6]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[0][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[0][3]    ; 6       ;
+; Random_Position_Generator:zombie_gen|pos_x[0][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[0][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[1][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[1][6]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[1][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[1][3]    ; 6       ;
+; Random_Position_Generator:zombie_gen|pos_x[1][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[1][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[3][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[3][6]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[3][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[3][3]    ; 6       ;
+; Random_Position_Generator:zombie_gen|pos_x[3][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[3][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[2][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[2][6]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_y[2][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[2][3]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_x[2][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[2][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[7][8]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[7][6]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[7][5]    ; 5       ;
+; Random_Position_Generator:zombie_gen|pos_y[7][3]    ; 6       ;
+; Random_Position_Generator:zombie_gen|pos_x[7][9]    ; 4       ;
+; Random_Position_Generator:zombie_gen|pos_x[7][7]    ; 5       ;
+; Random_Position_Generator:zombie_gen|lfsr_state[15] ; 4       ;
+; Random_Position_Generator:zombie_gen|lfsr_state[13] ; 4       ;
+; Random_Position_Generator:zombie_gen|lfsr_state[11] ; 11      ;
+; Random_Position_Generator:zombie_gen|lfsr_state[10] ; 3       ;
+; Random_Position_Generator:zombie_gen|lfsr_state[7]  ; 11      ;
+; Random_Position_Generator:zombie_gen|lfsr_state[6]  ; 11      ;
+; Random_Position_Generator:zombie_gen|lfsr_state[5]  ; 11      ;
+; Random_Position_Generator:zombie_gen|lfsr_state[0]  ; 12      ;
+; Total number of inverted registers = 74             ;         ;
++-----------------------------------------------------+---------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                                                        ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                                              ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------------------------------------------------+
+; 3:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_pixel_index_r[3]  ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim_pixel_data_r[0]      ;
+; 3:1                ; 14 bits   ; 28 LEs        ; 14 LEs               ; 14 LEs                 ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_bram_addr_reg[11] ;
+; 3:1                ; 16 bits   ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim_bram_addr_reg[14]    ;
+; 3:1                ; 8 bits    ; 16 LEs        ; 16 LEs               ; 0 LEs                  ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|bg_pixel_index_r[7]      ;
+; 5:1                ; 6 bits    ; 18 LEs        ; 12 LEs               ; 6 LEs                  ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|o_vga_b[3]               ;
+; 5:1                ; 2 bits    ; 6 LEs         ; 4 LEs                ; 2 LEs                  ; Yes        ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|o_vga_r[4]               ;
+; 5:1                ; 9 bits    ; 27 LEs        ; 9 LEs                ; 18 LEs                 ; Yes        ; |DE2_115|aim_x[5]                                                                       ;
+; 5:1                ; 6 bits    ; 18 LEs        ; 6 LEs                ; 12 LEs                 ; Yes        ; |DE2_115|aim_y[7]                                                                       ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[0][23]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[0][1]                               ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[0][12]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[0][9]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[1][27]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[1][10]                              ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[1][23]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[1][2]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[2][27]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[2][2]                               ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[2][27]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[2][7]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[3][11]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[3][1]                               ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[3][17]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[3][7]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[4][26]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[4][8]                               ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[4][10]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[4][1]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[5][12]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[5][4]                               ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[5][31]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[5][1]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[6][16]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[6][6]                               ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[6][10]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[6][7]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[7][30]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[7][3]                               ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[7][21]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[7][1]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[8][16]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[8][10]                              ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[8][21]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[8][9]                               ;
+; 6:1                ; 21 bits   ; 84 LEs        ; 42 LEs               ; 42 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[9][25]                              ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[9][3]                               ;
+; 6:1                ; 22 bits   ; 88 LEs        ; 44 LEs               ; 44 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[9][31]                              ;
+; 6:1                ; 5 bits    ; 20 LEs        ; 10 LEs               ; 10 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[9][9]                               ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[0][2]                           ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[1][16]                          ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[2][22]                          ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[3][3]                           ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[4][5]                           ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[5][30]                          ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[6][27]                          ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[7][5]                           ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[8][3]                           ;
+; 7:1                ; 32 bits   ; 128 LEs       ; 96 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|error_acc[9][18]                          ;
+; 5:1                ; 2 bits    ; 6 LEs         ; 2 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|aim_x[7]                                                                       ;
+; 5:1                ; 4 bits    ; 12 LEs        ; 4 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|aim_y[6]                                                                       ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[0][7]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[0][3]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[1][9]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[1][8]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[2][7]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[2][5]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[3][9]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[3][8]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[4][9]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[4][3]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[5][7]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[5][6]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[6][9]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[6][6]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[7][7]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[7][6]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[8][7]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[8][8]                               ;
+; 6:1                ; 2 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_x[9][9]                               ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 8 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|Random_Position_Generator:zombie_gen|pos_y[9][3]                               ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[0][1]                                 ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[0][1]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[1][6]                                 ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[1][6]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[2][8]                                 ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[2][5]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[3][3]                                 ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[3][3]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[4][8]                                 ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[4][0]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[5][8]                                 ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[5][2]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[6][0]                                 ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[6][5]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[7][10]                                ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[7][8]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[8][10]                                ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[8][3]                                 ;
+; 4:1                ; 11 bits   ; 22 LEs        ; 22 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_x[9][0]                                 ;
+; 4:1                ; 10 bits   ; 20 LEs        ; 20 LEs               ; 0 LEs                  ; No         ; |DE2_115|Random_Position_Generator:zombie_gen|o_y[9][0]                                 ;
+; 5:1                ; 5 bits    ; 15 LEs        ; 10 LEs               ; 5 LEs                  ; No         ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|o_vga_g                  ;
+; 5:1                ; 3 bits    ; 9 LEs         ; 6 LEs                ; 3 LEs                  ; No         ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|o_vga_r                  ;
+; 10:1               ; 21 bits   ; 126 LEs       ; 126 LEs              ; 0 LEs                  ; No         ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|Add11                    ;
+; 20:1               ; 21 bits   ; 273 LEs       ; 21 LEs               ; 252 LEs                ; No         ; |DE2_115|VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_local_x_w[2]      ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------------------------------------------------+
 
 
 +--------------------------------------------------------------------------+
@@ -474,6 +767,33 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +---------------------------------+--------------------+------+---------------------------------------------------------------------------------------------------------------------+
 ; OPTIMIZE_POWER_DURING_SYNTHESIS ; NORMAL_COMPILATION ; -    ; -                                                                                                                   ;
 +---------------------------------+--------------------+------+---------------------------------------------------------------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Source assignments for VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated ;
++---------------------------------+--------------------+------+--------------------------------------------------------------------------------------------+
+; Assignment                      ; Value              ; From ; To                                                                                         ;
++---------------------------------+--------------------+------+--------------------------------------------------------------------------------------------+
+; OPTIMIZE_POWER_DURING_SYNTHESIS ; NORMAL_COMPILATION ; -    ; -                                                                                          ;
++---------------------------------+--------------------+------+--------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Random_Position_Generator:zombie_gen ;
++-----------------+----------------------------------+------------------------------+
+; Parameter Name  ; Value                            ; Type                         ;
++-----------------+----------------------------------+------------------------------+
+; SCREEN_WIDTH    ; 1280                             ; Signed Integer               ;
+; SCREEN_HEIGHT   ; 720                              ; Signed Integer               ;
+; TARGET_X        ; 640                              ; Signed Integer               ;
+; TARGET_Y        ; 719                              ; Signed Integer               ;
+; MAX_POSITIONS   ; 10                               ; Signed Integer               ;
+; VELOCITY        ; 0000000000000010                 ; Unsigned Binary              ;
+; CLOCK_FREQ      ; 00000100011011001111011100010000 ; Unsigned Binary              ;
+; UPDATE_RATE     ; 00000000000000000000000000111100 ; Unsigned Binary              ;
+; GENERATION_RATE ; 00000000000000000000000000000001 ; Unsigned Binary              ;
++-----------------+----------------------------------+------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
 +-----------------------------------------------------------------------------------------------------------+
@@ -549,6 +869,18 @@ Note: In order to hide this table in the UI and the text report file, please set
 ; H_SYNC_START   ; 1610  ; Signed Integer                                        ;
 ; V_SYNC_START   ; 745   ; Signed Integer                                        ;
 +----------------+-------+-------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined ;
++----------------+-------+---------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                      ;
++----------------+-------+---------------------------------------------------------------------------+
+; MAX_ZOMBIES    ; 10    ; Signed Integer                                                            ;
+; ZOMBIE_SIZE_X  ; 102   ; Signed Integer                                                            ;
+; ZOMBIE_SIZE_Y  ; 149   ; Signed Integer                                                            ;
++----------------+-------+---------------------------------------------------------------------------+
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
@@ -735,6 +1067,297 @@ Note: In order to hide this table in the UI and the text report file, please set
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
++-------------------------------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component ;
++------------------------------------+------------------------------------------+-----------------------------------------------------------------+
+; Parameter Name                     ; Value                                    ; Type                                                            ;
++------------------------------------+------------------------------------------+-----------------------------------------------------------------+
+; BYTE_SIZE_BLOCK                    ; 8                                        ; Untyped                                                         ;
+; AUTO_CARRY_CHAINS                  ; ON                                       ; AUTO_CARRY                                                      ;
+; IGNORE_CARRY_BUFFERS               ; OFF                                      ; IGNORE_CARRY                                                    ;
+; AUTO_CASCADE_CHAINS                ; ON                                       ; AUTO_CASCADE                                                    ;
+; IGNORE_CASCADE_BUFFERS             ; OFF                                      ; IGNORE_CASCADE                                                  ;
+; WIDTH_BYTEENA                      ; 1                                        ; Untyped                                                         ;
+; OPERATION_MODE                     ; ROM                                      ; Untyped                                                         ;
+; WIDTH_A                            ; 2                                        ; Signed Integer                                                  ;
+; WIDTHAD_A                          ; 16                                       ; Signed Integer                                                  ;
+; NUMWORDS_A                         ; 40000                                    ; Signed Integer                                                  ;
+; OUTDATA_REG_A                      ; CLOCK0                                   ; Untyped                                                         ;
+; ADDRESS_ACLR_A                     ; NONE                                     ; Untyped                                                         ;
+; OUTDATA_ACLR_A                     ; NONE                                     ; Untyped                                                         ;
+; WRCONTROL_ACLR_A                   ; NONE                                     ; Untyped                                                         ;
+; INDATA_ACLR_A                      ; NONE                                     ; Untyped                                                         ;
+; BYTEENA_ACLR_A                     ; NONE                                     ; Untyped                                                         ;
+; WIDTH_B                            ; 1                                        ; Untyped                                                         ;
+; WIDTHAD_B                          ; 1                                        ; Untyped                                                         ;
+; NUMWORDS_B                         ; 1                                        ; Untyped                                                         ;
+; INDATA_REG_B                       ; CLOCK1                                   ; Untyped                                                         ;
+; WRCONTROL_WRADDRESS_REG_B          ; CLOCK1                                   ; Untyped                                                         ;
+; RDCONTROL_REG_B                    ; CLOCK1                                   ; Untyped                                                         ;
+; ADDRESS_REG_B                      ; CLOCK1                                   ; Untyped                                                         ;
+; OUTDATA_REG_B                      ; UNREGISTERED                             ; Untyped                                                         ;
+; BYTEENA_REG_B                      ; CLOCK1                                   ; Untyped                                                         ;
+; INDATA_ACLR_B                      ; NONE                                     ; Untyped                                                         ;
+; WRCONTROL_ACLR_B                   ; NONE                                     ; Untyped                                                         ;
+; ADDRESS_ACLR_B                     ; NONE                                     ; Untyped                                                         ;
+; OUTDATA_ACLR_B                     ; NONE                                     ; Untyped                                                         ;
+; RDCONTROL_ACLR_B                   ; NONE                                     ; Untyped                                                         ;
+; BYTEENA_ACLR_B                     ; NONE                                     ; Untyped                                                         ;
+; WIDTH_BYTEENA_A                    ; 1                                        ; Signed Integer                                                  ;
+; WIDTH_BYTEENA_B                    ; 1                                        ; Untyped                                                         ;
+; RAM_BLOCK_TYPE                     ; AUTO                                     ; Untyped                                                         ;
+; BYTE_SIZE                          ; 8                                        ; Untyped                                                         ;
+; READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                ; Untyped                                                         ;
+; READ_DURING_WRITE_MODE_PORT_A      ; NEW_DATA_NO_NBE_READ                     ; Untyped                                                         ;
+; READ_DURING_WRITE_MODE_PORT_B      ; NEW_DATA_NO_NBE_READ                     ; Untyped                                                         ;
+; INIT_FILE                          ; ../../Kmeans_comp/aim/output/aim_200.mif ; Untyped                                                         ;
+; INIT_FILE_LAYOUT                   ; PORT_A                                   ; Untyped                                                         ;
+; MAXIMUM_DEPTH                      ; 0                                        ; Untyped                                                         ;
+; CLOCK_ENABLE_INPUT_A               ; BYPASS                                   ; Untyped                                                         ;
+; CLOCK_ENABLE_INPUT_B               ; NORMAL                                   ; Untyped                                                         ;
+; CLOCK_ENABLE_OUTPUT_A              ; BYPASS                                   ; Untyped                                                         ;
+; CLOCK_ENABLE_OUTPUT_B              ; NORMAL                                   ; Untyped                                                         ;
+; CLOCK_ENABLE_CORE_A                ; USE_INPUT_CLKEN                          ; Untyped                                                         ;
+; CLOCK_ENABLE_CORE_B                ; USE_INPUT_CLKEN                          ; Untyped                                                         ;
+; ENABLE_ECC                         ; FALSE                                    ; Untyped                                                         ;
+; ECC_PIPELINE_STAGE_ENABLED         ; FALSE                                    ; Untyped                                                         ;
+; WIDTH_ECCSTATUS                    ; 3                                        ; Untyped                                                         ;
+; DEVICE_FAMILY                      ; Cyclone IV E                             ; Untyped                                                         ;
+; CBXI_PARAMETER                     ; altsyncram_0qb1                          ; Untyped                                                         ;
++------------------------------------+------------------------------------------+-----------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod0 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 11             ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_0bm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div0 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 11             ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_tim ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod1 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 11             ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_0bm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div1 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 11             ; Untyped                ;
+; LPM_WIDTHD             ; 7              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_0jm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod2 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 11             ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_0bm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div2 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 11             ; Untyped                ;
+; LPM_WIDTHD             ; 10             ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_akm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod3 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 10             ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_vam ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div3 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 10             ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_sim ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod4 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 10             ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_vam ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div4 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 10             ; Untyped                ;
+; LPM_WIDTHD             ; 7              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_vim ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
 +-----------------------------------------------------------------------------------------------------------------------+
 ; Parameter Settings for Inferred Entity Instance: VGA_Image_Overlay_Combined:vga_image_overlay_combined|lpm_mult:Mult0 ;
 +------------------------------------------------+--------------+-------------------------------------------------------+
@@ -770,12 +1393,58 @@ Note: In order to hide this table in the UI and the text report file, please set
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
 
 
++-------------------------------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: Random_Position_Generator:zombie_gen|lpm_divide:Mod0 ;
++------------------------+----------------+-------------------------------------------------------------+
+; Parameter Name         ; Value          ; Type                                                        ;
++------------------------+----------------+-------------------------------------------------------------+
+; LPM_WIDTHN             ; 11             ; Untyped                                                     ;
+; LPM_WIDTHD             ; 11             ; Untyped                                                     ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                                                     ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                                                     ;
+; LPM_PIPELINE           ; 0              ; Untyped                                                     ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                                                     ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                                                     ;
+; CBXI_PARAMETER         ; lpm_divide_ecm ; Untyped                                                     ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                                                     ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                                                     ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY                                                  ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY                                                ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE                                                ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE                                              ;
++------------------------+----------------+-------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: Random_Position_Generator:zombie_gen|lpm_divide:Mod1 ;
++------------------------+----------------+-------------------------------------------------------------+
+; Parameter Name         ; Value          ; Type                                                        ;
++------------------------+----------------+-------------------------------------------------------------+
+; LPM_WIDTHN             ; 11             ; Untyped                                                     ;
+; LPM_WIDTHD             ; 10             ; Untyped                                                     ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                                                     ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                                                     ;
+; LPM_PIPELINE           ; 0              ; Untyped                                                     ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                                                     ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                                                     ;
+; CBXI_PARAMETER         ; lpm_divide_dcm ; Untyped                                                     ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                                                     ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                                                     ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY                                                  ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY                                                ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE                                                ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE                                              ;
++------------------------+----------------+-------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ; altsyncram Parameter Settings by Entity Instance                                                                                                                        ;
 +-------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
 ; Name                                      ; Value                                                                                                                       ;
 +-------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
-; Number of entity instances                ; 3                                                                                                                           ;
+; Number of entity instances                ; 4                                                                                                                           ;
 ; Entity Instance                           ; VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component    ;
 ;     -- OPERATION_MODE                     ; SINGLE_PORT                                                                                                                 ;
 ;     -- WIDTH_A                            ; 16                                                                                                                          ;
@@ -802,6 +1471,17 @@ Note: In order to hide this table in the UI and the text report file, please set
 ;     -- OPERATION_MODE                     ; SINGLE_PORT                                                                                                                 ;
 ;     -- WIDTH_A                            ; 16                                                                                                                          ;
 ;     -- NUMWORDS_A                         ; 256                                                                                                                         ;
+;     -- OUTDATA_REG_A                      ; CLOCK0                                                                                                                      ;
+;     -- WIDTH_B                            ; 1                                                                                                                           ;
+;     -- NUMWORDS_B                         ; 1                                                                                                                           ;
+;     -- ADDRESS_REG_B                      ; CLOCK1                                                                                                                      ;
+;     -- OUTDATA_REG_B                      ; UNREGISTERED                                                                                                                ;
+;     -- RAM_BLOCK_TYPE                     ; AUTO                                                                                                                        ;
+;     -- READ_DURING_WRITE_MODE_MIXED_PORTS ; DONT_CARE                                                                                                                   ;
+; Entity Instance                           ; VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component                          ;
+;     -- OPERATION_MODE                     ; ROM                                                                                                                         ;
+;     -- WIDTH_A                            ; 2                                                                                                                           ;
+;     -- NUMWORDS_A                         ; 40000                                                                                                                       ;
 ;     -- OUTDATA_REG_A                      ; CLOCK0                                                                                                                      ;
 ;     -- WIDTH_B                            ; 1                                                                                                                           ;
 ;     -- NUMWORDS_B                         ; 1                                                                                                                           ;
@@ -860,6 +1540,27 @@ Note: In order to hide this table in the UI and the text report file, please set
 ; data ; Input ; Info     ; Stuck at GND                                                                               ;
 ; wren ; Input ; Info     ; Stuck at GND                                                                               ;
 +------+-------+----------+--------------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------------------------------------+
+; Port Connectivity Checks: "VGA_Image_Overlay_Combined:vga_image_overlay_combined" ;
++------------------------+-------+----------+---------------------------------------+
+; Port                   ; Type  ; Severity ; Details                               ;
++------------------------+-------+----------+---------------------------------------+
+; i_zombie_size_x[6..5]  ; Input ; Info     ; Stuck at VCC                          ;
+; i_zombie_size_x[2..1]  ; Input ; Info     ; Stuck at VCC                          ;
+; i_zombie_size_x[10..7] ; Input ; Info     ; Stuck at GND                          ;
+; i_zombie_size_x[4..3]  ; Input ; Info     ; Stuck at GND                          ;
+; i_zombie_size_x[0]     ; Input ; Info     ; Stuck at GND                          ;
+; i_zombie_size_y[9..8]  ; Input ; Info     ; Stuck at GND                          ;
+; i_zombie_size_y[6..5]  ; Input ; Info     ; Stuck at GND                          ;
+; i_zombie_size_y[7]     ; Input ; Info     ; Stuck at VCC                          ;
+; i_zombie_size_y[4]     ; Input ; Info     ; Stuck at VCC                          ;
+; i_zombie_size_y[3]     ; Input ; Info     ; Stuck at GND                          ;
+; i_zombie_size_y[2]     ; Input ; Info     ; Stuck at VCC                          ;
+; i_zombie_size_y[1]     ; Input ; Info     ; Stuck at GND                          ;
+; i_zombie_size_y[0]     ; Input ; Info     ; Stuck at VCC                          ;
++------------------------+-------+----------+---------------------------------------+
 
 
 +-----------------------------------------------------------------------------------------------------------------------------------------+
@@ -946,35 +1647,14 @@ Note: In order to hide this table in the UI and the text report file, please set
 +------------------+--------+----------+------------------------+
 
 
-+----------------------------------------------------------------------------------+
-; Port Connectivity Checks: "Zombie_Position_Test_Controller:zombie_pos_test_ctrl" ;
-+------------------------+-------+----------+--------------------------------------+
-; Port                   ; Type  ; Severity ; Details                              ;
-+------------------------+-------+----------+--------------------------------------+
-; i_zombie_size_x[6..5]  ; Input ; Info     ; Stuck at VCC                         ;
-; i_zombie_size_x[2..1]  ; Input ; Info     ; Stuck at VCC                         ;
-; i_zombie_size_x[10..7] ; Input ; Info     ; Stuck at GND                         ;
-; i_zombie_size_x[4..3]  ; Input ; Info     ; Stuck at GND                         ;
-; i_zombie_size_x[0]     ; Input ; Info     ; Stuck at GND                         ;
-; i_zombie_size_y[9..8]  ; Input ; Info     ; Stuck at GND                         ;
-; i_zombie_size_y[6..5]  ; Input ; Info     ; Stuck at GND                         ;
-; i_zombie_size_y[7]     ; Input ; Info     ; Stuck at VCC                         ;
-; i_zombie_size_y[4]     ; Input ; Info     ; Stuck at VCC                         ;
-; i_zombie_size_y[3]     ; Input ; Info     ; Stuck at GND                         ;
-; i_zombie_size_y[2]     ; Input ; Info     ; Stuck at VCC                         ;
-; i_zombie_size_y[1]     ; Input ; Info     ; Stuck at GND                         ;
-; i_zombie_size_y[0]     ; Input ; Info     ; Stuck at VCC                         ;
-; i_screen_width[7..0]   ; Input ; Info     ; Stuck at GND                         ;
-; i_screen_width[10]     ; Input ; Info     ; Stuck at VCC                         ;
-; i_screen_width[9]      ; Input ; Info     ; Stuck at GND                         ;
-; i_screen_width[8]      ; Input ; Info     ; Stuck at VCC                         ;
-; i_screen_height[7..6]  ; Input ; Info     ; Stuck at VCC                         ;
-; i_screen_height[3..0]  ; Input ; Info     ; Stuck at GND                         ;
-; i_screen_height[9]     ; Input ; Info     ; Stuck at VCC                         ;
-; i_screen_height[8]     ; Input ; Info     ; Stuck at GND                         ;
-; i_screen_height[5]     ; Input ; Info     ; Stuck at GND                         ;
-; i_screen_height[4]     ; Input ; Info     ; Stuck at VCC                         ;
-+------------------------+-------+----------+--------------------------------------+
++--------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "Random_Position_Generator:zombie_gen"                                                         ;
++----------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port           ; Type   ; Severity ; Details                                                                             ;
++----------------+--------+----------+-------------------------------------------------------------------------------------+
+; o_distance     ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; o_active_count ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++----------------+--------+----------+-------------------------------------------------------------------------------------+
 
 
 +-----------------------------------------------------+
@@ -983,28 +1663,32 @@ Note: In order to hide this table in the UI and the text report file, please set
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
 ; boundary_port         ; 480                         ;
-; cycloneiii_ff         ; 218                         ;
-;     CLR               ; 16                          ;
-;     CLR SCLR          ; 43                          ;
-;     ENA CLR           ; 31                          ;
-;     SCLR              ; 29                          ;
-;     plain             ; 99                          ;
+; cycloneiii_ff         ; 1307                        ;
+;     CLR               ; 19                          ;
+;     CLR SCLR          ; 99                          ;
+;     CLR SLD           ; 10                          ;
+;     ENA CLR           ; 272                         ;
+;     ENA CLR SCLR      ; 750                         ;
+;     SCLR              ; 44                          ;
+;     SCLR SLD          ; 2                           ;
+;     plain             ; 111                         ;
 ; cycloneiii_io_obuf    ; 141                         ;
-; cycloneiii_lcell_comb ; 416                         ;
-;     arith             ; 198                         ;
-;         2 data inputs ; 92                          ;
-;         3 data inputs ; 106                         ;
-;     normal            ; 218                         ;
-;         0 data inputs ; 3                           ;
-;         1 data inputs ; 11                          ;
-;         2 data inputs ; 107                         ;
-;         3 data inputs ; 26                          ;
-;         4 data inputs ; 71                          ;
+; cycloneiii_lcell_comb ; 9154                        ;
+;     arith             ; 5371                        ;
+;         1 data inputs ; 3                           ;
+;         2 data inputs ; 1429                        ;
+;         3 data inputs ; 3939                        ;
+;     normal            ; 3783                        ;
+;         0 data inputs ; 61                          ;
+;         1 data inputs ; 111                         ;
+;         2 data inputs ; 774                         ;
+;         3 data inputs ; 1041                        ;
+;         4 data inputs ; 1796                        ;
 ; cycloneiii_pll        ; 1                           ;
-; cycloneiii_ram_block  ; 48                          ;
+; cycloneiii_ram_block  ; 58                          ;
 ;                       ;                             ;
-; Max LUT depth         ; 6.20                        ;
-; Average LUT depth     ; 2.41                        ;
+; Max LUT depth         ; 22.10                       ;
+; Average LUT depth     ; 12.60                       ;
 +-----------------------+-----------------------------+
 
 
@@ -1013,7 +1697,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:00:01     ;
+; Top            ; 00:00:14     ;
 +----------------+--------------+
 
 
@@ -1023,11 +1707,17 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus II 64-Bit Analysis & Synthesis
     Info: Version 15.0.0 Build 145 04/22/2015 SJ Full Version
-    Info: Processing started: Fri Nov 21 02:53:58 2025
+    Info: Processing started: Fri Dec 05 19:15:49 2025
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off VGA_SRAM -c DE2_115
 Warning (125092): Tcl Script File BRAM.qip not found
     Info (125063): set_global_assignment -name QIP_FILE BRAM.qip
 Info (20030): Parallel compilation is enabled and will use 8 of the 8 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file brams/aim/aim.v
+    Info (12023): Found entity 1: aim
+Info (12021): Found 1 design units, including 1 entities, in source file src/zombie_position_control/random_position_generator.sv
+    Info (12023): Found entity 1: Random_Position_Generator
+Info (12021): Found 1 design units, including 1 entities, in source file src/zombie_position_control/position_controller.sv
+    Info (12023): Found entity 1: Position_Controller
 Info (12021): Found 1 design units, including 1 entities, in source file src/zombie_position_test_controller.sv
     Info (12023): Found entity 1: Zombie_Position_Test_Controller
 Info (12021): Found 1 design units, including 1 entities, in source file src/vga_image_overlay_combined.sv
@@ -1075,16 +1765,16 @@ Info (12021): Found 1 design units, including 1 entities, in source file brams/z
 Info (12021): Found 1 design units, including 1 entities, in source file brams/background/background_palette.v
     Info (12023): Found entity 1: background_palette
 Info (12127): Elaborating entity "DE2_115" for the top level hierarchy
+Warning (10036): Verilog HDL or VHDL warning at DE2_115.sv(155): object "zombie_distance" assigned a value but never read
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(256): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(257): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(258): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(259): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(264): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(265): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(266): truncated value with size 32 to match size of target (4)
 Warning (10034): Output port "LEDG" at DE2_115.sv(8) has no driver
 Warning (10034): Output port "LEDR" at DE2_115.sv(9) has no driver
-Warning (10034): Output port "HEX0" at DE2_115.sv(12) has no driver
-Warning (10034): Output port "HEX1" at DE2_115.sv(13) has no driver
-Warning (10034): Output port "HEX2" at DE2_115.sv(14) has no driver
-Warning (10034): Output port "HEX3" at DE2_115.sv(15) has no driver
-Warning (10034): Output port "HEX4" at DE2_115.sv(16) has no driver
-Warning (10034): Output port "HEX5" at DE2_115.sv(17) has no driver
-Warning (10034): Output port "HEX6" at DE2_115.sv(18) has no driver
-Warning (10034): Output port "HEX7" at DE2_115.sv(19) has no driver
 Warning (10034): Output port "ENET0_TX_DATA" at DE2_115.sv(68) has no driver
 Warning (10034): Output port "ENET1_TX_DATA" at DE2_115.sv(84) has no driver
 Warning (10034): Output port "OTG_ADDR" at DE2_115.sv(94) has no driver
@@ -1135,7 +1825,8 @@ Warning (10034): Output port "FL_WP_N" at DE2_115.sv(125) has no driver
 Warning (10034): Output port "HSMC_CLKOUT_P1" at DE2_115.sv(130) has no driver
 Warning (10034): Output port "HSMC_CLKOUT_P2" at DE2_115.sv(131) has no driver
 Warning (10034): Output port "HSMC_CLKOUT0" at DE2_115.sv(132) has no driver
-Info (12128): Elaborating entity "Zombie_Position_Test_Controller" for hierarchy "Zombie_Position_Test_Controller:zombie_pos_test_ctrl"
+Info (12128): Elaborating entity "HexTo7Seg" for hierarchy "HexTo7Seg:hex_x0"
+Info (12128): Elaborating entity "Random_Position_Generator" for hierarchy "Random_Position_Generator:zombie_gen"
 Info (12128): Elaborating entity "vga_clock" for hierarchy "vga_clock:vga_clk_pll"
 Info (12128): Elaborating entity "vga_clock_altpll_0" for hierarchy "vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0"
 Info (12128): Elaborating entity "vga_clock_altpll_0_stdsync_sv6" for hierarchy "vga_clock:vga_clk_pll|vga_clock_altpll_0:altpll_0|vga_clock_altpll_0_stdsync_sv6:stdsync2"
@@ -1148,10 +1839,13 @@ Info (12128): Elaborating entity "VGA_Controller_720p" for hierarchy "VGA_Contro
 Warning (10230): Verilog HDL assignment warning at VGA_Controller_720p.sv(74): truncated value with size 32 to match size of target (11)
 Warning (10230): Verilog HDL assignment warning at VGA_Controller_720p.sv(81): truncated value with size 32 to match size of target (10)
 Info (12128): Elaborating entity "VGA_Image_Overlay_Combined" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined"
-Warning (10036): Verilog HDL or VHDL warning at VGA_Image_Overlay_Combined.sv(124): object "zombie_pixel_addr_r0" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at VGA_Image_Overlay_Combined.sv(218): object "bg_palette_addr_r" assigned a value but never read
-Warning (10036): Verilog HDL or VHDL warning at VGA_Image_Overlay_Combined.sv(219): object "zombie_palette_addr_r" assigned a value but never read
-Warning (10230): Verilog HDL assignment warning at VGA_Image_Overlay_Combined.sv(46): truncated value with size 32 to match size of target (21)
+Warning (10036): Verilog HDL or VHDL warning at VGA_Image_Overlay_Combined.sv(108): object "selected_zombie_idx_w" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at VGA_Image_Overlay_Combined.sv(203): object "zombie_pixel_addr_r0" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at VGA_Image_Overlay_Combined.sv(310): object "bg_palette_addr_r" assigned a value but never read
+Warning (10036): Verilog HDL or VHDL warning at VGA_Image_Overlay_Combined.sv(311): object "zombie_palette_addr_r" assigned a value but never read
+Warning (10230): Verilog HDL assignment warning at VGA_Image_Overlay_Combined.sv(57): truncated value with size 32 to match size of target (21)
+Warning (10230): Verilog HDL assignment warning at VGA_Image_Overlay_Combined.sv(69): truncated value with size 11 to match size of target (8)
+Warning (10230): Verilog HDL assignment warning at VGA_Image_Overlay_Combined.sv(70): truncated value with size 10 to match size of target (8)
 Info (12128): Elaborating entity "background_palette" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram"
 Info (12128): Elaborating entity "altsyncram" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component"
 Info (12130): Elaborated megafunction instantiation "VGA_Image_Overlay_Combined:vga_image_overlay_combined|background_palette:bg_palette_bram|altsyncram:altsyncram_component"
@@ -1227,8 +1921,127 @@ Info (12133): Instantiated megafunction "VGA_Image_Overlay_Combined:vga_image_ov
 Info (12021): Found 1 design units, including 1 entities, in source file db/altsyncram_ljl1.tdf
     Info (12023): Found entity 1: altsyncram_ljl1
 Info (12128): Elaborating entity "altsyncram_ljl1" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined|zombie_1x_palette:zombie_palette_bram|altsyncram:altsyncram_component|altsyncram_ljl1:auto_generated"
-Info (278001): Inferred 1 megafunctions from design logic
+Info (12128): Elaborating entity "aim" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram"
+Info (12128): Elaborating entity "altsyncram" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component"
+Info (12130): Elaborated megafunction instantiation "VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component"
+Info (12133): Instantiated megafunction "VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component" with the following parameter:
+    Info (12134): Parameter "address_aclr_a" = "NONE"
+    Info (12134): Parameter "clock_enable_input_a" = "BYPASS"
+    Info (12134): Parameter "clock_enable_output_a" = "BYPASS"
+    Info (12134): Parameter "init_file" = "../../Kmeans_comp/aim/output/aim_200.mif"
+    Info (12134): Parameter "intended_device_family" = "Cyclone IV E"
+    Info (12134): Parameter "lpm_hint" = "ENABLE_RUNTIME_MOD=NO"
+    Info (12134): Parameter "lpm_type" = "altsyncram"
+    Info (12134): Parameter "numwords_a" = "40000"
+    Info (12134): Parameter "operation_mode" = "ROM"
+    Info (12134): Parameter "outdata_aclr_a" = "NONE"
+    Info (12134): Parameter "outdata_reg_a" = "CLOCK0"
+    Info (12134): Parameter "widthad_a" = "16"
+    Info (12134): Parameter "width_a" = "2"
+    Info (12134): Parameter "width_byteena_a" = "1"
+Info (12021): Found 1 design units, including 1 entities, in source file db/altsyncram_0qb1.tdf
+    Info (12023): Found entity 1: altsyncram_0qb1
+Info (12128): Elaborating entity "altsyncram_0qb1" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated"
+Info (12021): Found 1 design units, including 1 entities, in source file db/decode_h8a.tdf
+    Info (12023): Found entity 1: decode_h8a
+Info (12128): Elaborating entity "decode_h8a" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated|decode_h8a:rden_decode"
+Info (12021): Found 1 design units, including 1 entities, in source file db/mux_2nb.tdf
+    Info (12023): Found entity 1: mux_2nb
+Info (12128): Elaborating entity "mux_2nb" for hierarchy "VGA_Image_Overlay_Combined:vga_image_overlay_combined|aim:aim_bram|altsyncram:altsyncram_component|altsyncram_0qb1:auto_generated|mux_2nb:mux2"
+Info (278001): Inferred 13 megafunctions from design logic
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod0"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div0"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod1"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div1"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod2"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div2"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod3"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div3"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod4"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div4"
     Info (278003): Inferred multiplier megafunction ("lpm_mult") from the following logic: "VGA_Image_Overlay_Combined:vga_image_overlay_combined|Mult0"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Random_Position_Generator:zombie_gen|Mod0"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Random_Position_Generator:zombie_gen|Mod1"
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Mod0"
+Info (12133): Instantiated megafunction "lpm_divide:Mod0" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "11"
+    Info (12134): Parameter "LPM_WIDTHD" = "4"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_0bm.tdf
+    Info (12023): Found entity 1: lpm_divide_0bm
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_llh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_llh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_u6f.tdf
+    Info (12023): Found entity 1: alt_u_div_u6f
+Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_7pc.tdf
+    Info (12023): Found entity 1: add_sub_7pc
+Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_8pc.tdf
+    Info (12023): Found entity 1: add_sub_8pc
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div0"
+Info (12133): Instantiated megafunction "lpm_divide:Div0" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "11"
+    Info (12134): Parameter "LPM_WIDTHD" = "4"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_tim.tdf
+    Info (12023): Found entity 1: lpm_divide_tim
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div1"
+Info (12133): Instantiated megafunction "lpm_divide:Div1" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "11"
+    Info (12134): Parameter "LPM_WIDTHD" = "7"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_0jm.tdf
+    Info (12023): Found entity 1: lpm_divide_0jm
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_olh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_olh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_47f.tdf
+    Info (12023): Found entity 1: alt_u_div_47f
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div2"
+Info (12133): Instantiated megafunction "lpm_divide:Div2" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "11"
+    Info (12134): Parameter "LPM_WIDTHD" = "10"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_akm.tdf
+    Info (12023): Found entity 1: lpm_divide_akm
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_2nh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_2nh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_o9f.tdf
+    Info (12023): Found entity 1: alt_u_div_o9f
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Mod3"
+Info (12133): Instantiated megafunction "lpm_divide:Mod3" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "10"
+    Info (12134): Parameter "LPM_WIDTHD" = "4"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_vam.tdf
+    Info (12023): Found entity 1: lpm_divide_vam
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_klh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_klh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_s6f.tdf
+    Info (12023): Found entity 1: alt_u_div_s6f
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div3"
+Info (12133): Instantiated megafunction "lpm_divide:Div3" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "10"
+    Info (12134): Parameter "LPM_WIDTHD" = "4"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_sim.tdf
+    Info (12023): Found entity 1: lpm_divide_sim
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div4"
+Info (12133): Instantiated megafunction "lpm_divide:Div4" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "10"
+    Info (12134): Parameter "LPM_WIDTHD" = "7"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_vim.tdf
+    Info (12023): Found entity 1: lpm_divide_vim
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_nlh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_nlh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_27f.tdf
+    Info (12023): Found entity 1: alt_u_div_27f
 Info (12130): Elaborated megafunction instantiation "VGA_Image_Overlay_Combined:vga_image_overlay_combined|lpm_mult:Mult0"
 Info (12133): Instantiated megafunction "VGA_Image_Overlay_Combined:vga_image_overlay_combined|lpm_mult:Mult0" with the following parameter:
     Info (12134): Parameter "LPM_WIDTHA" = "10"
@@ -1250,6 +2063,26 @@ Info (12131): Elaborated megafunction instantiation "VGA_Image_Overlay_Combined:
 Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_ogh.tdf
     Info (12023): Found entity 1: add_sub_ogh
 Info (12131): Elaborated megafunction instantiation "VGA_Image_Overlay_Combined:vga_image_overlay_combined|lpm_mult:Mult0|altshift:external_latency_ffs", which is child of megafunction instantiation "VGA_Image_Overlay_Combined:vga_image_overlay_combined|lpm_mult:Mult0"
+Info (12130): Elaborated megafunction instantiation "Random_Position_Generator:zombie_gen|lpm_divide:Mod0"
+Info (12133): Instantiated megafunction "Random_Position_Generator:zombie_gen|lpm_divide:Mod0" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "11"
+    Info (12134): Parameter "LPM_WIDTHD" = "11"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_ecm.tdf
+    Info (12023): Found entity 1: lpm_divide_ecm
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_3nh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_3nh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_q9f.tdf
+    Info (12023): Found entity 1: alt_u_div_q9f
+Info (12130): Elaborated megafunction instantiation "Random_Position_Generator:zombie_gen|lpm_divide:Mod1"
+Info (12133): Instantiated megafunction "Random_Position_Generator:zombie_gen|lpm_divide:Mod1" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "11"
+    Info (12134): Parameter "LPM_WIDTHD" = "10"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_dcm.tdf
+    Info (12023): Found entity 1: lpm_divide_dcm
 Warning (13039): The following bidirectional pins have no drivers
     Warning (13040): bidirectional pin "LCD_DATA[0]" has no driver
     Warning (13040): bidirectional pin "LCD_DATA[1]" has no driver
@@ -1376,6 +2209,8 @@ Warning (13039): The following bidirectional pins have no drivers
     Warning (13040): bidirectional pin "EX_IO[4]" has no driver
     Warning (13040): bidirectional pin "EX_IO[5]" has no driver
     Warning (13040): bidirectional pin "EX_IO[6]" has no driver
+Info (13000): Registers with preset signals will power-up high
+Info (13003): DEV_CLRn pin will set, and not reset, register with preset signal due to NOT Gate Push-Back
 Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "SMA_CLKOUT" is stuck at GND
     Warning (13410): Pin "LEDG[0]" is stuck at GND
@@ -1405,62 +2240,14 @@ Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "LEDR[15]" is stuck at GND
     Warning (13410): Pin "LEDR[16]" is stuck at GND
     Warning (13410): Pin "LEDR[17]" is stuck at GND
-    Warning (13410): Pin "HEX0[0]" is stuck at GND
-    Warning (13410): Pin "HEX0[1]" is stuck at GND
-    Warning (13410): Pin "HEX0[2]" is stuck at GND
-    Warning (13410): Pin "HEX0[3]" is stuck at GND
-    Warning (13410): Pin "HEX0[4]" is stuck at GND
-    Warning (13410): Pin "HEX0[5]" is stuck at GND
-    Warning (13410): Pin "HEX0[6]" is stuck at GND
-    Warning (13410): Pin "HEX1[0]" is stuck at GND
-    Warning (13410): Pin "HEX1[1]" is stuck at GND
-    Warning (13410): Pin "HEX1[2]" is stuck at GND
-    Warning (13410): Pin "HEX1[3]" is stuck at GND
-    Warning (13410): Pin "HEX1[4]" is stuck at GND
-    Warning (13410): Pin "HEX1[5]" is stuck at GND
-    Warning (13410): Pin "HEX1[6]" is stuck at GND
-    Warning (13410): Pin "HEX2[0]" is stuck at GND
-    Warning (13410): Pin "HEX2[1]" is stuck at GND
-    Warning (13410): Pin "HEX2[2]" is stuck at GND
-    Warning (13410): Pin "HEX2[3]" is stuck at GND
-    Warning (13410): Pin "HEX2[4]" is stuck at GND
-    Warning (13410): Pin "HEX2[5]" is stuck at GND
-    Warning (13410): Pin "HEX2[6]" is stuck at GND
-    Warning (13410): Pin "HEX3[0]" is stuck at GND
     Warning (13410): Pin "HEX3[1]" is stuck at GND
-    Warning (13410): Pin "HEX3[2]" is stuck at GND
-    Warning (13410): Pin "HEX3[3]" is stuck at GND
-    Warning (13410): Pin "HEX3[4]" is stuck at GND
-    Warning (13410): Pin "HEX3[5]" is stuck at GND
-    Warning (13410): Pin "HEX3[6]" is stuck at GND
-    Warning (13410): Pin "HEX4[0]" is stuck at GND
-    Warning (13410): Pin "HEX4[1]" is stuck at GND
-    Warning (13410): Pin "HEX4[2]" is stuck at GND
-    Warning (13410): Pin "HEX4[3]" is stuck at GND
-    Warning (13410): Pin "HEX4[4]" is stuck at GND
-    Warning (13410): Pin "HEX4[5]" is stuck at GND
-    Warning (13410): Pin "HEX4[6]" is stuck at GND
-    Warning (13410): Pin "HEX5[0]" is stuck at GND
-    Warning (13410): Pin "HEX5[1]" is stuck at GND
-    Warning (13410): Pin "HEX5[2]" is stuck at GND
-    Warning (13410): Pin "HEX5[3]" is stuck at GND
-    Warning (13410): Pin "HEX5[4]" is stuck at GND
-    Warning (13410): Pin "HEX5[5]" is stuck at GND
-    Warning (13410): Pin "HEX5[6]" is stuck at GND
-    Warning (13410): Pin "HEX6[0]" is stuck at GND
-    Warning (13410): Pin "HEX6[1]" is stuck at GND
-    Warning (13410): Pin "HEX6[2]" is stuck at GND
-    Warning (13410): Pin "HEX6[3]" is stuck at GND
-    Warning (13410): Pin "HEX6[4]" is stuck at GND
-    Warning (13410): Pin "HEX6[5]" is stuck at GND
-    Warning (13410): Pin "HEX6[6]" is stuck at GND
-    Warning (13410): Pin "HEX7[0]" is stuck at GND
-    Warning (13410): Pin "HEX7[1]" is stuck at GND
-    Warning (13410): Pin "HEX7[2]" is stuck at GND
-    Warning (13410): Pin "HEX7[3]" is stuck at GND
-    Warning (13410): Pin "HEX7[4]" is stuck at GND
-    Warning (13410): Pin "HEX7[5]" is stuck at GND
-    Warning (13410): Pin "HEX7[6]" is stuck at GND
+    Warning (13410): Pin "HEX7[0]" is stuck at VCC
+    Warning (13410): Pin "HEX7[1]" is stuck at VCC
+    Warning (13410): Pin "HEX7[2]" is stuck at VCC
+    Warning (13410): Pin "HEX7[3]" is stuck at VCC
+    Warning (13410): Pin "HEX7[4]" is stuck at VCC
+    Warning (13410): Pin "HEX7[5]" is stuck at VCC
+    Warning (13410): Pin "HEX7[6]" is stuck at VCC
     Warning (13410): Pin "LCD_BLON" is stuck at GND
     Warning (13410): Pin "LCD_EN" is stuck at GND
     Warning (13410): Pin "LCD_ON" is stuck at GND
@@ -1577,6 +2364,27 @@ Warning (13024): Output pins are stuck at VCC or GND
     Warning (13410): Pin "HSMC_TX_D_P[16]" is stuck at GND
 Info (286030): Timing-Driven Synthesis is running
 Info (17049): 3 registers lost all their fanouts during netlist optimizations.
+Info (17016): Found the following redundant logic cells in design
+    Info (17048): Logic cell "lpm_divide:Mod0|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_3_result_int[0]~8"
+    Info (17048): Logic cell "lpm_divide:Div0|lpm_divide_tim:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_3_result_int[0]~8"
+    Info (17048): Logic cell "lpm_divide:Mod1|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_10_result_int[0]~0"
+    Info (17048): Logic cell "lpm_divide:Mod1|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_6_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod1|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_7_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod1|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_8_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod1|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_9_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod2|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_10_result_int[0]~0"
+    Info (17048): Logic cell "lpm_divide:Mod2|lpm_divide_0bm:auto_generated|sign_div_unsign_llh:divider|alt_u_div_u6f:divider|add_sub_9_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod3|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_3_result_int[0]~8"
+    Info (17048): Logic cell "lpm_divide:Mod3|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_4_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod3|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_6_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Div3|lpm_divide_sim:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_3_result_int[0]~8"
+    Info (17048): Logic cell "lpm_divide:Div3|lpm_divide_sim:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_4_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Div3|lpm_divide_sim:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_6_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod4|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_9_result_int[0]~0"
+    Info (17048): Logic cell "lpm_divide:Mod4|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_6_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod4|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_7_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Mod4|lpm_divide_vam:auto_generated|sign_div_unsign_klh:divider|alt_u_div_s6f:divider|add_sub_8_result_int[0]~10"
+    Info (17048): Logic cell "lpm_divide:Div4|lpm_divide_vim:auto_generated|sign_div_unsign_nlh:divider|alt_u_div_27f:divider|add_sub_6_result_int[0]~12"
 Info (144001): Generated suppressed messages file C:/Users/user/Desktop/dclab_hw/final/VGA_RGB_blocks_with_sram/output_files/DE2_115.map.smsg
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 1 node(s), including 0 DDIO, 1 PLL, 0 transceiver and 0 LCELL
@@ -1590,8 +2398,6 @@ Warning (21074): Design contains 85 input pin(s) that do not drive logic
     Warning (15610): No output dependent on input pin "KEY[0]"
     Warning (15610): No output dependent on input pin "KEY[2]"
     Warning (15610): No output dependent on input pin "KEY[3]"
-    Warning (15610): No output dependent on input pin "SW[2]"
-    Warning (15610): No output dependent on input pin "SW[3]"
     Warning (15610): No output dependent on input pin "SW[4]"
     Warning (15610): No output dependent on input pin "SW[5]"
     Warning (15610): No output dependent on input pin "SW[6]"
@@ -1604,6 +2410,8 @@ Warning (21074): Design contains 85 input pin(s) that do not drive logic
     Warning (15610): No output dependent on input pin "SW[13]"
     Warning (15610): No output dependent on input pin "SW[14]"
     Warning (15610): No output dependent on input pin "SW[15]"
+    Warning (15610): No output dependent on input pin "SW[16]"
+    Warning (15610): No output dependent on input pin "SW[17]"
     Warning (15610): No output dependent on input pin "UART_RTS"
     Warning (15610): No output dependent on input pin "UART_RXD"
     Warning (15610): No output dependent on input pin "SD_WP_N"
@@ -1668,18 +2476,18 @@ Warning (21074): Design contains 85 input pin(s) that do not drive logic
     Warning (15610): No output dependent on input pin "HSMC_RX_D_P[14]"
     Warning (15610): No output dependent on input pin "HSMC_RX_D_P[15]"
     Warning (15610): No output dependent on input pin "HSMC_RX_D_P[16]"
-Info (21057): Implemented 963 device resources after synthesis - the final resource count might be different
+Info (21057): Implemented 9735 device resources after synthesis - the final resource count might be different
     Info (21058): Implemented 91 input pins
     Info (21059): Implemented 248 output pins
     Info (21060): Implemented 141 bidirectional pins
-    Info (21061): Implemented 434 logic cells
-    Info (21064): Implemented 48 RAM segments
+    Info (21061): Implemented 9196 logic cells
+    Info (21064): Implemented 58 RAM segments
     Info (21065): Implemented 1 PLLs
-Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 480 warnings
-    Info: Peak virtual memory: 4899 megabytes
-    Info: Processing ended: Fri Nov 21 02:54:09 2025
-    Info: Elapsed time: 00:00:11
-    Info: Total CPU time (on all processors): 00:00:16
+Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 435 warnings
+    Info: Peak virtual memory: 4966 megabytes
+    Info: Processing ended: Fri Dec 05 19:16:15 2025
+    Info: Elapsed time: 00:00:26
+    Info: Total CPU time (on all processors): 00:00:31
 
 
 +------------------------------------------+

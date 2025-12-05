@@ -1,19 +1,28 @@
 // VGA Image Overlay Module (Combined)
 // Handles both background and zombie overlay with transparency support
+// Supports multiple zombies from Random_Position_Generator
 // Uses sequential (_r) and combinational (_w) logic separation
-module VGA_Image_Overlay_Combined (
+module VGA_Image_Overlay_Combined #(
+	parameter MAX_ZOMBIES = 10,       // Maximum number of zombies (must match Random_Position_Generator)
+	parameter ZOMBIE_SIZE_X = 102,    // Zombie width
+	parameter ZOMBIE_SIZE_Y = 149     // Zombie height
+)(
 	input logic i_clk,              // 74.25MHz VGA clock
 	input logic i_rst_n,
 	input logic [10:0] i_h_count,   // Horizontal position (0-1279) - already 1 cycle ahead
 	input logic [9:0] i_v_count,   // Vertical position (0-719) - already 1 cycle ahead
 	input logic i_active_video,     // Active video region
 	
-	// Zombie position and size
-	input logic [10:0] i_zombie_x1,  // Zombie top-left X position
-	input logic [9:0] i_zombie_y1,   // Zombie top-left Y position
+	// Multiple zombie positions (arrays from Random_Position_Generator)
+	input logic [10:0] i_zombie_x [0:MAX_ZOMBIES-1],      // Zombie top-left X positions
+	input logic [9:0] i_zombie_y [0:MAX_ZOMBIES-1],       // Zombie top-left Y positions
+	input logic i_zombie_valid [0:MAX_ZOMBIES-1],         // Valid flags for each zombie
 	input logic [10:0] i_zombie_size_x,  // Zombie width (102)
 	input logic [9:0] i_zombie_size_y,   // Zombie height (149)
-	
+
+	// about aim
+	input logic [10:0] i_aim_x,
+	input logic [9:0] i_aim_y,
 	// Background SRAM interface
 	output logic [19:0] o_bg_sram_addr,
 	output logic o_bg_sram_ce_n,
@@ -36,6 +45,8 @@ module VGA_Image_Overlay_Combined (
 	// Image dimensions
 	localparam BG_WIDTH = 1280;
 	localparam BG_HEIGHT = 720;
+	localparam AIM_SIZE_X = 200;  // Aim width
+	localparam AIM_SIZE_Y = 200;  // Aim height
 	
 	// ============================================================
 	// Combinational Logic: Address Calculation (_w)
@@ -45,18 +56,76 @@ module VGA_Image_Overlay_Combined (
 	logic [20:0] bg_pixel_byte_addr_w;
 	assign bg_pixel_byte_addr_w = (i_v_count * BG_WIDTH) + i_h_count;
 	
-	// Zombie area check and local coordinates
+	// Aim area check and local coordinates
+	logic in_aim_area_w;
+	logic [7:0] aim_local_x_w;   // 0-199 (8 bits)
+	logic [7:0] aim_local_y_w;   // 0-199 (8 bits)
+	
+	assign in_aim_area_w = (i_h_count >= i_aim_x) && 
+	                      (i_h_count < (i_aim_x + AIM_SIZE_X)) &&
+	                      (i_v_count >= i_aim_y) && 
+	                      (i_v_count < (i_aim_y + AIM_SIZE_Y));
+	
+	assign aim_local_x_w = i_h_count - i_aim_x;
+	assign aim_local_y_w = i_v_count - i_aim_y;
+	
+	// Aim pixel address calculation: (local_y * 200) + local_x
+	// Optimize: 200 = 128 + 64 + 8 = (local_y << 7) + (local_y << 6) + (local_y << 3)
+	logic [15:0] aim_pixel_addr_w;
+	logic [15:0] aim_y_times_200;
+	assign aim_y_times_200 = (aim_local_y_w << 7) + (aim_local_y_w << 6) + (aim_local_y_w << 3);
+	assign aim_pixel_addr_w = in_aim_area_w ? (aim_y_times_200 + aim_local_x_w) : 16'd0;
+	
+	// Check which zombie(s) cover the current pixel
+	// For each zombie, check if current pixel is within its bounds
+	logic in_zombie_area [0:MAX_ZOMBIES-1];
+	logic [10:0] zombie_local_x [0:MAX_ZOMBIES-1];
+	logic [9:0] zombie_local_y [0:MAX_ZOMBIES-1];
+	
+	genvar z;
+	generate
+		for (z = 0; z < MAX_ZOMBIES; z++) begin : zombie_area_check
+			always_comb begin
+				if (i_zombie_valid[z] && 
+				    (i_h_count >= i_zombie_x[z]) && 
+				    (i_h_count < (i_zombie_x[z] + i_zombie_size_x)) &&
+				    (i_v_count >= i_zombie_y[z]) && 
+				    (i_v_count < (i_zombie_y[z] + i_zombie_size_y))) begin
+					in_zombie_area[z] = 1'b1;
+					zombie_local_x[z] = i_h_count - i_zombie_x[z];
+					zombie_local_y[z] = i_v_count - i_zombie_y[z];
+				end else begin
+					in_zombie_area[z] = 1'b0;
+					zombie_local_x[z] = 11'd0;
+					zombie_local_y[z] = 10'd0;
+				end
+			end
+		end
+	endgenerate
+	
+	// Select which zombie to display (priority: lowest index first)
+	// Find the first valid zombie that covers the current pixel
+	logic [3:0] selected_zombie_idx_w;
 	logic in_zombie_area_w;
 	logic [10:0] zombie_local_x_w;
 	logic [9:0] zombie_local_y_w;
 	
-	assign in_zombie_area_w = (i_h_count >= i_zombie_x1) && 
-	                          (i_h_count < (i_zombie_x1 + i_zombie_size_x)) &&
-	                          (i_v_count >= i_zombie_y1) && 
-	                          (i_v_count < (i_zombie_y1 + i_zombie_size_y));
-	
-	assign zombie_local_x_w = i_h_count - i_zombie_x1;
-	assign zombie_local_y_w = i_v_count - i_zombie_y1;
+	always_comb begin
+		selected_zombie_idx_w = 4'd0;
+		in_zombie_area_w = 1'b0;
+		zombie_local_x_w = 11'd0;
+		zombie_local_y_w = 10'd0;
+		
+		// Check zombies in order, use first one that covers the pixel
+		for (int i = 0; i < MAX_ZOMBIES; i++) begin
+			if (!in_zombie_area_w && in_zombie_area[i]) begin
+				selected_zombie_idx_w = i[3:0];
+				in_zombie_area_w = 1'b1;
+				zombie_local_x_w = zombie_local_x[i];
+				zombie_local_y_w = zombie_local_y[i];
+			end
+		end
+	end
 	
 	// Zombie pixel address calculation
 	logic [13:0] zombie_pixel_addr_w;
@@ -104,6 +173,16 @@ module VGA_Image_Overlay_Combined (
 		.q(zombie_palette_data)
 	);
 	
+	// Aim BRAM
+	logic [15:0] aim_bram_addr_reg;
+	logic [1:0] aim_bram_data;
+	
+	aim aim_bram(
+		.address(aim_bram_addr_reg),
+		.clock(i_clk),
+		.q(aim_bram_data)
+	);
+	
 	// ============================================================
 	// Sequential Logic: Pipeline Stage 0 - Register Addresses (_r)
 	// ============================================================
@@ -123,24 +202,29 @@ module VGA_Image_Overlay_Combined (
 	logic [20:0] bg_pixel_byte_addr_r1;  // Second cycle: SRAM data ready
 	logic [13:0] zombie_pixel_addr_r0;
 	logic in_zombie_area_r0;
+	logic in_aim_area_r0;
 	logic active_video_r0;
 	
 	// Register zombie BRAM address (BRAM requires registered address, 1 cycle delay)
 	always_ff @(posedge i_clk) begin
 		if (~i_rst_n) begin
 			zombie_bram_addr_reg <= 14'd0;
+			aim_bram_addr_reg <= 16'd0;
 			bg_pixel_byte_addr_r0 <= 21'd0;
 			bg_pixel_byte_addr_r1 <= 21'd0;
 			zombie_pixel_addr_r0 <= 14'd0;
 			in_zombie_area_r0 <= 1'b0;
+			in_aim_area_r0 <= 1'b0;
 			active_video_r0 <= 1'b0;
 		end else begin
 			// Register addresses for pipeline
 			bg_pixel_byte_addr_r0 <= bg_pixel_byte_addr_w;  // Stage 0: register SRAM address
 			bg_pixel_byte_addr_r1 <= bg_pixel_byte_addr_r0;  // Stage 1: SRAM data will be ready next cycle
 			zombie_bram_addr_reg <= zombie_pixel_addr_w;    // BRAM address (1 cycle delay)
+			aim_bram_addr_reg <= aim_pixel_addr_w;          // Aim BRAM address (1 cycle delay)
 			zombie_pixel_addr_r0 <= zombie_pixel_addr_w;
 			in_zombie_area_r0 <= in_zombie_area_w;
+			in_aim_area_r0 <= in_aim_area_w;
 			active_video_r0 <= i_active_video;
 		end
 	end
@@ -163,14 +247,18 @@ module VGA_Image_Overlay_Combined (
 	
 	logic [7:0] bg_pixel_index_r;
 	logic in_zombie_area_r;
+	logic in_aim_area_r;
 	logic [7:0] zombie_pixel_index_r;
+	logic [1:0] aim_pixel_data_r;
 	logic active_video_r1;  // First stage pipeline for active_video
 	
 	always_ff @(posedge i_clk) begin
 		if (~i_rst_n) begin
 			bg_pixel_index_r <= 8'd0;
 			in_zombie_area_r <= 1'b0;
+			in_aim_area_r <= 1'b0;
 			zombie_pixel_index_r <= 8'd0;
+			aim_pixel_data_r <= 2'd0;
 			active_video_r1 <= 1'b0;
 		end else begin
 			// Read background pixel index from SRAM (using latched data after 2 cycles)
@@ -183,10 +271,14 @@ module VGA_Image_Overlay_Combined (
 			
 			// Pipeline zombie area flag (sync with background)
 			in_zombie_area_r <= in_zombie_area_r0;
+			in_aim_area_r <= in_aim_area_r0;
 			
 			// Read zombie pixel index from BRAM (BRAM has registered output, 1 cycle delay)
 			// zombie_bram_addr_reg was set 1 cycle ago, so data is ready now
 			zombie_pixel_index_r <= zombie_bram_data;
+			
+			// Read aim pixel data from BRAM (BRAM has registered output, 1 cycle delay)
+			aim_pixel_data_r <= aim_bram_data;
 			
 			// Pipeline active video signal (stage 1)
 			active_video_r1 <= active_video_r0;
@@ -220,7 +312,9 @@ module VGA_Image_Overlay_Combined (
 	logic [15:0] bg_rgb565_r;
 	logic [15:0] zombie_rgb565_r;
 	logic in_zombie_area_r2;  // Pipeline zombie area flag
+	logic in_aim_area_r2;     // Pipeline aim area flag
 	logic [7:0] zombie_pixel_index_r2;  // Pipeline zombie pixel index for transparency check
+	logic [1:0] aim_pixel_data_r2;      // Pipeline aim pixel data
 	logic active_video_r;  // Pipeline active video signal
 	
 	always_ff @(posedge i_clk) begin
@@ -230,7 +324,9 @@ module VGA_Image_Overlay_Combined (
 			bg_rgb565_r <= 16'd0;
 			zombie_rgb565_r <= 16'd0;
 			in_zombie_area_r2 <= 1'b0;
+			in_aim_area_r2 <= 1'b0;
 			zombie_pixel_index_r2 <= 8'd0;
+			aim_pixel_data_r2 <= 2'd0;
 			active_video_r <= 1'b0;
 		end else begin
 			// Register palette addresses
@@ -243,7 +339,9 @@ module VGA_Image_Overlay_Combined (
 			
 			// Pipeline zombie area flag and pixel index
 			in_zombie_area_r2 <= in_zombie_area_r;
+			in_aim_area_r2 <= in_aim_area_r;
 			zombie_pixel_index_r2 <= zombie_pixel_index_r;
+			aim_pixel_data_r2 <= aim_pixel_data_r;
 			
 			// Pipeline active video signal (stage 2, total 2 cycles delay to match RGB data)
 			active_video_r <= active_video_r1;
@@ -276,12 +374,38 @@ module VGA_Image_Overlay_Combined (
 	logic use_zombie_color_w;
 	assign use_zombie_color_w = in_zombie_area_r2 && (zombie_pixel_index_r2 != 8'h00);
 	
+	// Aim color conversion (2-bit to RGB888)
+	// 00 = transparent, 10 = red(255,0,0), 11 = black(0,0,0)
+	logic [7:0] aim_r_8bit, aim_g_8bit, aim_b_8bit;
+	logic use_aim_color_w;
+	
+	assign use_aim_color_w = in_aim_area_r2 && (aim_pixel_data_r2 != 2'b00);
+	assign aim_r_8bit = (aim_pixel_data_r2 == 2'b10) ? 8'd255 : 8'd0;  // Red for 10, black for 11
+	assign aim_g_8bit = 8'd0;
+	assign aim_b_8bit = 8'd0;
+	
 	// Final RGB selection (combinational)
+	// Priority order: Aim (highest z-order) > Zombie > Background
 	logic [7:0] final_r_w, final_g_w, final_b_w;
 	
-	assign final_r_w = use_zombie_color_w ? zombie_r_8bit : bg_r_8bit;
-	assign final_g_w = use_zombie_color_w ? zombie_g_8bit : bg_g_8bit;
-	assign final_b_w = use_zombie_color_w ? zombie_b_8bit : bg_b_8bit;
+	always_comb begin
+		if (use_aim_color_w) begin
+			// Aim has highest priority (smallest z-value, rendered on top)
+			final_r_w = aim_r_8bit;
+			final_g_w = aim_g_8bit;
+			final_b_w = aim_b_8bit;
+		end else if (use_zombie_color_w) begin
+			// Zombie has middle priority
+			final_r_w = zombie_r_8bit;
+			final_g_w = zombie_g_8bit;
+			final_b_w = zombie_b_8bit;
+		end else begin
+			// Background has lowest priority
+			final_r_w = bg_r_8bit;
+			final_g_w = bg_g_8bit;
+			final_b_w = bg_b_8bit;
+		end
+	end
 	
 	// ============================================================
 	// Sequential Logic: Output RGB Values
