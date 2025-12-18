@@ -1,0 +1,1206 @@
+Analysis & Synthesis report for DE2_115
+Fri Dec 19 02:42:08 2025
+Quartus II 64-Bit Version 15.0.0 Build 145 04/22/2015 SJ Full Version
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis IP Cores Summary
+  7. Partition Status Summary
+  8. Dependent File Changes for Partition Top
+  9. Partition for Top-Level Resource Utilization by Entity
+ 10. State Machine - |DE2_115|mpu6050_ctrl:mpu6050_ctrl_inst|state
+ 11. State Machine - |DE2_115|i2c_master:i2c_master_inst|state
+ 12. Registers Removed During Synthesis
+ 13. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 14. Parameter Settings for User Entity Instance: i2c_master:i2c_master_inst
+ 15. Parameter Settings for User Entity Instance: mpu6050_ctrl:mpu6050_ctrl_inst
+ 16. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod0
+ 17. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod1
+ 18. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod2
+ 19. Parameter Settings for Inferred Entity Instance: lpm_divide:Div2
+ 20. Parameter Settings for Inferred Entity Instance: lpm_divide:Div1
+ 21. Parameter Settings for Inferred Entity Instance: lpm_divide:Div0
+ 22. Partition Dependent Files
+ 23. Post-Synthesis Netlist Statistics for Top Partition
+ 24. Source assignments for sld_signaltap:auto_signaltap_0
+ 25. Parameter Settings for Inferred Entity Instance: sld_signaltap:auto_signaltap_0
+ 26. Port Connectivity Checks: "HexTo7Seg:hex7"
+ 27. Port Connectivity Checks: "HexTo7Seg:hex6"
+ 28. Port Connectivity Checks: "mpu6050_ctrl:mpu6050_ctrl_inst"
+ 29. SignalTap II Logic Analyzer Settings
+ 30. Elapsed Time Per Partition
+ 31. Analysis & Synthesis Messages
+ 32. Analysis & Synthesis Suppressed Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus II License Agreement,
+the Altera MegaCore Function License Agreement, or other 
+applicable license agreement, including, without limitation, 
+that your use is for the sole purpose of programming logic 
+devices manufactured by Altera and sold by Altera or its 
+authorized distributors.  Please refer to the applicable 
+agreement for further details.
+
+
+
++----------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                     ;
++------------------------------------+---------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Fri Dec 19 02:42:08 2025       ;
+; Quartus II 64-Bit Version          ; 15.0.0 Build 145 04/22/2015 SJ Full Version ;
+; Revision Name                      ; DE2_115                                     ;
+; Top-level Entity Name              ; DE2_115                                     ;
+; Family                             ; Cyclone IV E                                ;
+; Total logic elements               ; N/A until Partition Merge                   ;
+;     Total combinational functions  ; N/A until Partition Merge                   ;
+;     Dedicated logic registers      ; N/A until Partition Merge                   ;
+; Total registers                    ; N/A until Partition Merge                   ;
+; Total pins                         ; N/A until Partition Merge                   ;
+; Total virtual pins                 ; N/A until Partition Merge                   ;
+; Total memory bits                  ; N/A until Partition Merge                   ;
+; Embedded Multiplier 9-bit elements ; N/A until Partition Merge                   ;
+; Total PLLs                         ; N/A until Partition Merge                   ;
++------------------------------------+---------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                                        ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                                     ; Setting            ; Default Value      ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                                     ; EP4CE115F29C7      ;                    ;
+; Top-level entity name                                                      ; DE2_115            ; DE2_115            ;
+; Family name                                                                ; Cyclone IV E       ; Cyclone V          ;
+; Use smart compilation                                                      ; Off                ; Off                ;
+; Enable parallel Assembler and TimeQuest Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                                ; Off                ; Off                ;
+; Restructure Multiplexers                                                   ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                                        ; Off                ; Off                ;
+; Preserve fewer node names                                                  ; On                 ; On                 ;
+; Disable OpenCore Plus hardware evaluation                                  ; Off                ; Off                ;
+; Verilog Version                                                            ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                               ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                                   ; Auto               ; Auto               ;
+; Safe State Machine                                                         ; Off                ; Off                ;
+; Extract Verilog State Machines                                             ; On                 ; On                 ;
+; Extract VHDL State Machines                                                ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                          ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                                 ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                             ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                                    ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                                  ; On                 ; On                 ;
+; Parallel Synthesis                                                         ; On                 ; On                 ;
+; DSP Block Balancing                                                        ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                                         ; On                 ; On                 ;
+; Power-Up Don't Care                                                        ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                               ; Off                ; Off                ;
+; Remove Duplicate Registers                                                 ; On                 ; On                 ;
+; Ignore CARRY Buffers                                                       ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                                     ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                                      ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                                  ; Off                ; Off                ;
+; Ignore LCELL Buffers                                                       ; Off                ; Off                ;
+; Ignore SOFT Buffers                                                        ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                             ; Off                ; Off                ;
+; Optimization Technique                                                     ; Balanced           ; Balanced           ;
+; Carry Chain Length                                                         ; 70                 ; 70                 ;
+; Auto Carry Chains                                                          ; On                 ; On                 ;
+; Auto Open-Drain Pins                                                       ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                                      ; Off                ; Off                ;
+; Auto ROM Replacement                                                       ; On                 ; On                 ;
+; Auto RAM Replacement                                                       ; On                 ; On                 ;
+; Auto DSP Block Replacement                                                 ; On                 ; On                 ;
+; Auto Shift Register Replacement                                            ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                            ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                              ; On                 ; On                 ;
+; Strict RAM Replacement                                                     ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                          ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                                     ; Off                ; Off                ;
+; Auto RAM Block Balancing                                                   ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                          ; Off                ; Off                ;
+; Auto Resource Sharing                                                      ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                              ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing                        ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                          ; Off                ; Off                ;
+; Timing-Driven Synthesis                                                    ; On                 ; On                 ;
+; Report Parameter Settings                                                  ; On                 ; On                 ;
+; Report Source Assignments                                                  ; On                 ; On                 ;
+; Report Connectivity Checks                                                 ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                                         ; Off                ; Off                ;
+; Synchronization Register Chain Length                                      ; 2                  ; 2                  ;
+; PowerPlay Power Optimization During Synthesis                              ; Normal compilation ; Normal compilation ;
+; HDL message level                                                          ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                            ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report                   ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report                         ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report                  ; 100                ; 100                ;
+; Clock MUX Protection                                                       ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                                ; Off                ; Off                ;
+; Block Design Naming                                                        ; Auto               ; Auto               ;
+; SDC constraint protection                                                  ; Off                ; Off                ;
+; Synthesis Effort                                                           ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal               ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                                       ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                                         ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                                ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                                     ; On                 ; On                 ;
+; Synthesis Seed                                                             ; 1                  ; 1                  ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 8           ;
+; Maximum allowed            ; 8           ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 8           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processors 2-8         ; < 0.1%      ;
++----------------------------+-------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                                                                                ;
++--------------------------------------------------------------------+-----------------+------------------------------------+-------------------------------------------------------------------------------------------------------------+-------------+
+; File Name with User-Entered Path                                   ; Used in Netlist ; File Type                          ; File Name with Absolute Path                                                                                ; Library     ;
++--------------------------------------------------------------------+-----------------+------------------------------------+-------------------------------------------------------------------------------------------------------------+-------------+
+; DE2_115/DE2_115.sv                                                 ; yes             ; User SystemVerilog HDL File        ; C:/Users/user/Desktop/dclab_hw/final/IMU/DE2_115/DE2_115.sv                                                 ;             ;
+; src/IMU_ctrl.sv                                                    ; yes             ; User SystemVerilog HDL File        ; C:/Users/user/Desktop/dclab_hw/final/IMU/src/IMU_ctrl.sv                                                    ;             ;
+; src/I2C_master.sv                                                  ; yes             ; User SystemVerilog HDL File        ; C:/Users/user/Desktop/dclab_hw/final/IMU/src/I2C_master.sv                                                  ;             ;
+; sld_signaltap.vhd                                                  ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/sld_signaltap.vhd                                            ;             ;
+; sld_signaltap_impl.vhd                                             ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_signaltap_impl.vhd                                       ;             ;
+; sld_ela_control.vhd                                                ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_ela_control.vhd                                          ;             ;
+; lpm_shiftreg.tdf                                                   ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_shiftreg.tdf                                             ;             ;
+; lpm_constant.inc                                                   ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_constant.inc                                             ;             ;
+; dffeea.inc                                                         ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/dffeea.inc                                                   ;             ;
+; aglobal150.inc                                                     ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/aglobal150.inc                                               ;             ;
+; sld_mbpmg.vhd                                                      ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_mbpmg.vhd                                                ;             ;
+; sld_ela_trigger_flow_mgr.vhd                                       ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_ela_trigger_flow_mgr.vhd                                 ;             ;
+; sld_buffer_manager.vhd                                             ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_buffer_manager.vhd                                       ;             ;
+; altsyncram.tdf                                                     ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/altsyncram.tdf                                               ;             ;
+; stratix_ram_block.inc                                              ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/stratix_ram_block.inc                                        ;             ;
+; lpm_mux.inc                                                        ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_mux.inc                                                  ;             ;
+; lpm_decode.inc                                                     ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_decode.inc                                               ;             ;
+; a_rdenreg.inc                                                      ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/a_rdenreg.inc                                                ;             ;
+; altrom.inc                                                         ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/altrom.inc                                                   ;             ;
+; altram.inc                                                         ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/altram.inc                                                   ;             ;
+; altdpram.inc                                                       ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/altdpram.inc                                                 ;             ;
+; db/altsyncram_8s14.tdf                                             ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/altsyncram_8s14.tdf                                             ;             ;
+; db/decode_rsa.tdf                                                  ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/decode_rsa.tdf                                                  ;             ;
+; db/mux_rob.tdf                                                     ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/mux_rob.tdf                                                     ;             ;
+; altdpram.tdf                                                       ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/altdpram.tdf                                                 ;             ;
+; memmodes.inc                                                       ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/others/maxplus2/memmodes.inc                                               ;             ;
+; a_hdffe.inc                                                        ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/a_hdffe.inc                                                  ;             ;
+; alt_le_rden_reg.inc                                                ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/alt_le_rden_reg.inc                                          ;             ;
+; altsyncram.inc                                                     ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/altsyncram.inc                                               ;             ;
+; lpm_mux.tdf                                                        ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_mux.tdf                                                  ;             ;
+; muxlut.inc                                                         ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/muxlut.inc                                                   ;             ;
+; bypassff.inc                                                       ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/bypassff.inc                                                 ;             ;
+; altshift.inc                                                       ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/altshift.inc                                                 ;             ;
+; db/mux_ssc.tdf                                                     ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/mux_ssc.tdf                                                     ;             ;
+; lpm_decode.tdf                                                     ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_decode.tdf                                               ;             ;
+; declut.inc                                                         ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/declut.inc                                                   ;             ;
+; lpm_compare.inc                                                    ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_compare.inc                                              ;             ;
+; db/decode_dvf.tdf                                                  ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/decode_dvf.tdf                                                  ;             ;
+; lpm_counter.tdf                                                    ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_counter.tdf                                              ;             ;
+; lpm_add_sub.inc                                                    ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_add_sub.inc                                              ;             ;
+; cmpconst.inc                                                       ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/cmpconst.inc                                                 ;             ;
+; lpm_counter.inc                                                    ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_counter.inc                                              ;             ;
+; alt_counter_stratix.inc                                            ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/alt_counter_stratix.inc                                      ;             ;
+; db/cntr_ngi.tdf                                                    ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/cntr_ngi.tdf                                                    ;             ;
+; db/cmpr_sgc.tdf                                                    ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/cmpr_sgc.tdf                                                    ;             ;
+; db/cntr_gbj.tdf                                                    ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/cntr_gbj.tdf                                                    ;             ;
+; db/cntr_ggi.tdf                                                    ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/cntr_ggi.tdf                                                    ;             ;
+; db/cntr_23j.tdf                                                    ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/cntr_23j.tdf                                                    ;             ;
+; db/cmpr_ngc.tdf                                                    ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/cmpr_ngc.tdf                                                    ;             ;
+; sld_rom_sr.vhd                                                     ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_rom_sr.vhd                                               ;             ;
+; sld_jtag_endpoint_adapter.vhd                                      ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_jtag_endpoint_adapter.vhd                                ;             ;
+; sld_jtag_endpoint_adapter_impl.sv                                  ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_jtag_endpoint_adapter_impl.sv                            ;             ;
+; sld_hub.vhd                                                        ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_hub.vhd                                                  ; altera_sld  ;
+; db/ip/sld462777f9/alt_sld_fab.v                                    ; yes             ; Encrypted Altera IP File           ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/ip/sld462777f9/alt_sld_fab.v                                    ; alt_sld_fab ;
+; db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab.v             ; yes             ; Encrypted Altera IP File           ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab.v             ; alt_sld_fab ;
+; db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_ident.sv      ; yes             ; Auto-Found SystemVerilog HDL File  ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_ident.sv      ; alt_sld_fab ;
+; db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_presplit.sv   ; yes             ; Encrypted Altera IP File           ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_presplit.sv   ; alt_sld_fab ;
+; db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_sldfabric.vhd ; yes             ; Encrypted Altera IP File           ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_sldfabric.vhd ; alt_sld_fab ;
+; db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_splitter.sv   ; yes             ; Encrypted Altera IP File           ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_splitter.sv   ; alt_sld_fab ;
+; sld_jtag_hub.vhd                                                   ; yes             ; Encrypted Megafunction             ; c:/altera/15.0/quartus/libraries/megafunctions/sld_jtag_hub.vhd                                             ;             ;
+; lpm_divide.tdf                                                     ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_divide.tdf                                               ;             ;
+; abs_divider.inc                                                    ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/abs_divider.inc                                              ;             ;
+; sign_div_unsign.inc                                                ; yes             ; Megafunction                       ; c:/altera/15.0/quartus/libraries/megafunctions/sign_div_unsign.inc                                          ;             ;
+; db/lpm_divide_icm.tdf                                              ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/lpm_divide_icm.tdf                                              ;             ;
+; db/sign_div_unsign_7nh.tdf                                         ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/sign_div_unsign_7nh.tdf                                         ;             ;
+; db/alt_u_div_2af.tdf                                               ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/alt_u_div_2af.tdf                                               ;             ;
+; db/add_sub_7pc.tdf                                                 ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/add_sub_7pc.tdf                                                 ;             ;
+; db/add_sub_8pc.tdf                                                 ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/add_sub_8pc.tdf                                                 ;             ;
+; db/lpm_divide_2bm.tdf                                              ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/lpm_divide_2bm.tdf                                              ;             ;
+; db/sign_div_unsign_nlh.tdf                                         ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/sign_div_unsign_nlh.tdf                                         ;             ;
+; db/alt_u_div_27f.tdf                                               ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/alt_u_div_27f.tdf                                               ;             ;
+; db/lpm_divide_l9m.tdf                                              ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/lpm_divide_l9m.tdf                                              ;             ;
+; db/sign_div_unsign_akh.tdf                                         ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/sign_div_unsign_akh.tdf                                         ;             ;
+; db/alt_u_div_84f.tdf                                               ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/alt_u_div_84f.tdf                                               ;             ;
+; db/lpm_divide_ihm.tdf                                              ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/lpm_divide_ihm.tdf                                              ;             ;
+; db/lpm_divide_vim.tdf                                              ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/lpm_divide_vim.tdf                                              ;             ;
+; db/lpm_divide_fkm.tdf                                              ; yes             ; Auto-Generated Megafunction        ; C:/Users/user/Desktop/dclab_hw/final/IMU/db/lpm_divide_fkm.tdf                                              ;             ;
++--------------------------------------------------------------------+-----------------+------------------------------------+-------------------------------------------------------------------------------------------------------------+-------------+
+
+
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis IP Cores Summary                                                                                                                                                                                                                                                   ;
++--------+--------------+---------+--------------+--------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+
+; Vendor ; IP Core Name ; Version ; Release Date ; License Type ; Entity Instance                                                                                                                                                                                       ; IP Include File ;
++--------+--------------+---------+--------------+--------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+
+; Altera ; Signal Tap   ; N/A     ; N/A          ; Licensed     ; |DE2_115|sld_hub:auto_hub|alt_sld_fab:\instrumentation_fabric_with_node_gen:fabric_gen_new_way:instrumentation_fabric                                                                                 ;                 ;
+; Altera ; Signal Tap   ; N/A     ; N/A          ; Licensed     ; |DE2_115|sld_hub:auto_hub|alt_sld_fab:\instrumentation_fabric_with_node_gen:fabric_gen_new_way:instrumentation_fabric|alt_sld_fab_alt_sld_fab:alt_sld_fab                                             ;                 ;
+; Altera ; Signal Tap   ; N/A     ; N/A          ; Licensed     ; |DE2_115|sld_hub:auto_hub|alt_sld_fab:\instrumentation_fabric_with_node_gen:fabric_gen_new_way:instrumentation_fabric|alt_sld_fab_alt_sld_fab:alt_sld_fab|alt_sld_fab_alt_sld_fab_presplit:presplit   ;                 ;
+; Altera ; Signal Tap   ; N/A     ; N/A          ; Licensed     ; |DE2_115|sld_hub:auto_hub|alt_sld_fab:\instrumentation_fabric_with_node_gen:fabric_gen_new_way:instrumentation_fabric|alt_sld_fab_alt_sld_fab:alt_sld_fab|alt_sld_fab_alt_sld_fab_sldfabric:sldfabric ;                 ;
+; Altera ; Signal Tap   ; N/A     ; N/A          ; Licensed     ; |DE2_115|sld_hub:auto_hub|alt_sld_fab:\instrumentation_fabric_with_node_gen:fabric_gen_new_way:instrumentation_fabric|alt_sld_fab_alt_sld_fab:alt_sld_fab|alt_sld_fab_alt_sld_fab_splitter:splitter   ;                 ;
++--------+--------------+---------+--------------+--------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+-----------------+
+
+
++------------------------------------------------------------------------+
+; Partition Status Summary                                               ;
++--------------------------------+-------------+-------------------------+
+; Partition Name                 ; Synthesized ; Reason                  ;
++--------------------------------+-------------+-------------------------+
+; Top                            ; yes         ; Dependent files changed ;
+; sld_signaltap:auto_signaltap_0 ; no          ; No relevant changes     ;
+; sld_hub:auto_hub               ; no          ; No relevant changes     ;
++--------------------------------+-------------+-------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Dependent File Changes for Partition Top                                                                                                              ;
++--------------------------------+-----------------+-------------------+----------+----------------------------------+----------------------------------+
+; Hierarchy                      ; File Name       ; Relative Location ; Change   ; Old                              ; New                              ;
++--------------------------------+-----------------+-------------------+----------+----------------------------------+----------------------------------+
+; mpu6050_ctrl:mpu6050_ctrl_inst ; src/IMU_ctrl.sv ; Project Directory ; Checksum ; c92ae4d9f59ae71e24f72eb3fefe3141 ; 3fd0383e8718023fcc1ef34d97c3d19d ;
++--------------------------------+-----------------+-------------------+----------+----------------------------------+----------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Partition for Top-Level Resource Utilization by Entity                                                                                                                                                                                                                       ;
++----------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+----------------------------------------------------------------------------------------------------------+--------------+
+; Compilation Hierarchy Node             ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                      ; Library Name ;
++----------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+----------------------------------------------------------------------------------------------------------+--------------+
+; |DE2_115                               ; 864 (81)          ; 205 (10)     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115                                                                                                 ; work         ;
+;    |HexTo7Seg:hex0|                    ; 8 (8)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex0                                                                                  ; work         ;
+;    |HexTo7Seg:hex1|                    ; 8 (8)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex1                                                                                  ; work         ;
+;    |HexTo7Seg:hex2|                    ; 8 (8)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex2                                                                                  ; work         ;
+;    |HexTo7Seg:hex3|                    ; 8 (8)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex3                                                                                  ; work         ;
+;    |HexTo7Seg:hex4|                    ; 8 (8)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex4                                                                                  ; work         ;
+;    |HexTo7Seg:hex5|                    ; 8 (8)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex5                                                                                  ; work         ;
+;    |i2c_master:i2c_master_inst|        ; 121 (121)         ; 51 (51)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|i2c_master:i2c_master_inst                                                                      ; work         ;
+;    |lpm_divide:Div0|                   ; 126 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0                                                                                 ; work         ;
+;       |lpm_divide_fkm:auto_generated|  ; 126 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_fkm:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_7nh:divider| ; 126 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_fkm:auto_generated|sign_div_unsign_7nh:divider                       ; work         ;
+;             |alt_u_div_2af:divider|    ; 126 (126)         ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_fkm:auto_generated|sign_div_unsign_7nh:divider|alt_u_div_2af:divider ; work         ;
+;    |lpm_divide:Div1|                   ; 72 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1                                                                                 ; work         ;
+;       |lpm_divide_vim:auto_generated|  ; 72 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_vim:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_nlh:divider| ; 72 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_vim:auto_generated|sign_div_unsign_nlh:divider                       ; work         ;
+;             |alt_u_div_27f:divider|    ; 72 (72)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_vim:auto_generated|sign_div_unsign_nlh:divider|alt_u_div_27f:divider ; work         ;
+;    |lpm_divide:Div2|                   ; 46 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2                                                                                 ; work         ;
+;       |lpm_divide_ihm:auto_generated|  ; 46 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_ihm:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_akh:divider| ; 46 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_ihm:auto_generated|sign_div_unsign_akh:divider                       ; work         ;
+;             |alt_u_div_84f:divider|    ; 46 (46)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_ihm:auto_generated|sign_div_unsign_akh:divider|alt_u_div_84f:divider ; work         ;
+;    |lpm_divide:Mod0|                   ; 158 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0                                                                                 ; work         ;
+;       |lpm_divide_icm:auto_generated|  ; 158 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_icm:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_7nh:divider| ; 158 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_icm:auto_generated|sign_div_unsign_7nh:divider                       ; work         ;
+;             |alt_u_div_2af:divider|    ; 158 (158)         ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_icm:auto_generated|sign_div_unsign_7nh:divider|alt_u_div_2af:divider ; work         ;
+;    |lpm_divide:Mod1|                   ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1                                                                                 ; work         ;
+;       |lpm_divide_2bm:auto_generated|  ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_2bm:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_nlh:divider| ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_2bm:auto_generated|sign_div_unsign_nlh:divider                       ; work         ;
+;             |alt_u_div_27f:divider|    ; 91 (91)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_2bm:auto_generated|sign_div_unsign_nlh:divider|alt_u_div_27f:divider ; work         ;
+;    |lpm_divide:Mod2|                   ; 51 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2                                                                                 ; work         ;
+;       |lpm_divide_l9m:auto_generated|  ; 51 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_l9m:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_akh:divider| ; 51 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_l9m:auto_generated|sign_div_unsign_akh:divider                       ; work         ;
+;             |alt_u_div_84f:divider|    ; 51 (51)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_l9m:auto_generated|sign_div_unsign_akh:divider|alt_u_div_84f:divider ; work         ;
+;    |mpu6050_ctrl:mpu6050_ctrl_inst|    ; 70 (70)           ; 144 (144)    ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|mpu6050_ctrl:mpu6050_ctrl_inst                                                                  ; work         ;
++----------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+----------------------------------------------------------------------------------------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
+Encoding Type:  One-Hot
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |DE2_115|mpu6050_ctrl:mpu6050_ctrl_inst|state                                                                                                                                              ;
++---------------------+----------------+---------------------+--------------------+---------------+-----------------+-----------------+-----------------+-----------------+-----------------+----------------+
+; Name                ; state.ST_ERROR ; state.ST_DONE_FRAME ; state.ST_READ_BYTE ; state.ST_IDLE ; state.ST_INIT_4 ; state.ST_INIT_3 ; state.ST_INIT_2 ; state.ST_INIT_1 ; state.ST_INIT_0 ; state.ST_RESET ;
++---------------------+----------------+---------------------+--------------------+---------------+-----------------+-----------------+-----------------+-----------------+-----------------+----------------+
+; state.ST_RESET      ; 0              ; 0                   ; 0                  ; 0             ; 0               ; 0               ; 0               ; 0               ; 0               ; 0              ;
+; state.ST_INIT_0     ; 0              ; 0                   ; 0                  ; 0             ; 0               ; 0               ; 0               ; 0               ; 1               ; 1              ;
+; state.ST_INIT_1     ; 0              ; 0                   ; 0                  ; 0             ; 0               ; 0               ; 0               ; 1               ; 0               ; 1              ;
+; state.ST_INIT_2     ; 0              ; 0                   ; 0                  ; 0             ; 0               ; 0               ; 1               ; 0               ; 0               ; 1              ;
+; state.ST_INIT_3     ; 0              ; 0                   ; 0                  ; 0             ; 0               ; 1               ; 0               ; 0               ; 0               ; 1              ;
+; state.ST_INIT_4     ; 0              ; 0                   ; 0                  ; 0             ; 1               ; 0               ; 0               ; 0               ; 0               ; 1              ;
+; state.ST_IDLE       ; 0              ; 0                   ; 0                  ; 1             ; 0               ; 0               ; 0               ; 0               ; 0               ; 1              ;
+; state.ST_READ_BYTE  ; 0              ; 0                   ; 1                  ; 0             ; 0               ; 0               ; 0               ; 0               ; 0               ; 1              ;
+; state.ST_DONE_FRAME ; 0              ; 1                   ; 0                  ; 0             ; 0               ; 0               ; 0               ; 0               ; 0               ; 1              ;
+; state.ST_ERROR      ; 1              ; 0                   ; 0                  ; 0             ; 0               ; 0               ; 0               ; 0               ; 0               ; 1              ;
++---------------------+----------------+---------------------+--------------------+---------------+-----------------+-----------------+-----------------+-----------------+-----------------+----------------+
+
+
+Encoding Type:  One-Hot
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |DE2_115|i2c_master:i2c_master_inst|state                                                                                                                                                                                                                                             ;
++---------------------+---------------+--------------------+--------------------+--------------------+---------------------+--------------------+---------------------+------------------+------------------+-------------------+------------------+-------------------+----------------+---------------+
+; Name                ; state.ST_STOP ; state.ST_READ_NACK ; state.ST_READ_DATA ; state.ST_WRITE_ACK ; state.ST_WRITE_DATA ; state.ST_DEV_ACK_R ; state.ST_DEV_ADDR_R ; state.ST_RESTART ; state.ST_REG_ACK ; state.ST_REG_ADDR ; state.ST_DEV_ACK ; state.ST_DEV_ADDR ; state.ST_START ; state.ST_IDLE ;
++---------------------+---------------+--------------------+--------------------+--------------------+---------------------+--------------------+---------------------+------------------+------------------+-------------------+------------------+-------------------+----------------+---------------+
+; state.ST_IDLE       ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 0             ;
+; state.ST_START      ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 1              ; 1             ;
+; state.ST_DEV_ADDR   ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 1                 ; 0              ; 1             ;
+; state.ST_DEV_ACK    ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 1                ; 0                 ; 0              ; 1             ;
+; state.ST_REG_ADDR   ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 1                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_REG_ACK    ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 1                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_RESTART    ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 1                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_DEV_ADDR_R ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 1                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_DEV_ACK_R  ; 0             ; 0                  ; 0                  ; 0                  ; 0                   ; 1                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_WRITE_DATA ; 0             ; 0                  ; 0                  ; 0                  ; 1                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_WRITE_ACK  ; 0             ; 0                  ; 0                  ; 1                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_READ_DATA  ; 0             ; 0                  ; 1                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_READ_NACK  ; 0             ; 1                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
+; state.ST_STOP       ; 1             ; 0                  ; 0                  ; 0                  ; 0                   ; 0                  ; 0                   ; 0                ; 0                ; 0                 ; 0                ; 0                 ; 0              ; 1             ;
++---------------------+---------------+--------------------+--------------------+--------------------+---------------------+--------------------+---------------------+------------------+------------------+-------------------+------------------+-------------------+----------------+---------------+
+
+
++-------------------------------------------------------------+
+; Registers Removed During Synthesis                          ;
++----------------------------------------+--------------------+
+; Register name                          ; Reason for Removal ;
++----------------------------------------+--------------------+
+; mpu6050_ctrl:mpu6050_ctrl_inst|state~4 ; Lost fanout        ;
+; mpu6050_ctrl:mpu6050_ctrl_inst|state~5 ; Lost fanout        ;
+; mpu6050_ctrl:mpu6050_ctrl_inst|state~6 ; Lost fanout        ;
+; mpu6050_ctrl:mpu6050_ctrl_inst|state~7 ; Lost fanout        ;
+; mpu6050_ctrl:mpu6050_ctrl_inst|state~8 ; Lost fanout        ;
+; i2c_master:i2c_master_inst|state~18    ; Lost fanout        ;
+; i2c_master:i2c_master_inst|state~19    ; Lost fanout        ;
+; i2c_master:i2c_master_inst|state~20    ; Lost fanout        ;
+; i2c_master:i2c_master_inst|state~21    ; Lost fanout        ;
+; Total Number of Removed Registers = 9  ;                    ;
++----------------------------------------+--------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                          ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------------------+
+; 3:1                ; 7 bits    ; 14 LEs        ; 7 LEs                ; 7 LEs                  ; Yes        ; |DE2_115|i2c_master:i2c_master_inst|clk_cnt[0]            ;
+; 5:1                ; 8 bits    ; 24 LEs        ; 8 LEs                ; 16 LEs                 ; Yes        ; |DE2_115|i2c_master:i2c_master_inst|rd_data_reg[5]        ;
+; 7:1                ; 4 bits    ; 16 LEs        ; 4 LEs                ; 12 LEs                 ; Yes        ; |DE2_115|mpu6050_ctrl:mpu6050_ctrl_inst|byte_index_reg[2] ;
+; 10:1               ; 4 bits    ; 24 LEs        ; 8 LEs                ; 16 LEs                 ; Yes        ; |DE2_115|i2c_master:i2c_master_inst|shifter[6]            ;
+; 10:1               ; 2 bits    ; 12 LEs        ; 4 LEs                ; 8 LEs                  ; Yes        ; |DE2_115|i2c_master:i2c_master_inst|shifter[2]            ;
+; 11:1               ; 3 bits    ; 21 LEs        ; 3 LEs                ; 18 LEs                 ; Yes        ; |DE2_115|i2c_master:i2c_master_inst|bit_cnt[1]            ;
+; 4:1                ; 16 bits   ; 32 LEs        ; 32 LEs               ; 0 LEs                  ; No         ; |DE2_115|Mux3                                             ;
+; 3:1                ; 4 bits    ; 8 LEs         ; 8 LEs                ; 0 LEs                  ; No         ; |DE2_115|temp_val                                         ;
+; 8:1                ; 2 bits    ; 10 LEs        ; 6 LEs                ; 4 LEs                  ; No         ; |DE2_115|mpu6050_ctrl:mpu6050_ctrl_inst|Selector15        ;
+; 12:1               ; 2 bits    ; 16 LEs        ; 4 LEs                ; 12 LEs                 ; No         ; |DE2_115|i2c_master:i2c_master_inst|state                 ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-----------------------------------------------------------+
+
+
++-------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: i2c_master:i2c_master_inst ;
++----------------+----------+---------------------------------------------+
+; Parameter Name ; Value    ; Type                                        ;
++----------------+----------+---------------------------------------------+
+; CLK_HZ         ; 50000000 ; Signed Integer                              ;
+; I2C_HZ         ; 100000   ; Signed Integer                              ;
++----------------+----------+---------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: mpu6050_ctrl:mpu6050_ctrl_inst ;
++----------------+----------+-------------------------------------------------+
+; Parameter Name ; Value    ; Type                                            ;
++----------------+----------+-------------------------------------------------+
+; CLK_HZ         ; 50000000 ; Signed Integer                                  ;
+; I2C_ADDR       ; 1101000  ; Unsigned Binary                                 ;
++----------------+----------+-------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod0 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 16             ; Untyped                ;
+; LPM_WIDTHD             ; 10             ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_icm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod1 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 10             ; Untyped                ;
+; LPM_WIDTHD             ; 7              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_2bm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod2 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 7              ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_l9m ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div2 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 7              ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_ihm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div1 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 10             ; Untyped                ;
+; LPM_WIDTHD             ; 7              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_vim ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div0 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 16             ; Untyped                ;
+; LPM_WIDTHD             ; 10             ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_fkm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------------------+
+; Partition Dependent Files                                                           ;
++--------------------+-------------------+---------+----------------------------------+
+; File               ; Location          ; Library ; Checksum                         ;
++--------------------+-------------------+---------+----------------------------------+
+; DE2_115/DE2_115.sv ; Project Directory ; work    ; 001edaff4866f3688b25e6592f44e94a ;
+; src/I2C_master.sv  ; Project Directory ; work    ; 976efe8519eef13304d7a39d6a5c9c6a ;
+; src/IMU_ctrl.sv    ; Project Directory ; work    ; 3fd0383e8718023fcc1ef34d97c3d19d ;
++--------------------+-------------------+---------+----------------------------------+
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; boundary_port         ; 522                         ;
+; cycloneiii_ff         ; 205                         ;
+;     CLR               ; 54                          ;
+;     CLR SCLR          ; 1                           ;
+;     ENA               ; 64                          ;
+;     ENA CLR           ; 80                          ;
+;     ENA CLR SCLR      ; 4                           ;
+;     ENA CLR SLD       ; 2                           ;
+; cycloneiii_io_obuf    ; 141                         ;
+; cycloneiii_lcell_comb ; 868                         ;
+;     arith             ; 192                         ;
+;         1 data inputs ; 2                           ;
+;         2 data inputs ; 50                          ;
+;         3 data inputs ; 140                         ;
+;     normal            ; 676                         ;
+;         0 data inputs ; 28                          ;
+;         1 data inputs ; 16                          ;
+;         2 data inputs ; 253                         ;
+;         3 data inputs ; 43                          ;
+;         4 data inputs ; 336                         ;
+;                       ;                             ;
+; Max LUT depth         ; 44.60                       ;
+; Average LUT depth     ; 24.09                       ;
++-----------------------+-----------------------------+
+
+
++-------------------------------------------------------+
+; Source assignments for sld_signaltap:auto_signaltap_0 ;
++-----------------+-------+------+----------------------+
+; Assignment      ; Value ; From ; To                   ;
++-----------------+-------+------+----------------------+
+; MESSAGE_DISABLE ; 13410 ; -    ; -                    ;
++-----------------+-------+------+----------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: sld_signaltap:auto_signaltap_0                                                                                                                                                       ;
++-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+
+; Parameter Name                                  ; Value                                                                                                                                                              ; Type           ;
++-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+
+; lpm_type                                        ; sld_signaltap                                                                                                                                                      ; String         ;
+; sld_node_info                                   ; 805334528                                                                                                                                                          ; Untyped        ;
+; SLD_SECTION_ID                                  ; hdl_signaltap_0                                                                                                                                                    ; String         ;
+; SLD_IP_VERSION                                  ; 6                                                                                                                                                                  ; Signed Integer ;
+; SLD_IP_MINOR_VERSION                            ; 0                                                                                                                                                                  ; Signed Integer ;
+; SLD_COMMON_IP_VERSION                           ; 0                                                                                                                                                                  ; Signed Integer ;
+; sld_data_bits                                   ; 44                                                                                                                                                                 ; Untyped        ;
+; sld_trigger_bits                                ; 44                                                                                                                                                                 ; Untyped        ;
+; SLD_NODE_CRC_BITS                               ; 32                                                                                                                                                                 ; Signed Integer ;
+; SLD_NODE_CRC_HIWORD                             ; 41394                                                                                                                                                              ; Signed Integer ;
+; SLD_NODE_CRC_LOWORD                             ; 50132                                                                                                                                                              ; Signed Integer ;
+; sld_incremental_routing                         ; 1                                                                                                                                                                  ; Untyped        ;
+; sld_sample_depth                                ; 65536                                                                                                                                                              ; Untyped        ;
+; sld_segment_size                                ; 65536                                                                                                                                                              ; Untyped        ;
+; sld_ram_block_type                              ; M9K                                                                                                                                                                ; Untyped        ;
+; sld_state_bits                                  ; 11                                                                                                                                                                 ; Untyped        ;
+; sld_buffer_full_stop                            ; 1                                                                                                                                                                  ; Untyped        ;
+; SLD_MEM_ADDRESS_BITS                            ; 7                                                                                                                                                                  ; Signed Integer ;
+; SLD_DATA_BIT_CNTR_BITS                          ; 4                                                                                                                                                                  ; Signed Integer ;
+; sld_trigger_level                               ; 1                                                                                                                                                                  ; Untyped        ;
+; sld_trigger_in_enabled                          ; 0                                                                                                                                                                  ; Untyped        ;
+; SLD_HPS_TRIGGER_IN_ENABLED                      ; 0                                                                                                                                                                  ; Signed Integer ;
+; SLD_HPS_TRIGGER_OUT_ENABLED                     ; 0                                                                                                                                                                  ; Signed Integer ;
+; SLD_HPS_EVENT_ENABLED                           ; 0                                                                                                                                                                  ; Signed Integer ;
+; SLD_HPS_EVENT_ID                                ; 0                                                                                                                                                                  ; Signed Integer ;
+; sld_advanced_trigger_entity                     ; basic,1,                                                                                                                                                           ; Untyped        ;
+; sld_trigger_level_pipeline                      ; 1                                                                                                                                                                  ; Untyped        ;
+; sld_enable_advanced_trigger                     ; 0                                                                                                                                                                  ; Untyped        ;
+; SLD_ADVANCED_TRIGGER_1                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_2                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_3                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_4                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_5                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_6                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_7                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_8                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_9                          ; NONE                                                                                                                                                               ; String         ;
+; SLD_ADVANCED_TRIGGER_10                         ; NONE                                                                                                                                                               ; String         ;
+; sld_inversion_mask_length                       ; 162                                                                                                                                                                ; Untyped        ;
+; sld_inversion_mask                              ; 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000 ; Untyped        ;
+; sld_power_up_trigger                            ; 0                                                                                                                                                                  ; Untyped        ;
+; SLD_STATE_FLOW_MGR_ENTITY                       ; state_flow_mgr_entity.vhd                                                                                                                                          ; String         ;
+; sld_state_flow_use_generated                    ; 0                                                                                                                                                                  ; Untyped        ;
+; sld_current_resource_width                      ; 1                                                                                                                                                                  ; Untyped        ;
+; sld_attribute_mem_mode                          ; OFF                                                                                                                                                                ; Untyped        ;
+; sld_storage_qualifier_bits                      ; 44                                                                                                                                                                 ; Untyped        ;
+; SLD_STORAGE_QUALIFIER_GAP_RECORD                ; 0                                                                                                                                                                  ; Signed Integer ;
+; SLD_STORAGE_QUALIFIER_MODE                      ; OFF                                                                                                                                                                ; String         ;
+; SLD_STORAGE_QUALIFIER_ENABLE_ADVANCED_CONDITION ; 0                                                                                                                                                                  ; Signed Integer ;
+; sld_storage_qualifier_inversion_mask_length     ; 0                                                                                                                                                                  ; Untyped        ;
+; SLD_STORAGE_QUALIFIER_ADVANCED_CONDITION_ENTITY ; basic                                                                                                                                                              ; String         ;
+; SLD_STORAGE_QUALIFIER_PIPELINE                  ; 0                                                                                                                                                                  ; Signed Integer ;
+; SLD_CREATE_MONITOR_INTERFACE                    ; 0                                                                                                                                                                  ; Signed Integer ;
+; SLD_USE_JTAG_SIGNAL_ADAPTER                     ; 1                                                                                                                                                                  ; Signed Integer ;
++-------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------+
+; Port Connectivity Checks: "HexTo7Seg:hex7"    ;
++-------------+-------+----------+--------------+
+; Port        ; Type  ; Severity ; Details      ;
++-------------+-------+----------+--------------+
+; i_hex[3..1] ; Input ; Info     ; Stuck at GND ;
++-------------+-------+----------+--------------+
+
+
++-----------------------------------------------+
+; Port Connectivity Checks: "HexTo7Seg:hex6"    ;
++-------------+-------+----------+--------------+
+; Port        ; Type  ; Severity ; Details      ;
++-------------+-------+----------+--------------+
+; i_hex[3..1] ; Input ; Info     ; Stuck at GND ;
++-------------+-------+----------+--------------+
+
+
++------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "mpu6050_ctrl:mpu6050_ctrl_inst"                                                             ;
++--------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port         ; Type   ; Severity ; Details                                                                             ;
++--------------+--------+----------+-------------------------------------------------------------------------------------+
+; v_x          ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; v_y          ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; v_z          ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; fsm_state[4] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++--------------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; SignalTap II Logic Analyzer Settings                                                                                                                                                                                                                                    ;
++----------------+------------------+---------------------+------------------+--------------+----------+------------------------+----------------------+--------------------+-----------------------------+-----------------+------------------+--------------------------+
+; Instance Index ; Instance Name    ; Trigger Input Width ; Data Input Width ; Sample Depth ; Segments ; Storage Qualifier Type ; Trigger Flow Control ; Trigger Conditions ; Advanced Trigger Conditions ; Trigger In Used ; Trigger Out Used ; Power-Up Trigger Enabled ;
++----------------+------------------+---------------------+------------------+--------------+----------+------------------------+----------------------+--------------------+-----------------------------+-----------------+------------------+--------------------------+
+; 0              ; auto_signaltap_0 ; 44                  ; 44               ; 65536        ; 1        ; continuous             ; sequential           ; 1                  ; 0                           ; no              ; no               ; no                       ;
++----------------+------------------+---------------------+------------------+--------------+----------+------------------------+----------------------+--------------------+-----------------------------+-----------------+------------------+--------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:01     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus II 64-Bit Analysis & Synthesis
+    Info: Version 15.0.0 Build 145 04/22/2015 SJ Full Version
+    Info: Processing started: Fri Dec 19 02:41:48 2025
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off IMU -c DE2_115
+Info (20030): Parallel compilation is enabled and will use 8 of the 8 processors detected
+Info (12021): Found 2 design units, including 2 entities, in source file de2_115/de2_115.sv
+    Info (12023): Found entity 1: DE2_115
+    Info (12023): Found entity 2: HexTo7Seg
+Info (12021): Found 2 design units, including 2 entities, in source file src/sevenhexdecoder.sv
+    Info (12023): Found entity 1: SevenHexDecoder
+    Info (12023): Found entity 2: SevenDec13
+Info (12021): Found 1 design units, including 1 entities, in source file src/imu_ctrl.sv
+    Info (12023): Found entity 1: mpu6050_ctrl
+Info (12021): Found 1 design units, including 1 entities, in source file src/i2c_master.sv
+    Info (12023): Found entity 1: i2c_master
+Info (12021): Found 1 design units, including 1 entities, in source file src/debounce.sv
+    Info (12023): Found entity 1: Debounce
+Info (12127): Elaborating entity "DE2_115" for the top level hierarchy
+Warning (10036): Verilog HDL or VHDL warning at DE2_115.sv(280): object "sign_digit" assigned a value but never read
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(250): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(255): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(260): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(294): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(309): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(310): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(311): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(312): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(313): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(314): truncated value with size 32 to match size of target (4)
+Warning (10034): Output port "AUD_DACDAT" at DE2_115.sv(49) has no driver
+Warning (10034): Output port "AUD_XCK" at DE2_115.sv(51) has no driver
+Info (12128): Elaborating entity "i2c_master" for hierarchy "i2c_master:i2c_master_inst"
+Warning (10230): Verilog HDL assignment warning at I2C_master.sv(46): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at I2C_master.sv(53): truncated value with size 32 to match size of target (7)
+Warning (10230): Verilog HDL assignment warning at I2C_master.sv(202): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at I2C_master.sv(248): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at I2C_master.sv(327): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at I2C_master.sv(371): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at I2C_master.sv(412): truncated value with size 32 to match size of target (3)
+Info (12128): Elaborating entity "mpu6050_ctrl" for hierarchy "mpu6050_ctrl:mpu6050_ctrl_inst"
+Warning (10230): Verilog HDL assignment warning at IMU_ctrl.sv(65): truncated value with size 32 to match size of target (16)
+Info (10264): Verilog HDL Case Statement information at IMU_ctrl.sv(109): all case item expressions in this case statement are onehot
+Warning (10230): Verilog HDL assignment warning at IMU_ctrl.sv(279): truncated value with size 32 to match size of target (4)
+Info (12128): Elaborating entity "HexTo7Seg" for hierarchy "HexTo7Seg:hex0"
+Info (12021): Found 1 design units, including 1 entities, in source file db/altsyncram_8s14.tdf
+    Info (12023): Found entity 1: altsyncram_8s14
+Info (12021): Found 1 design units, including 1 entities, in source file db/decode_rsa.tdf
+    Info (12023): Found entity 1: decode_rsa
+Info (12021): Found 1 design units, including 1 entities, in source file db/mux_rob.tdf
+    Info (12023): Found entity 1: mux_rob
+Info (12021): Found 1 design units, including 1 entities, in source file db/mux_ssc.tdf
+    Info (12023): Found entity 1: mux_ssc
+Info (12021): Found 1 design units, including 1 entities, in source file db/decode_dvf.tdf
+    Info (12023): Found entity 1: decode_dvf
+Info (12021): Found 1 design units, including 1 entities, in source file db/cntr_ngi.tdf
+    Info (12023): Found entity 1: cntr_ngi
+Info (12021): Found 1 design units, including 1 entities, in source file db/cmpr_sgc.tdf
+    Info (12023): Found entity 1: cmpr_sgc
+Info (12021): Found 1 design units, including 1 entities, in source file db/cntr_gbj.tdf
+    Info (12023): Found entity 1: cntr_gbj
+Info (12021): Found 1 design units, including 1 entities, in source file db/cntr_ggi.tdf
+    Info (12023): Found entity 1: cntr_ggi
+Info (12021): Found 1 design units, including 1 entities, in source file db/cntr_23j.tdf
+    Info (12023): Found entity 1: cntr_23j
+Info (12021): Found 1 design units, including 1 entities, in source file db/cmpr_ngc.tdf
+    Info (12023): Found entity 1: cmpr_ngc
+Info (12033): Analysis and Synthesis generated SignalTap II or debug node instance "auto_signaltap_0"
+Info (11170): Start IP generation for the debug fabric within sld_hub.
+Info (11172): 2025.12.19.02:42:02 Progress: Loading sld462777f9/alt_sld_fab_wrapper_hw.tcl
+Info (11172): Alt_sld_fab.alt_sld_fab: SLD fabric agents which did not specify prefer_host were connected to JTAG
+Info (11172): Alt_sld_fab: Generating alt_sld_fab "alt_sld_fab" for QUARTUS_SYNTH
+Info (11172): Alt_sld_fab: "alt_sld_fab" instantiated alt_sld_fab "alt_sld_fab"
+Info (11172): Presplit: "alt_sld_fab" instantiated altera_super_splitter "presplit"
+Info (11172): Splitter: "alt_sld_fab" instantiated altera_sld_splitter "splitter"
+Info (11172): Sldfabric: "alt_sld_fab" instantiated altera_sld_jtag_hub "sldfabric"
+Info (11172): Ident: "alt_sld_fab" instantiated altera_connection_identification_hub "ident"
+Info (11172): Alt_sld_fab: Done "alt_sld_fab" with 6 modules, 6 files
+Info (11171): Finished IP generation for the debug fabric within sld_hub.
+Info (12021): Found 1 design units, including 1 entities, in source file db/ip/sld462777f9/alt_sld_fab.v
+    Info (12023): Found entity 1: alt_sld_fab
+Info (12021): Found 1 design units, including 1 entities, in source file db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab.v
+    Info (12023): Found entity 1: alt_sld_fab_alt_sld_fab
+Info (12021): Found 1 design units, including 1 entities, in source file db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_ident.sv
+    Info (12023): Found entity 1: alt_sld_fab_alt_sld_fab_ident
+Info (12021): Found 1 design units, including 1 entities, in source file db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_presplit.sv
+    Info (12023): Found entity 1: alt_sld_fab_alt_sld_fab_presplit
+Info (12021): Found 2 design units, including 1 entities, in source file db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_sldfabric.vhd
+    Info (12022): Found design unit 1: alt_sld_fab_alt_sld_fab_sldfabric-rtl
+    Info (12023): Found entity 1: alt_sld_fab_alt_sld_fab_sldfabric
+Info (12021): Found 1 design units, including 1 entities, in source file db/ip/sld462777f9/submodules/alt_sld_fab_alt_sld_fab_splitter.sv
+    Info (12023): Found entity 1: alt_sld_fab_alt_sld_fab_splitter
+Info (12205): 1 design partition requires Analysis and Synthesis
+    Info (12211): Partition "Top" requires synthesis because there were changes to its dependent source files
+Info (12208): 2 design partitions do not require synthesis
+    Info (12229): Partition "sld_signaltap:auto_signaltap_0" does not require synthesis because there were no relevant design changes
+    Info (12229): Partition "sld_hub:auto_hub" does not require synthesis because there were no relevant design changes
+Info (278001): Inferred 6 megafunctions from design logic
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod0"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod1"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod2"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div2"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div1"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div0"
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Mod0"
+Info (12133): Instantiated megafunction "lpm_divide:Mod0" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "16"
+    Info (12134): Parameter "LPM_WIDTHD" = "10"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_icm.tdf
+    Info (12023): Found entity 1: lpm_divide_icm
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_7nh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_7nh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_2af.tdf
+    Info (12023): Found entity 1: alt_u_div_2af
+Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_7pc.tdf
+    Info (12023): Found entity 1: add_sub_7pc
+Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_8pc.tdf
+    Info (12023): Found entity 1: add_sub_8pc
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Mod1"
+Info (12133): Instantiated megafunction "lpm_divide:Mod1" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "10"
+    Info (12134): Parameter "LPM_WIDTHD" = "7"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_2bm.tdf
+    Info (12023): Found entity 1: lpm_divide_2bm
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_nlh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_nlh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_27f.tdf
+    Info (12023): Found entity 1: alt_u_div_27f
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Mod2"
+Info (12133): Instantiated megafunction "lpm_divide:Mod2" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "7"
+    Info (12134): Parameter "LPM_WIDTHD" = "4"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_l9m.tdf
+    Info (12023): Found entity 1: lpm_divide_l9m
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_akh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_akh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_84f.tdf
+    Info (12023): Found entity 1: alt_u_div_84f
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div2"
+Info (12133): Instantiated megafunction "lpm_divide:Div2" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "7"
+    Info (12134): Parameter "LPM_WIDTHD" = "4"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_ihm.tdf
+    Info (12023): Found entity 1: lpm_divide_ihm
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div1"
+Info (12133): Instantiated megafunction "lpm_divide:Div1" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "10"
+    Info (12134): Parameter "LPM_WIDTHD" = "7"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_vim.tdf
+    Info (12023): Found entity 1: lpm_divide_vim
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div0"
+Info (12133): Instantiated megafunction "lpm_divide:Div0" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "16"
+    Info (12134): Parameter "LPM_WIDTHD" = "10"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_fkm.tdf
+    Info (12023): Found entity 1: lpm_divide_fkm
+Info (281020): Starting Logic Optimization and Technology Mapping for Top Partition
+Warning (13034): The following nodes have both tri-state and non-tri-state drivers
+    Warning (13035): Inserted always-enabled tri-state buffer between "GPIO[0]" and its non-tri-state driver.
+Warning (13039): The following bidirectional pins have no drivers
+    Warning (13040): bidirectional pin "PS2_CLK" has no driver
+    Warning (13040): bidirectional pin "PS2_DAT" has no driver
+    Warning (13040): bidirectional pin "PS2_CLK2" has no driver
+    Warning (13040): bidirectional pin "PS2_DAT2" has no driver
+    Warning (13040): bidirectional pin "SD_CMD" has no driver
+    Warning (13040): bidirectional pin "SD_DAT[0]" has no driver
+    Warning (13040): bidirectional pin "SD_DAT[1]" has no driver
+    Warning (13040): bidirectional pin "SD_DAT[2]" has no driver
+    Warning (13040): bidirectional pin "SD_DAT[3]" has no driver
+    Warning (13040): bidirectional pin "AUD_ADCLRCK" has no driver
+    Warning (13040): bidirectional pin "AUD_BCLK" has no driver
+    Warning (13040): bidirectional pin "AUD_DACLRCK" has no driver
+    Warning (13040): bidirectional pin "EEP_I2C_SDAT" has no driver
+    Warning (13040): bidirectional pin "I2C_SDAT" has no driver
+    Warning (13040): bidirectional pin "GPIO[1]" has no driver
+    Warning (13040): bidirectional pin "GPIO[3]" has no driver
+    Warning (13040): bidirectional pin "GPIO[4]" has no driver
+    Warning (13040): bidirectional pin "GPIO[5]" has no driver
+    Warning (13040): bidirectional pin "GPIO[6]" has no driver
+    Warning (13040): bidirectional pin "GPIO[7]" has no driver
+    Warning (13040): bidirectional pin "GPIO[8]" has no driver
+    Warning (13040): bidirectional pin "GPIO[9]" has no driver
+    Warning (13040): bidirectional pin "GPIO[10]" has no driver
+    Warning (13040): bidirectional pin "GPIO[11]" has no driver
+    Warning (13040): bidirectional pin "GPIO[12]" has no driver
+    Warning (13040): bidirectional pin "GPIO[13]" has no driver
+    Warning (13040): bidirectional pin "GPIO[14]" has no driver
+    Warning (13040): bidirectional pin "GPIO[15]" has no driver
+    Warning (13040): bidirectional pin "GPIO[16]" has no driver
+    Warning (13040): bidirectional pin "GPIO[17]" has no driver
+    Warning (13040): bidirectional pin "GPIO[18]" has no driver
+    Warning (13040): bidirectional pin "GPIO[19]" has no driver
+    Warning (13040): bidirectional pin "GPIO[20]" has no driver
+    Warning (13040): bidirectional pin "GPIO[21]" has no driver
+    Warning (13040): bidirectional pin "GPIO[22]" has no driver
+    Warning (13040): bidirectional pin "GPIO[23]" has no driver
+    Warning (13040): bidirectional pin "GPIO[24]" has no driver
+    Warning (13040): bidirectional pin "GPIO[25]" has no driver
+    Warning (13040): bidirectional pin "GPIO[26]" has no driver
+    Warning (13040): bidirectional pin "GPIO[27]" has no driver
+    Warning (13040): bidirectional pin "GPIO[28]" has no driver
+    Warning (13040): bidirectional pin "GPIO[29]" has no driver
+    Warning (13040): bidirectional pin "GPIO[30]" has no driver
+    Warning (13040): bidirectional pin "GPIO[31]" has no driver
+    Warning (13040): bidirectional pin "GPIO[32]" has no driver
+    Warning (13040): bidirectional pin "GPIO[33]" has no driver
+    Warning (13040): bidirectional pin "GPIO[34]" has no driver
+    Warning (13040): bidirectional pin "GPIO[35]" has no driver
+    Warning (13040): bidirectional pin "HSMC_D[0]" has no driver
+    Warning (13040): bidirectional pin "HSMC_D[1]" has no driver
+    Warning (13040): bidirectional pin "HSMC_D[2]" has no driver
+    Warning (13040): bidirectional pin "HSMC_D[3]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[0]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[1]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[2]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[3]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[4]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[5]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[6]" has no driver
+Info (13060): One or more bidirectional pins are fed by always enabled tri-state buffers
+    Info (13061): Fan-out of permanently enabled tri-state buffer feeding bidirectional pin "GPIO[0]" is moved to its source
+Info (13000): Registers with preset signals will power-up high
+Info (13003): DEV_CLRn pin will set, and not reset, register with preset signal due to NOT Gate Push-Back
+Warning (13009): TRI or OPNDRN buffers permanently enabled
+    Warning (13010): Node "GPIO[0]~synth"
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "SMA_CLKOUT" is stuck at GND
+    Warning (13410): Pin "LEDG[3]" is stuck at GND
+    Warning (13410): Pin "LEDG[4]" is stuck at GND
+    Warning (13410): Pin "LEDG[5]" is stuck at GND
+    Warning (13410): Pin "LEDG[6]" is stuck at GND
+    Warning (13410): Pin "LEDG[7]" is stuck at GND
+    Warning (13410): Pin "LEDG[8]" is stuck at GND
+    Warning (13410): Pin "LEDR[4]" is stuck at GND
+    Warning (13410): Pin "LEDR[5]" is stuck at GND
+    Warning (13410): Pin "LEDR[6]" is stuck at GND
+    Warning (13410): Pin "LEDR[7]" is stuck at GND
+    Warning (13410): Pin "LEDR[8]" is stuck at GND
+    Warning (13410): Pin "LEDR[9]" is stuck at GND
+    Warning (13410): Pin "LEDR[10]" is stuck at GND
+    Warning (13410): Pin "LEDR[11]" is stuck at GND
+    Warning (13410): Pin "LEDR[12]" is stuck at GND
+    Warning (13410): Pin "LEDR[13]" is stuck at GND
+    Warning (13410): Pin "LEDR[14]" is stuck at GND
+    Warning (13410): Pin "LEDR[15]" is stuck at GND
+    Warning (13410): Pin "LEDR[16]" is stuck at GND
+    Warning (13410): Pin "LEDR[17]" is stuck at GND
+    Warning (13410): Pin "HEX6[1]" is stuck at GND
+    Warning (13410): Pin "HEX6[2]" is stuck at GND
+    Warning (13410): Pin "HEX6[6]" is stuck at VCC
+    Warning (13410): Pin "HEX7[1]" is stuck at GND
+    Warning (13410): Pin "HEX7[2]" is stuck at GND
+    Warning (13410): Pin "HEX7[6]" is stuck at VCC
+    Warning (13410): Pin "LCD_BLON" is stuck at GND
+    Warning (13410): Pin "LCD_EN" is stuck at GND
+    Warning (13410): Pin "LCD_ON" is stuck at GND
+    Warning (13410): Pin "LCD_RS" is stuck at GND
+    Warning (13410): Pin "LCD_RW" is stuck at GND
+    Warning (13410): Pin "UART_CTS" is stuck at GND
+    Warning (13410): Pin "UART_TXD" is stuck at VCC
+    Warning (13410): Pin "SD_CLK" is stuck at GND
+    Warning (13410): Pin "VGA_B[0]" is stuck at GND
+    Warning (13410): Pin "VGA_B[1]" is stuck at GND
+    Warning (13410): Pin "VGA_B[2]" is stuck at GND
+    Warning (13410): Pin "VGA_B[3]" is stuck at GND
+    Warning (13410): Pin "VGA_B[4]" is stuck at GND
+    Warning (13410): Pin "VGA_B[5]" is stuck at GND
+    Warning (13410): Pin "VGA_B[6]" is stuck at GND
+    Warning (13410): Pin "VGA_B[7]" is stuck at GND
+    Warning (13410): Pin "VGA_BLANK_N" is stuck at GND
+    Warning (13410): Pin "VGA_CLK" is stuck at GND
+    Warning (13410): Pin "VGA_G[0]" is stuck at GND
+    Warning (13410): Pin "VGA_G[1]" is stuck at GND
+    Warning (13410): Pin "VGA_G[2]" is stuck at GND
+    Warning (13410): Pin "VGA_G[3]" is stuck at GND
+    Warning (13410): Pin "VGA_G[4]" is stuck at GND
+    Warning (13410): Pin "VGA_G[5]" is stuck at GND
+    Warning (13410): Pin "VGA_G[6]" is stuck at GND
+    Warning (13410): Pin "VGA_G[7]" is stuck at GND
+    Warning (13410): Pin "VGA_HS" is stuck at GND
+    Warning (13410): Pin "VGA_R[0]" is stuck at GND
+    Warning (13410): Pin "VGA_R[1]" is stuck at GND
+    Warning (13410): Pin "VGA_R[2]" is stuck at GND
+    Warning (13410): Pin "VGA_R[3]" is stuck at GND
+    Warning (13410): Pin "VGA_R[4]" is stuck at GND
+    Warning (13410): Pin "VGA_R[5]" is stuck at GND
+    Warning (13410): Pin "VGA_R[6]" is stuck at GND
+    Warning (13410): Pin "VGA_R[7]" is stuck at GND
+    Warning (13410): Pin "VGA_SYNC_N" is stuck at GND
+    Warning (13410): Pin "VGA_VS" is stuck at GND
+    Warning (13410): Pin "AUD_DACDAT" is stuck at GND
+    Warning (13410): Pin "AUD_XCK" is stuck at GND
+    Warning (13410): Pin "EEP_I2C_SCLK" is stuck at GND
+    Warning (13410): Pin "I2C_SCLK" is stuck at GND
+    Warning (13410): Pin "ENET0_GTX_CLK" is stuck at GND
+    Warning (13410): Pin "ENET0_MDC" is stuck at GND
+    Warning (13410): Pin "ENET0_RST_N" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_DATA[0]" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_DATA[1]" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_DATA[2]" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_DATA[3]" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_EN" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_ER" is stuck at GND
+    Warning (13410): Pin "ENET1_GTX_CLK" is stuck at GND
+    Warning (13410): Pin "ENET1_MDC" is stuck at GND
+    Warning (13410): Pin "ENET1_RST_N" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_DATA[0]" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_DATA[1]" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_DATA[2]" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_DATA[3]" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_EN" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_ER" is stuck at GND
+    Warning (13410): Pin "TD_RESET_N" is stuck at GND
+    Warning (13410): Pin "OTG_ADDR[0]" is stuck at GND
+    Warning (13410): Pin "OTG_ADDR[1]" is stuck at GND
+    Warning (13410): Pin "OTG_CS_N" is stuck at VCC
+    Warning (13410): Pin "OTG_WR_N" is stuck at VCC
+    Warning (13410): Pin "OTG_RD_N" is stuck at VCC
+    Warning (13410): Pin "OTG_RST_N" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[0]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[1]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[2]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[3]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[4]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[5]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[6]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[7]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[8]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[9]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[10]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[11]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[12]" is stuck at GND
+    Warning (13410): Pin "DRAM_BA[0]" is stuck at GND
+    Warning (13410): Pin "DRAM_BA[1]" is stuck at GND
+    Warning (13410): Pin "DRAM_CAS_N" is stuck at VCC
+    Warning (13410): Pin "DRAM_CKE" is stuck at GND
+    Warning (13410): Pin "DRAM_CLK" is stuck at GND
+    Warning (13410): Pin "DRAM_CS_N" is stuck at VCC
+    Warning (13410): Pin "DRAM_DQM[0]" is stuck at GND
+    Warning (13410): Pin "DRAM_DQM[1]" is stuck at GND
+    Warning (13410): Pin "DRAM_DQM[2]" is stuck at GND
+    Warning (13410): Pin "DRAM_DQM[3]" is stuck at GND
+    Warning (13410): Pin "DRAM_RAS_N" is stuck at VCC
+    Warning (13410): Pin "DRAM_WE_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_ADDR[0]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[1]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[2]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[3]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[4]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[5]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[6]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[7]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[8]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[9]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[10]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[11]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[12]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[13]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[14]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[15]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[16]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[17]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[18]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[19]" is stuck at GND
+    Warning (13410): Pin "SRAM_CE_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_LB_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_OE_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_UB_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_WE_N" is stuck at VCC
+    Warning (13410): Pin "FL_ADDR[0]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[1]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[2]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[3]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[4]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[5]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[6]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[7]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[8]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[9]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[10]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[11]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[12]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[13]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[14]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[15]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[16]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[17]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[18]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[19]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[20]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[21]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[22]" is stuck at GND
+    Warning (13410): Pin "FL_CE_N" is stuck at VCC
+    Warning (13410): Pin "FL_OE_N" is stuck at VCC
+    Warning (13410): Pin "FL_RST_N" is stuck at GND
+    Warning (13410): Pin "FL_WE_N" is stuck at VCC
+    Warning (13410): Pin "FL_WP_N" is stuck at GND
+    Warning (13410): Pin "HSMC_CLKOUT_P1" is stuck at GND
+    Warning (13410): Pin "HSMC_CLKOUT_P2" is stuck at GND
+    Warning (13410): Pin "HSMC_CLKOUT0" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[0]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[1]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[2]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[3]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[4]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[5]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[6]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[7]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[8]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[9]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[10]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[11]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[12]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[13]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[14]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[15]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[16]" is stuck at GND
+Info (286031): Timing-Driven Synthesis is running on partition "Top"
+Warning (14632): Output pin "pre_syn.bp.i2c_master_inst_sda" driven by bidirectional pin "GPIO[2]" cannot be tri-stated
+Info (17049): 9 registers lost all their fanouts during netlist optimizations.
+Info (17016): Found the following redundant logic cells in design
+    Info (17048): Logic cell "lpm_divide:Mod0|lpm_divide_icm:auto_generated|sign_div_unsign_7nh:divider|alt_u_div_2af:divider|add_sub_11_result_int[2]~18"
+    Info (17048): Logic cell "lpm_divide:Mod0|lpm_divide_icm:auto_generated|sign_div_unsign_7nh:divider|alt_u_div_2af:divider|add_sub_11_result_int[1]~20"
+    Info (17048): Logic cell "lpm_divide:Div0|lpm_divide_fkm:auto_generated|sign_div_unsign_7nh:divider|alt_u_div_2af:divider|add_sub_11_result_int[2]~18"
+    Info (17048): Logic cell "lpm_divide:Div0|lpm_divide_fkm:auto_generated|sign_div_unsign_7nh:divider|alt_u_div_2af:divider|add_sub_11_result_int[1]~20"
+Info (21057): Implemented 1515 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 91 input pins
+    Info (21059): Implemented 290 output pins
+    Info (21060): Implemented 141 bidirectional pins
+    Info (21061): Implemented 993 logic cells
+Info (144001): Generated suppressed messages file C:/Users/user/Desktop/dclab_hw/final/IMU/output_files/DE2_115.map.smsg
+Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 279 warnings
+    Info: Peak virtual memory: 4977 megabytes
+    Info: Processing ended: Fri Dec 19 02:42:08 2025
+    Info: Elapsed time: 00:00:20
+    Info: Total CPU time (on all processors): 00:00:30
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in C:/Users/user/Desktop/dclab_hw/final/IMU/output_files/DE2_115.map.smsg.
+
+

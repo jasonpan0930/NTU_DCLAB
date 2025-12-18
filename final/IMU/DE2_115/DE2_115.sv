@@ -160,7 +160,7 @@ module DE2_115 (
 
 	i2c_master #(
 		.CLK_HZ(50_000_000),
-		.I2C_HZ(10)  // 降低到 100 Hz 以便觀察 FSM 狀態（調試用）
+		.I2C_HZ(100_000)  // 降低到 100 Hz 以便觀察 FSM 狀態（調試用）
 	) i2c_master_inst (
 		.clk(clk),
 		.rst_n(rst_n),
@@ -187,6 +187,7 @@ module DE2_115 (
 	logic signed [31:0] v_x, v_y, v_z;
 	logic signed [15:0] gyro_x, gyro_y, gyro_z;
 	logic data_valid;
+	logic [4:0] imu_fsm_state;  // IMU_ctrl 的 FSM 狀態（低4位顯示在 LEDR0-3）
 
 	mpu6050_ctrl #(
 		.CLK_HZ(50_000_000),
@@ -209,7 +210,8 @@ module DE2_115 (
 		.gyro_x(gyro_x),
 		.gyro_y(gyro_y),
 		.gyro_z(gyro_z),
-		.data_valid(data_valid)
+		.data_valid(data_valid),
+		.fsm_state(imu_fsm_state)
 	);
 
 	// =========================================================
@@ -260,8 +262,9 @@ module DE2_115 (
 		end
 	end
 
-	// LEDR 顯示 IMU_ctrl FSM 狀態和調試信息
-	assign LEDR[17:0] = 18'b0;  // 不使用
+	// LEDR 顯示 IMU_ctrl 的 FSM 狀態（低4位），其餘關閉
+	assign LEDR[3:0]  = imu_fsm_state[3:0];
+	assign LEDR[17:4] = 14'b0;
 
 	// =========================================================
 	// 7段顯示器：顯示陀螺儀數據

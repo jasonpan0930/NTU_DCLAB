@@ -103,6 +103,7 @@ module i2c_master #(
     logic ack_err_reg;
     logic done_reg;
     logic busy_reg;
+    logic start_pending;
 
     assign rd_data = rd_data_reg;
     assign ack_error = ack_err_reg;
@@ -126,8 +127,13 @@ module i2c_master #(
             scl_o <= 1'b1;
             sda_o <= 1'b1;
             sda_oe <= 1'b0; // 高阻，靠pull-up為1
+            start_pending <= 1'b0;
         end else begin
             done_reg <= 1'b0; // 預設為0，有完成事才拉1拍
+
+            if(start && !busy_reg) begin
+                start_pending <= 1'b1;
+            end
 
             if (i2c_clk_en) begin
                 case (state)
@@ -136,12 +142,14 @@ module i2c_master #(
                         scl_o <= 1'b1; // bus idle: SCL/SDA都在高電位
                         sda_oe <= 1'b0; // 高阻，靠pull-up拉高
                         busy_reg<= 1'b0;
-                        if (start && phase == 2'd3) begin
+                        if (start_pending && phase == 2'd3) begin
                             // 鎖存操作類型
                             rw_reg <= rw;
                             ack_err_reg <= 1'b0;
                             busy_reg <= 1'b1;
                             sda_oe <= 1'b1;
+
+                            start_pending <= 1'b0;
 
                             // 進入Start條件
                             state <= ST_START;
@@ -183,7 +191,7 @@ module i2c_master #(
                             end
                             2'd3: begin
                                 // 一bit完成，移位
-                                shifter <= {shifter[6:0], 1'b0};
+                                shifter <= {shifter[6:0], sda_i};
                                 if (bit_cnt == 0) begin
                                     bit_cnt <= 3'd7;
                                     // 下一拍進入ACK階段
@@ -250,6 +258,9 @@ module i2c_master #(
                         case (phase)
                             2'd1: begin
                                 scl_o <= 1'b1;
+                            end
+                            2'd2: begin
+                                sda_o <= 1'b0;
                             end
                             2'd3: begin
                                 if (sda_i == 1'b1) begin

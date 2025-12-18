@@ -1,0 +1,30 @@
+
+State Machine - |DE2_115|mpu6050_ctrl:mpu6050_ctrl_inst|state
+Name state.ST_ERROR state.ST_DONE_FRAME state.ST_READ_BYTE state.ST_IDLE state.ST_INIT_4 state.ST_INIT_3 state.ST_INIT_2 state.ST_INIT_1 state.ST_INIT_0 state.ST_RESET 
+state.ST_RESET 0 0 0 0 0 0 0 0 0 0 
+state.ST_INIT_0 0 0 0 0 0 0 0 0 1 1 
+state.ST_INIT_1 0 0 0 0 0 0 0 1 0 1 
+state.ST_INIT_2 0 0 0 0 0 0 1 0 0 1 
+state.ST_INIT_3 0 0 0 0 0 1 0 0 0 1 
+state.ST_INIT_4 0 0 0 0 1 0 0 0 0 1 
+state.ST_IDLE 0 0 0 1 0 0 0 0 0 1 
+state.ST_READ_BYTE 0 0 1 0 0 0 0 0 0 1 
+state.ST_DONE_FRAME 0 1 0 0 0 0 0 0 0 1 
+state.ST_ERROR 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |DE2_115|i2c_master:i2c_master_inst|state
+Name state.ST_STOP state.ST_READ_NACK state.ST_READ_DATA state.ST_WRITE_ACK state.ST_WRITE_DATA state.ST_DEV_ACK_R state.ST_DEV_ADDR_R state.ST_RESTART state.ST_REG_ACK state.ST_REG_ADDR state.ST_DEV_ACK state.ST_DEV_ADDR state.ST_START state.ST_IDLE 
+state.ST_IDLE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+state.ST_START 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+state.ST_DEV_ADDR 0 0 0 0 0 0 0 0 0 0 0 1 0 1 
+state.ST_DEV_ACK 0 0 0 0 0 0 0 0 0 0 1 0 0 1 
+state.ST_REG_ADDR 0 0 0 0 0 0 0 0 0 1 0 0 0 1 
+state.ST_REG_ACK 0 0 0 0 0 0 0 0 1 0 0 0 0 1 
+state.ST_RESTART 0 0 0 0 0 0 0 1 0 0 0 0 0 1 
+state.ST_DEV_ADDR_R 0 0 0 0 0 0 1 0 0 0 0 0 0 1 
+state.ST_DEV_ACK_R 0 0 0 0 0 1 0 0 0 0 0 0 0 1 
+state.ST_WRITE_DATA 0 0 0 0 1 0 0 0 0 0 0 0 0 1 
+state.ST_WRITE_ACK 0 0 0 1 0 0 0 0 0 0 0 0 0 1 
+state.ST_READ_DATA 0 0 1 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_READ_NACK 0 1 0 0 0 0 0 0 0 0 0 0 0 1 
+state.ST_STOP 1 0 0 0 0 0 0 0 0 0 0 0 0 1 

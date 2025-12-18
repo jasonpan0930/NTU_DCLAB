@@ -42,7 +42,7 @@ module Position_Controller #(
 	
 	// Optional: Enable linear velocity contributions
 	parameter USE_LINEAR_VELOCITY = 0,
-	parameter LINEAR_SCALE = 16'd10  // Scaling for linear velocities if enabled
+	parameter LINEAR_SCALE = 32'd10  // Scaling for linear velocities if enabled
 )(
 	input logic i_clk,              // Clock (typically VGA clock, e.g., 74.25MHz)
 	input logic i_rst_n,            // Reset (active low)
@@ -53,9 +53,9 @@ module Position_Controller #(
 	input logic signed [15:0] i_wz, // Angular velocity Z (yaw around Z axis, up) - controls horizontal aim
 	
 	// Linear velocity inputs (signed) - OPTIONAL
-	input logic signed [15:0] i_vx, // Linear velocity X (right/left)
-	input logic signed [15:0] i_vy, // Linear velocity Y (forward/backward toward screen)
-	input logic signed [15:0] i_vz, // Linear velocity Z (up/down)
+	input logic signed [31:0] i_vx, // Linear velocity X (right/left)
+	input logic signed [31:0] i_vy, // Linear velocity Y (forward/backward toward screen)
+	input logic signed [31:0] i_vz, // Linear velocity Z (up/down)
 	
 	// Output position
 	output logic [10:0] o_x,         // Screen X position (0 to SCREEN_WIDTH-1)

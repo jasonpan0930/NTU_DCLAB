@@ -27,7 +27,8 @@ module mpu6050_ctrl #(
     output logic signed [15:0] gyro_x,
     output logic signed [15:0] gyro_y,
     output logic signed [15:0] gyro_z,
-    output logic              data_valid   // 每次成功更新一整組資料時拉高1拍
+    output logic              data_valid,   // 每次成功更新一整組資料時拉高1拍
+    output logic [4:0]        fsm_state    // 將內部狀態輸出，方便在外部顯示/除錯
 );
 
     // =========================================================
@@ -46,7 +47,7 @@ module mpu6050_ctrl #(
     //  簡單的取樣頻率分頻 (控制多久讀一次資料)
     // =========================================================
     // 降低取樣頻率以便觀察 FSM 運作（調試用）
-    localparam int SAMPLE_HZ = 1;                 // 1次/秒 => 1000ms（調試用，正常可設為 200）
+    localparam int SAMPLE_HZ = 1000;                 // 1次/秒 => 1000ms（調試用，正常可設為 200）
     localparam int SAMPLE_CNT_MAX = CLK_HZ / SAMPLE_HZ;
 
     logic [$clog2(SAMPLE_CNT_MAX)-1:0] sample_cnt;
@@ -183,6 +184,7 @@ module mpu6050_ctrl #(
 
     logic data_valid_reg;
     assign data_valid = data_valid_reg;
+    assign fsm_state = state;  // 輸出目前 FSM 狀態
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -264,13 +266,13 @@ module mpu6050_ctrl #(
                 // ---------------------------------------------
                 // 觸發讀 1 byte
                 ST_READ_BYTE: begin
+                    data_buf[byte_index_reg] <= i2c_rd_data;
                     if (i2c_done) begin
                         if (i2c_ack_error) begin
                             // 這一輪讀壞了，不更新 buf，直接進 ERROR
                             state <= ST_ERROR;
                         end else begin
                             // 讀結束後，i2c_rd_data 就是一個byte
-                            data_buf[byte_index_reg] <= i2c_rd_data;
                             if (byte_index_reg == 4'd13) begin
                                 state <= ST_DONE_FRAME;
                             end else begin
@@ -300,9 +302,9 @@ module mpu6050_ctrl #(
                     gyro_y <= $signed({data_buf[10], data_buf[11]});
                     gyro_z <= $signed({data_buf[12], data_buf[13]});
 
-                    v_x <= v_x + acc_x;
-                    v_y <= v_y + acc_y;
-                    v_z <= v_z + acc_z;
+                    v_x <=  acc_x;
+                    v_y <=  acc_y;
+                    v_z <=  acc_z;
 
                     data_valid_reg <= 1'b1;  // 告訴外面：新數據OK了
                     state          <= ST_IDLE;

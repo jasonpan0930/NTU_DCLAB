@@ -171,6 +171,28 @@ logic [9:0] aim_y;
 localparam AIM_SIZE_X = 200;
 localparam AIM_SIZE_Y = 200;
 
+// I2C and IMU signals
+logic i2c_start;
+logic i2c_rw;
+logic [6:0] i2c_dev_addr;
+logic [7:0] i2c_reg_addr;
+logic [7:0] i2c_wr_data;
+logic [7:0] i2c_rd_data;
+logic i2c_busy;
+logic i2c_done;
+logic i2c_ack_error;
+logic i2c_scl;
+wire i2c_sda;  // inout signal should be wire
+
+// IMU output signals
+logic signed [31:0] imu_v_x;
+logic signed [31:0] imu_v_y;
+logic signed [31:0] imu_v_z;
+logic signed [15:0] imu_gyro_x;
+logic signed [15:0] imu_gyro_y;
+logic signed [15:0] imu_gyro_z;
+logic imu_data_valid;
+
 /*******************************test code*******************************/
 /**********************************************************************/
 /**********************************************************************/
@@ -198,44 +220,45 @@ always_ff @(posedge vga_clock_74_25 or negedge KEY[1]) begin
 	end
 end
 
-// Aim position control with switches
+// Aim position control with switches (DISABLED - now controlled by Position_Controller)
 // SW[0]: move right
 // SW[1]: move left
 // SW[2]: move down
 // SW[3]: move up
-always_ff @(posedge vga_clock_74_25 or negedge KEY[1]) begin
-	if (!KEY[1]) begin
-		// aim_x, aim_y is the center of the aim
-		aim_x <= 11'd640;  // Center X: 1280/2 = 640
-		aim_y <= 10'd360;  // Center Y: 720/2 = 360
-	end else if (aim_movement_tick) begin
-		// X position control (SW[0] = right, SW[1] = left)
-		if (SW[0] && !SW[1]) begin
-			// Move right (increase x)
-			if (aim_x < (11'd1280 - 100)) begin
-				aim_x <= aim_x + 11'd1;
-			end
-		end else if (SW[1] && !SW[0]) begin
-			// Move left (decrease x)
-			if (aim_x > 100) begin
-				aim_x <= aim_x - 11'd1;
-			end
-		end
-		
-		// Y position control (SW[2] = down, SW[3] = up)
-		if (SW[2] && !SW[3]) begin
-			// Move down (increase y)
-			if (aim_y < (10'd720 - 100)) begin
-				aim_y <= aim_y + 10'd1;
-			end
-		end else if (SW[3] && !SW[2]) begin
-			// Move up (decrease y)
-			if (aim_y > 100) begin
-				aim_y <= aim_y - 10'd1;
-			end
-		end
-	end
-end
+// Commented out because aim_x and aim_y are now driven by Position_Controller
+// always_ff @(posedge vga_clock_74_25 or negedge KEY[1]) begin
+// 	if (!KEY[1]) begin
+// 		// aim_x, aim_y is the center of the aim
+// 		aim_x <= 11'd640;  // Center X: 1280/2 = 640
+// 		aim_y <= 10'd360;  // Center Y: 720/2 = 360
+// 	end else if (aim_movement_tick) begin
+// 		// X position control (SW[0] = right, SW[1] = left)
+// 		if (SW[0] && !SW[1]) begin
+// 			// Move right (increase x)
+// 			if (aim_x < (11'd1280 - 100)) begin
+// 				aim_x <= aim_x + 11'd1;
+// 			end
+// 		end else if (SW[1] && !SW[0]) begin
+// 			// Move left (decrease x)
+// 			if (aim_x > 100) begin
+// 				aim_x <= aim_x - 11'd1;
+// 			end
+// 		end
+// 		
+// 		// Y position control (SW[2] = down, SW[3] = up)
+// 		if (SW[2] && !SW[3]) begin
+// 			// Move down (increase y)
+// 			if (aim_y < (10'd720 - 100)) begin
+// 				aim_y <= aim_y + 10'd1;
+// 			end
+// 		end else if (SW[3] && !SW[2]) begin
+// 			// Move up (decrease y)
+// 			if (aim_y > 100) begin
+// 				aim_y <= aim_y - 10'd1;
+// 			end
+// 		end
+// 	end
+// end
 
 // Show current X on HEX[3:0] and current Y on HEX[7:4] with decimal display
 // HEX0: X ones digit
@@ -369,6 +392,108 @@ assign SRAM_WE_N = vga_sram_we_n;
 assign VGA_R = vga_r;
 assign VGA_G = vga_g;
 assign VGA_B = vga_b;
+
+// I2C Master module instantiation
+i2c_master #(
+	.CLK_HZ(50_000_000),  // 50MHz system clock
+	.I2C_HZ(100_000)      // 100kHz I2C clock
+) i2c_master_inst(
+	.clk(CLOCK_50),
+	.rst_n(KEY[1]),
+	.start(i2c_start),
+	.rw(i2c_rw),
+	.dev_addr(i2c_dev_addr),
+	.reg_addr(i2c_reg_addr),
+	.wr_data(i2c_wr_data),
+	.rd_data(i2c_rd_data),
+	.busy(i2c_busy),
+	.done(i2c_done),
+	.ack_error(i2c_ack_error),
+	.scl(i2c_scl),
+	.sda(i2c_sda)  // inout wire connection
+);
+
+// MPU6050 IMU Controller module instantiation
+mpu6050_ctrl #(
+	.CLK_HZ(50_000_000),  // 50MHz system clock
+	.I2C_ADDR(7'h68)      // MPU6050 I2C address (AD0=0)
+) mpu6050_ctrl_inst(
+	.clk(CLOCK_50),
+	.rst_n(KEY[1]),
+	.i2c_start(i2c_start),
+	.i2c_rw(i2c_rw),
+	.i2c_dev_addr(i2c_dev_addr),
+	.i2c_reg_addr(i2c_reg_addr),
+	.i2c_wr_data(i2c_wr_data),
+	.i2c_rd_data(i2c_rd_data),
+	.i2c_busy(i2c_busy),
+	.i2c_done(i2c_done),
+	.i2c_ack_error(i2c_ack_error),
+	.v_x(imu_v_x),
+	.v_y(imu_v_y),
+	.v_z(imu_v_z),
+	.gyro_x(imu_gyro_x),
+	.gyro_y(imu_gyro_y),
+	.gyro_z(imu_gyro_z),
+	.data_valid(imu_data_valid)
+);
+
+// Synchronize IMU data from 50MHz domain to 74.25MHz domain for Position_Controller
+// This prevents metastability issues when crossing clock domains
+logic signed [15:0] imu_gyro_x_sync, imu_gyro_y_sync, imu_gyro_z_sync;
+logic signed [15:0] imu_gyro_x_sync1, imu_gyro_y_sync1, imu_gyro_z_sync1;
+logic signed [15:0] imu_gyro_x_sync2, imu_gyro_y_sync2, imu_gyro_z_sync2;
+
+always_ff @(posedge vga_clock_74_25 or negedge KEY[1]) begin
+	if (!KEY[1]) begin
+		imu_gyro_x_sync1 <= 16'd0;
+		imu_gyro_y_sync1 <= 16'd0;
+		imu_gyro_z_sync1 <= 16'd0;
+		imu_gyro_x_sync2 <= 16'd0;
+		imu_gyro_y_sync2 <= 16'd0;
+		imu_gyro_z_sync2 <= 16'd0;
+		imu_gyro_x_sync <= 16'd0;
+		imu_gyro_y_sync <= 16'd0;
+		imu_gyro_z_sync <= 16'd0;
+	end else begin
+		// Two-stage synchronizer to safely cross clock domains
+		imu_gyro_x_sync1 <= imu_gyro_x;
+		imu_gyro_y_sync1 <= imu_gyro_y;
+		imu_gyro_z_sync1 <= imu_gyro_z;
+		imu_gyro_x_sync2 <= imu_gyro_x_sync1;
+		imu_gyro_y_sync2 <= imu_gyro_y_sync1;
+		imu_gyro_z_sync2 <= imu_gyro_z_sync1;
+		imu_gyro_x_sync <= imu_gyro_x_sync2;
+		imu_gyro_y_sync <= imu_gyro_y_sync2;
+		imu_gyro_z_sync <= imu_gyro_z_sync2;
+	end
+end
+
+// Position Controller module instantiation (for IMU-based aim control)
+Position_Controller #(
+	.SCREEN_WIDTH(1280),
+	.SCREEN_HEIGHT(720),
+	.KX(32'd100000),          // Horizontal sensitivity (adjustable)
+	.KY(32'd100000),          // Vertical sensitivity (adjustable)
+	.UPDATE_DIVIDER(24'd74250), // ~1000Hz update rate at 74.25MHz
+	.USE_LINEAR_VELOCITY(0)    // Disable linear velocity for now
+) position_controller_inst(
+	.i_clk(vga_clock_74_25),   // Use VGA clock (74.25MHz)
+	.i_rst_n(KEY[1]),
+	.i_wx(imu_gyro_x_sync),    // Angular velocity X (pitch) → controls Y (synchronized)
+	.i_wy(imu_gyro_y_sync),    // Angular velocity Y (roll) → not used (synchronized)
+	.i_wz(imu_gyro_z_sync),    // Angular velocity Z (yaw) → controls X (synchronized)
+	.i_vx(32'd0),              // Linear velocity X (not used)
+	.i_vy(32'd0),              // Linear velocity Y (not used)
+	.i_vz(32'd0),              // Linear velocity Z (not used)
+	.o_x(aim_x),               // Output X position to aim_x
+	.o_y(aim_y)                // Output Y position to aim_y
+);
+
+// I2C physical pin connections
+// SCL connected to GPIO[0], SDA connected to GPIO[2]
+assign GPIO[0] = i2c_scl;
+assign GPIO[2] = i2c_sda;
 
 `ifdef DUT_LAB1
 	initial begin
