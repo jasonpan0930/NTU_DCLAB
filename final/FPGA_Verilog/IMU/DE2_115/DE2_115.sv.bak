@@ -1,0 +1,493 @@
+module DE2_115 (
+	input CLOCK_50,
+	input CLOCK2_50,
+	input CLOCK3_50,
+	input ENETCLK_25,
+	input SMA_CLKIN,
+	output SMA_CLKOUT,
+	output [8:0] LEDG,
+	output [17:0] LEDR,
+	input [3:0] KEY,
+	input [17:0] SW,
+	output [6:0] HEX0,
+	output [6:0] HEX1,
+	output [6:0] HEX2,
+	output [6:0] HEX3,
+	output [6:0] HEX4,
+	output [6:0] HEX5,
+	output [6:0] HEX6,
+	output [6:0] HEX7,
+	output LCD_BLON,
+	inout [7:0] LCD_DATA,
+	output LCD_EN,
+	output LCD_ON,
+	output LCD_RS,
+	output LCD_RW,
+	output UART_CTS,
+	input UART_RTS,
+	input UART_RXD,
+	output UART_TXD,
+	inout PS2_CLK,
+	inout PS2_DAT,
+	inout PS2_CLK2,
+	inout PS2_DAT2,
+	output SD_CLK,
+	inout SD_CMD,
+	inout [3:0] SD_DAT,
+	input SD_WP_N,
+	output [7:0] VGA_B,
+	output VGA_BLANK_N,
+	output VGA_CLK,
+	output [7:0] VGA_G,
+	output VGA_HS,
+	output [7:0] VGA_R,
+	output VGA_SYNC_N,
+	output VGA_VS,
+	input AUD_ADCDAT,
+	inout AUD_ADCLRCK,
+	inout AUD_BCLK,
+	output AUD_DACDAT,
+	inout AUD_DACLRCK,
+	output AUD_XCK,
+	output EEP_I2C_SCLK,
+	inout EEP_I2C_SDAT,
+	output I2C_SCLK,
+	inout I2C_SDAT,
+	output ENET0_GTX_CLK,
+	input ENET0_INT_N,
+	output ENET0_MDC,
+	input ENET0_MDIO,
+	output ENET0_RST_N,
+	input ENET0_RX_CLK,
+	input ENET0_RX_COL,
+	input ENET0_RX_CRS,
+	input [3:0] ENET0_RX_DATA,
+	input ENET0_RX_DV,
+	input ENET0_RX_ER,
+	input ENET0_TX_CLK,
+	output [3:0] ENET0_TX_DATA,
+	output ENET0_TX_EN,
+	output ENET0_TX_ER,
+	input ENET0_LINK100,
+	output ENET1_GTX_CLK,
+	input ENET1_INT_N,
+	output ENET1_MDC,
+	input ENET1_MDIO,
+	output ENET1_RST_N,
+	input ENET1_RX_CLK,
+	input ENET1_RX_COL,
+	input ENET1_RX_CRS,
+	input [3:0] ENET1_RX_DATA,
+	input ENET1_RX_DV,
+	input ENET1_RX_ER,
+	input ENET1_TX_CLK,
+	output [3:0] ENET1_TX_DATA,
+	output ENET1_TX_EN,
+	output ENET1_TX_ER,
+	input ENET1_LINK100,
+	input TD_CLK27,
+	input [7:0] TD_DATA,
+	input TD_HS,
+	output TD_RESET_N,
+	input TD_VS,
+	inout [15:0] OTG_DATA,
+	output [1:0] OTG_ADDR,
+	output OTG_CS_N,
+	output OTG_WR_N,
+	output OTG_RD_N,
+	input OTG_INT,
+	output OTG_RST_N,
+	input IRDA_RXD,
+	output [12:0] DRAM_ADDR,
+	output [1:0] DRAM_BA,
+	output DRAM_CAS_N,
+	output DRAM_CKE,
+	output DRAM_CLK,
+	output DRAM_CS_N,
+	inout [31:0] DRAM_DQ,
+	output [3:0] DRAM_DQM,
+	output DRAM_RAS_N,
+	output DRAM_WE_N,
+	output [19:0] SRAM_ADDR,
+	output SRAM_CE_N,
+	inout [15:0] SRAM_DQ,
+	output SRAM_LB_N,
+	output SRAM_OE_N,
+	output SRAM_UB_N,
+	output SRAM_WE_N,
+	output [22:0] FL_ADDR,
+	output FL_CE_N,
+	inout [7:0] FL_DQ,
+	output FL_OE_N,
+	output FL_RST_N,
+	input FL_RY,
+	output FL_WE_N,
+	output FL_WP_N,
+	inout [35:0] GPIO,
+	input HSMC_CLKIN_P1,
+	input HSMC_CLKIN_P2,
+	input HSMC_CLKIN0,
+	output HSMC_CLKOUT_P1,
+	output HSMC_CLKOUT_P2,
+	output HSMC_CLKOUT0,
+	inout [3:0] HSMC_D,
+	input [16:0] HSMC_RX_D_P,
+	output [16:0] HSMC_TX_D_P,
+	inout [6:0] EX_IO
+);
+
+	// =========================================================
+	// 時鐘和重置
+	// =========================================================
+	logic clk;
+	logic rst_n;
+	
+	assign clk = CLOCK_50;
+	assign rst_n = KEY[0];  // KEY[0] 為重置按鈕（低電平有效）
+
+	// =========================================================
+	// I2C Master 實例化
+	// =========================================================
+	logic i2c_start;
+	logic i2c_rw;
+	logic [6:0] i2c_dev_addr;
+	logic [7:0] i2c_reg_addr;
+	logic [7:0] i2c_wr_data;
+	logic [7:0] i2c_rd_data;
+	logic i2c_busy;
+	logic i2c_done;
+	logic i2c_ack_error;
+
+	i2c_master #(
+		.CLK_HZ(50_000_000),
+		.I2C_HZ(100_000)  // 降低到 100 Hz 以便觀察 FSM 狀態（調試用）
+	) i2c_master_inst (
+		.clk(clk),
+		.rst_n(rst_n),
+		.start(i2c_start),
+		.rw(i2c_rw),
+		.dev_addr(i2c_dev_addr),
+		.reg_addr(i2c_reg_addr),
+		.wr_data(i2c_wr_data),
+		.rd_data(i2c_rd_data),
+		.busy(i2c_busy),
+		.done(i2c_done),
+		.ack_error(i2c_ack_error),
+		.scl(GPIO[0]),  // IMU SCL 連接到 GPIO[0]
+		.sda(GPIO[2])   // IMU SDA 連接到 GPIO[2]
+	);
+	
+	// 讀取 SCL 和 SDA 的實際狀態（用於調試）
+	wire scl_actual = GPIO[0];
+	wire sda_actual = GPIO[2];  // I2C master 的 sda（通過 GPIO[2] 連接）
+
+	// =========================================================
+	// MPU6050 控制器實例化
+	// =========================================================
+	logic signed [31:0] v_x, v_y, v_z;
+	logic signed [15:0] gyro_x, gyro_y, gyro_z;
+	logic data_valid;
+
+	mpu6050_ctrl #(
+		.CLK_HZ(50_000_000),
+		.I2C_ADDR(7'h68)  // MPU6050 I2C 位址 (AD0=0)
+	) mpu6050_ctrl_inst (
+		.clk(clk),
+		.rst_n(rst_n),
+		.i2c_start(i2c_start),
+		.i2c_rw(i2c_rw),
+		.i2c_dev_addr(i2c_dev_addr),
+		.i2c_reg_addr(i2c_reg_addr),
+		.i2c_wr_data(i2c_wr_data),
+		.i2c_rd_data(i2c_rd_data),
+		.i2c_busy(i2c_busy),
+		.i2c_done(i2c_done),
+		.i2c_ack_error(i2c_ack_error),
+		.v_x(v_x),
+		.v_y(v_y),
+		.v_z(v_z),
+		.gyro_x(gyro_x),
+		.gyro_y(gyro_y),
+		.gyro_z(gyro_z),
+		.data_valid(data_valid)
+	);
+
+	// =========================================================
+	// LED 狀態顯示
+	// =========================================================
+	assign LEDG[0] = data_valid;        // 資料有效指示
+	assign LEDG[1] = i2c_busy;          // I2C 忙碌指示
+	assign LEDG[2] = i2c_ack_error;     // I2C 錯誤指示
+	assign LEDG[8:3] = 6'b0;
+	
+	// 追蹤 i2c_done 和 i2c_ack_error 的計數（用於調試）
+	logic [15:0] i2c_done_count;
+	logic [15:0] i2c_ack_error_count;
+	logic i2c_done_prev;
+	logic i2c_ack_error_prev;
+	
+	// 追蹤 data_valid 的上升沿次數（用於調試）
+	logic [15:0] data_valid_count;
+	logic data_valid_prev;
+	
+	always_ff @(posedge clk or negedge rst_n) begin
+		if (!rst_n) begin
+			i2c_done_count <= 16'd0;
+			i2c_ack_error_count <= 16'd0;
+			i2c_done_prev <= 1'b0;
+			i2c_ack_error_prev <= 1'b0;
+			data_valid_count <= 16'd0;
+			data_valid_prev <= 1'b0;
+		end else begin
+			i2c_done_prev <= i2c_done;
+			i2c_ack_error_prev <= i2c_ack_error;
+			data_valid_prev <= data_valid;
+			
+			// 檢測 i2c_done 的上升沿
+			if (i2c_done && !i2c_done_prev) begin
+				i2c_done_count <= i2c_done_count + 1;
+			end
+			
+			// 檢測 i2c_ack_error 的上升沿
+			if (i2c_ack_error && !i2c_ack_error_prev) begin
+				i2c_ack_error_count <= i2c_ack_error_count + 1;
+			end
+			
+			// 檢測 data_valid 的上升沿
+			if (data_valid && !data_valid_prev) begin
+				data_valid_count <= data_valid_count + 1;
+			end
+		end
+	end
+
+	// LEDR 顯示 IMU_ctrl FSM 狀態和調試信息
+	assign LEDR[17:0] = 18'b0;  // 不使用
+
+	// =========================================================
+	// 7段顯示器：顯示陀螺儀數據
+	// =========================================================
+	// 使用 SW[17:16] 選擇顯示陀螺儀軸：
+	// 00: 顯示陀螺儀 X 軸 (gyro_x)
+	// 01: 顯示陀螺儀 Y 軸 (gyro_y)
+	// 10: 顯示陀螺儀 Z 軸 (gyro_z)
+	// 11: 顯示陀螺儀 X 軸 (gyro_x)
+
+	logic signed [15:0] display_value_16bit;
+	logic [15:0] display_value_abs;
+	logic [3:0] sign_digit;
+
+	always_comb begin
+		// 根據開關選擇陀螺儀軸
+		case (SW[17:16])
+			2'b00: display_value_16bit = gyro_x;
+			2'b01: display_value_16bit = gyro_y;
+			2'b10: display_value_16bit = gyro_z;
+			2'b11: display_value_16bit = gyro_x;
+			default: display_value_16bit = gyro_x;
+		endcase
+		
+		// 取絕對值（用於顯示）
+		if (display_value_16bit[15]) begin
+			display_value_abs = (~display_value_16bit + 1);
+			sign_digit = 4'd10;  // 顯示負號（用 'A' 表示）
+		end else begin
+			display_value_abs = display_value_16bit;
+			sign_digit = 4'd11;  // 顯示正號（用 'b' 表示）
+		end
+	end
+
+	// 提取十進制數字
+	logic [3:0] thousands, hundreds, tens, ones;
+	logic [15:0] temp_val;
+
+	always_comb begin
+		// 限制在 0-9999 範圍內
+		temp_val = (display_value_abs > 9999) ? 16'd9999 : display_value_abs;
+		thousands = temp_val / 1000;
+		temp_val = temp_val % 1000;
+		hundreds = temp_val / 100;
+		temp_val = temp_val % 100;
+		tens = temp_val / 10;
+		ones = temp_val % 10;
+	end
+
+	// 7段顯示器解碼器
+	HexTo7Seg hex0(.i_hex(ones), .o_seg(HEX0));
+	HexTo7Seg hex1(.i_hex(tens), .o_seg(HEX1));
+	HexTo7Seg hex2(.i_hex(hundreds), .o_seg(HEX2));
+	HexTo7Seg hex3(.i_hex(thousands), .o_seg(HEX3));
+	
+	// HEX4-7 顯示調試信息
+	// HEX4-5: 顯示 I2C master 的 rd_data（讀取的數據，十六進制）
+	// HEX6: 顯示 SCL 實際狀態（直接從 GPIO[0] 讀取，0=低，1=高）
+	// HEX7: 顯示 SDA 實際狀態（直接從 GPIO[2] 讀取，0=低，1=高）
+	logic [3:0] rd_data_ones, rd_data_tens;
+	logic [3:0] scl_display, sda_display;
+	logic [7:0] rd_data_stable;  // 穩定的讀取數據
+	logic scl_stable, sda_stable;  // 穩定的 SCL/SDA 狀態（直接從 GPIO 讀取）
+	
+	// 使用寄存器穩定讀取數據和 SCL/SDA 狀態顯示（避免快速變化）
+	always_ff @(posedge clk or negedge rst_n) begin
+		if (!rst_n) begin
+			rd_data_stable <= 8'h00;
+			scl_stable <= 1'b0;
+			sda_stable <= 1'b0;
+		end else begin
+			rd_data_stable <= i2c_rd_data;  // 直接顯示 I2C master 的 rd_data
+			scl_stable <= scl_actual;  // 讀取 SCL 狀態
+			sda_stable <= sda_actual;  // 讀取 I2C master 的 sda 狀態
+		end
+	end
+	
+	always_comb begin
+		// 讀取數據的個位和十位（十六進制）
+		rd_data_ones = rd_data_stable[3:0];
+		rd_data_tens = rd_data_stable[7:4];
+		
+		// SCL 和 SDA 狀態顯示（0=低，1=高）
+		scl_display = scl_stable ? 4'd1 : 4'd0;
+		sda_display = sda_stable ? 4'd1 : 4'd0;
+	end
+	
+	HexTo7Seg hex4(.i_hex(rd_data_ones), .o_seg(HEX4));  // rd_data 個位數（十六進制）
+	HexTo7Seg hex5(.i_hex(rd_data_tens), .o_seg(HEX5));  // rd_data 十位數（十六進制）
+	HexTo7Seg hex6(.i_hex(scl_display), .o_seg(HEX6));  // SCL 狀態
+	HexTo7Seg hex7(.i_hex(sda_display), .o_seg(HEX7));  // I2C master 的 sda 狀態
+
+	// =========================================================
+	// 未使用的輸出設定為安全預設值
+	// =========================================================
+	
+	// VGA 輸出（未使用，設為安全值）
+	assign VGA_R = 8'h00;
+	assign VGA_G = 8'h00;
+	assign VGA_B = 8'h00;
+	assign VGA_HS = 1'b0;
+	assign VGA_VS = 1'b0;
+	assign VGA_CLK = 1'b0;
+	assign VGA_BLANK_N = 1'b0;
+	assign VGA_SYNC_N = 1'b0;
+
+	// SRAM（未使用，設為安全值）
+	assign SRAM_ADDR = 20'h00000;
+	assign SRAM_CE_N = 1'b1;
+	assign SRAM_LB_N = 1'b1;
+	assign SRAM_OE_N = 1'b1;
+	assign SRAM_UB_N = 1'b1;
+	assign SRAM_WE_N = 1'b1;
+	assign SRAM_DQ = 16'hZZZZ;
+
+	// 其他未使用的輸出
+	assign SMA_CLKOUT = 1'b0;
+	assign LCD_BLON = 1'b0;
+	assign LCD_ON = 1'b0;
+	assign LCD_EN = 1'b0;
+	assign LCD_RS = 1'b0;
+	assign LCD_RW = 1'b0;
+	assign LCD_DATA = 8'hZZ;
+	assign UART_CTS = 1'b0;
+	assign UART_TXD = 1'b1;
+	assign SD_CLK = 1'b0;
+	assign EEP_I2C_SCLK = 1'b0;
+	assign I2C_SCLK = 1'b0;  // 未使用（IMU 連接到 GPIO[0]）
+	// I2C_SDAT 是 inout，保持高阻態（未使用，IMU 連接到 GPIO[2]）
+	assign ENET0_RST_N = 1'b0;
+	assign ENET0_GTX_CLK = 1'b0;
+	assign ENET0_MDC = 1'b0;
+	assign ENET0_TX_DATA = 4'h0;
+	assign ENET0_TX_EN = 1'b0;
+	assign ENET0_TX_ER = 1'b0;
+	assign ENET1_RST_N = 1'b0;
+	assign ENET1_GTX_CLK = 1'b0;
+	assign ENET1_MDC = 1'b0;
+	assign ENET1_TX_DATA = 4'h0;
+	assign ENET1_TX_EN = 1'b0;
+	assign ENET1_TX_ER = 1'b0;
+	assign TD_RESET_N = 1'b0;
+	assign OTG_RST_N = 1'b0;
+	assign OTG_CS_N = 1'b1;
+	assign OTG_WR_N = 1'b1;
+	assign OTG_RD_N = 1'b1;
+	assign OTG_ADDR = 2'h0;
+	assign OTG_DATA = 16'hZZZZ;
+	assign DRAM_ADDR = 13'h0000;
+	assign DRAM_BA = 2'h0;
+	assign DRAM_CAS_N = 1'b1;
+	assign DRAM_CKE = 1'b0;
+	assign DRAM_CLK = 1'b0;
+	assign DRAM_CS_N = 1'b1;
+	assign DRAM_DQM = 4'h0;
+	assign DRAM_RAS_N = 1'b1;
+	assign DRAM_WE_N = 1'b1;
+	assign DRAM_DQ = 32'hZZZZZZZZ;
+	assign FL_ADDR = 23'h000000;
+	assign FL_CE_N = 1'b1;
+	assign FL_OE_N = 1'b1;
+	assign FL_RST_N = 1'b0;
+	assign FL_WE_N = 1'b1;
+	assign FL_WP_N = 1'b0;
+	assign FL_DQ = 8'hZZ;
+	assign HSMC_CLKOUT_P1 = 1'b0;
+	assign HSMC_CLKOUT_P2 = 1'b0;
+	assign HSMC_CLKOUT0 = 1'b0;
+	assign HSMC_TX_D_P = 17'h00000;
+
+`ifdef DUT_LAB1
+	initial begin
+		$fsdbDumpfile("LAB1.fsdb");
+		$fsdbDumpvars(0, DE2_115, "+mda");
+	end
+`endif
+
+endmodule
+
+// =========================================================
+// HexTo7Seg 模組：將 4-bit 十六進制數轉換為 7段顯示
+// =========================================================
+module HexTo7Seg (
+	input  [3:0] i_hex,
+	output [6:0] o_seg
+);
+
+	// 7段顯示器編碼（1=亮，0=暗）
+	// 段順序：g f e d c b a
+	localparam D0 = 7'b1000000;  // 0
+	localparam D1 = 7'b1111001;  // 1
+	localparam D2 = 7'b0100100;  // 2
+	localparam D3 = 7'b0110000;  // 3
+	localparam D4 = 7'b0011001;  // 4
+	localparam D5 = 7'b0010010;  // 5
+	localparam D6 = 7'b0000010;  // 6
+	localparam D7 = 7'b1111000;  // 7
+	localparam D8 = 7'b0000000;  // 8
+	localparam D9 = 7'b0010000;  // 9
+	localparam DA = 7'b0001000;  // A (用於負號)
+	localparam DB = 7'b0000011;  // b (用於正號)
+	localparam DC = 7'b1000110;  // C
+	localparam DD = 7'b0100001;  // d
+	localparam DE = 7'b0000110;  // E
+	localparam DF = 7'b0001110;  // F
+
+	always_comb begin
+		case (i_hex)
+			4'h0: o_seg = D0;
+			4'h1: o_seg = D1;
+			4'h2: o_seg = D2;
+			4'h3: o_seg = D3;
+			4'h4: o_seg = D4;
+			4'h5: o_seg = D5;
+			4'h6: o_seg = D6;
+			4'h7: o_seg = D7;
+			4'h8: o_seg = D8;
+			4'h9: o_seg = D9;
+			4'ha: o_seg = DA;
+			4'hb: o_seg = DB;
+			4'hc: o_seg = DC;
+			4'hd: o_seg = DD;
+			4'he: o_seg = DE;
+			4'hf: o_seg = DF;
+			default: o_seg = 7'b1111111;  // 空白
+		endcase
+	end
+
+endmodule
