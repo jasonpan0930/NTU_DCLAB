@@ -14,6 +14,10 @@ module Random_Position_Generator #(
 	input logic i_clk,
 	input logic i_rst_n,
 	
+	// Kill signal: when i_kill=1, zombie at i_kill_index dies
+	input logic i_kill,
+	input logic [4:0] i_kill_index,
+	
 	output logic [10:0] o_x [0:MAX_POSITIONS-1],
 	output logic [9:0] o_y [0:MAX_POSITIONS-1],
 	output logic o_valid [0:MAX_POSITIONS-1],
@@ -162,7 +166,12 @@ module Random_Position_Generator #(
 				end else begin
 					
 					// Update per-zombie divider counter (independent update, runs every update_tick)
-					if (update_tick && position_valid[i] && !(gen_tick && (available_slot == i) && slot_found)) begin
+					// Skip counter update if zombie is being killed, spawned, or moved
+					// Note: We check move_div_cnt directly instead of move_enable to avoid comb loop
+					if (update_tick && position_valid[i] && 
+					    !(i_kill && (i_kill_index == i[4:0]) && position_valid[i]) &&
+					    !(gen_tick && (available_slot == i) && slot_found) &&
+					    !(move_div_cnt[i] == move_div_val[i])) begin
 						if (move_div_cnt[i] >= move_div_val[i]) begin
 							move_div_cnt[i] <= 4'd0;
 						end else begin
@@ -170,11 +179,21 @@ module Random_Position_Generator #(
 						end
 					end
 					
+					// 0. KILL ZOMBIE (highest priority: when kill signal arrives, zombie dies)
+					//    Only kill if zombie actually exists (position_valid[i] == 1)
+					//    Generate next spawn position when killed (same as arrival behavior)
+					if (i_kill && (i_kill_index == i[4:0]) && position_valid[i]) begin
+						position_valid[i] <= 1'b0; // Zombie dies - disappears
+						pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH); // Generate and store random X position for next spawn
+						pos_y[i] <= 32'd270; // Set spawn Y position
+						error_acc[i] <= 32'd0;
+						move_div_cnt[i] <= 4'd0;
+					end
 					// 1. SPAWN NEW ZOMBIE (priority: when gen_tick arrives, make zombie visible)
-					//    Position was already generated and fixed when previous zombie disappeared
+					//    Position was already generated and fixed when previous zombie disappeared/killed
 					//    (or will be generated here if first spawn after reset)
 					//    Now we just make it visible (position_valid=1) - position is already stable
-					if (gen_tick && (available_slot == i) && slot_found) begin
+					else if (gen_tick && (available_slot == i) && slot_found) begin
 						// If position is at reset value (screen center), generate new random position
 						// Otherwise, position was pre-generated when zombie disappeared - use it
 						if (pos_x[i] == 32'(SCREEN_WIDTH / 2) && pos_y[i] == 32'(SCREEN_HEIGHT / 2)) begin

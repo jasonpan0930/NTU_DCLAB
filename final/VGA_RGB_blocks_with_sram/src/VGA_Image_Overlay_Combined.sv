@@ -42,12 +42,12 @@ module VGA_Image_Overlay_Combined #(
     // Output
     output logic [7:0] o_vga_r,
     output logic [7:0] o_vga_g,
-    output logic [7:0] o_vga_b
+    output logic [7:0] o_vga_b,
 
 	// killing part
-	// input logic i_killing,
-	// output logic o_kill_en,
-	// output logic o_kill_idx
+	input logic i_killing,
+	output logic o_kill_en,
+	output logic [4:0] o_kill_idx
 );
 
     // Constants
@@ -56,12 +56,45 @@ module VGA_Image_Overlay_Combined #(
     localparam AIM_SIZE_Y = 200;
 
     // ============================================================
+    //  Killing Logic: Capture Target Position
+    // ============================================================
+    logic [10:0] kill_target_x;
+    logic [9:0] kill_target_y;
+    logic kill_target_valid;
+    
+    always_ff @(posedge i_clk) begin
+        if (~i_rst_n) begin
+            kill_target_x <= 0;
+            kill_target_y <= 0;
+            kill_target_valid <= 0;
+        end else begin
+            if (i_killing) begin
+                // Capture aim center position when killing signal goes high
+                kill_target_x <= i_aim_x;
+                kill_target_y <= i_aim_y;
+                kill_target_valid <= 1'b1;
+            end else if (kill_target_valid && 
+                         (i_h_count == kill_target_x) && 
+                         (i_v_count == kill_target_y)) begin
+                // Clear valid flag after we've processed this position
+                kill_target_valid <= 1'b0;
+            end
+        end
+    end
+
+    // ============================================================
     //  LAYER 0: Logic Calculation & Candidate Selection
     // ============================================================
     
     // --- 0.1 Background Address Calc ---
     logic [20:0] bg_addr_s0;
     assign bg_addr_s0 = (i_v_count * BG_WIDTH) + i_h_count;
+    
+    // --- 0.1.5 Kill Target Detection ---
+    logic at_kill_target_s0;
+    assign at_kill_target_s0 = kill_target_valid && 
+                                (i_h_count == kill_target_x) && 
+                                (i_v_count == kill_target_y);
 
     // --- 0.2 Aim Calc ---
     // Convert center coordinates to top-left corner (use signed arithmetic)
@@ -144,10 +177,11 @@ module VGA_Image_Overlay_Combined #(
     logic [15:0] aim_addr_s1;
     logic        in_aim_s1;
     logic        active_video_s1;
+    logic        at_kill_target_s1;
 
     always_ff @(posedge i_clk) begin
         if (~i_rst_n) begin
-            bg_addr_s1 <= 0; active_video_s1 <= 0; in_aim_s1 <= 0;
+            bg_addr_s1 <= 0; active_video_s1 <= 0; in_aim_s1 <= 0; at_kill_target_s1 <= 0;
         end else begin
             // Zombie Data
             for(int k=0; k<4; k++) begin
@@ -161,6 +195,7 @@ module VGA_Image_Overlay_Combined #(
             aim_addr_s1     <= aim_addr_s0;
             in_aim_s1       <= in_aim_s0;
             active_video_s1 <= i_active_video;
+            at_kill_target_s1 <= at_kill_target_s0;
         end
     end
 
@@ -213,10 +248,11 @@ module VGA_Image_Overlay_Combined #(
     logic [20:0] bg_addr_s2; // Keep tracking for parsing low/high byte later
     logic        in_aim_s2;
     logic        active_video_s2;
+    logic        at_kill_target_s2;
 
     always_ff @(posedge i_clk) begin
         if (~i_rst_n) begin
-            active_video_s2 <= 0;
+            active_video_s2 <= 0; at_kill_target_s2 <= 0;
         end else begin
             // Pass Zombie Info for Checking
             for(int k=0; k<4; k++) begin
@@ -230,6 +266,7 @@ module VGA_Image_Overlay_Combined #(
             // Pass Aim & Control
             in_aim_s2 <= in_aim_s1;
             active_video_s2 <= active_video_s1;
+            at_kill_target_s2 <= at_kill_target_s1;
         end
     end
 
@@ -272,6 +309,44 @@ module VGA_Image_Overlay_Combined #(
     logic        use_zombie_s2;
     assign use_zombie_s2 = use_zombie;
     assign z_pixel_addr_s2 = use_zombie_s2 ? ((final_y_s2 * i_zombie_size_x) + final_x_s2) : 14'd0;
+
+    // --- 2.3 Kill Detection Logic ---
+    // Check if we're at the kill target position and there's a zombie
+    logic kill_detected_s2;
+    assign kill_detected_s2 = at_kill_target_s2 && use_zombie_s2;
+    
+    // Hold kill outputs for 10 cycles
+    logic [3:0] kill_hold_counter; // 0-10 counter
+    logic kill_en_reg;
+    logic [4:0] kill_idx_reg;
+    
+    always_ff @(posedge i_clk) begin
+        if (~i_rst_n) begin
+            kill_hold_counter <= 4'd0;
+            kill_en_reg <= 1'b0;
+            kill_idx_reg <= 5'd0;
+        end else begin
+            if (kill_detected_s2 && (kill_hold_counter == 4'd0)) begin
+                // New kill detected, latch values and start counter
+                kill_en_reg <= 1'b1;
+                kill_idx_reg <= final_id_s2[4:0];
+                kill_hold_counter <= 4'd1; // Start counting
+            end else if (kill_hold_counter > 4'd0) begin
+                // Counting down
+                if (kill_hold_counter < 4'd10) begin
+                    kill_hold_counter <= kill_hold_counter + 4'd1;
+                end else begin
+                    // Reached 10 cycles, clear outputs
+                    kill_hold_counter <= 4'd0;
+                    kill_en_reg <= 1'b0;
+                    kill_idx_reg <= 5'd0;
+                end
+            end
+        end
+    end
+    
+    assign o_kill_en = kill_en_reg;
+    assign o_kill_idx = kill_idx_reg;
 
     // ------------------------------------------------------------
     // === PIPELINE REGISTER PASSING (Layer 2 -> Layer 3) ===

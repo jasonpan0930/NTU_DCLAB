@@ -341,9 +341,9 @@ VGA_Image_Overlay_Combined #(
 	.o_bg_sram_we_n(vga_sram_we_n),
 	.o_vga_r(vga_r),
 	.o_vga_g(vga_g),
-	.o_vga_b(vga_b),
+	.o_vga_b(vga_b)
 
-	.i_killing(trigger_posedge),
+	.i_kill(trigger_posedge),
 	.o_kill_idx(kill_index),
 	.o_kill_en(kill_en)
 );
