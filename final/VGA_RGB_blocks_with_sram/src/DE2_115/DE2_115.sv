@@ -257,7 +257,7 @@ Debounce #(
     .CNT_N(250000) // 約 5ms 在 50MHz 下，可依需要再調整
 ) trigger_debounce_inst (
     .i_in       (trigger_raw),
-    .i_clk      (clk),
+    .i_clk      (vga_clock_74_25),
     .i_rst_n    (KEY[1]),
     .o_debounced(trigger_debounced),
     .o_neg      (trigger_negedge),
@@ -327,7 +327,7 @@ VGA_Image_Overlay_Combined #(
 	.i_aim_y(aim_y - 100),                   // Aim Y position
 	.o_zombie_addr(zombie_addr_overlay),     // BRAM address when not busy building transparency
 	.i_zombie_pixel(zombie_bram_q),          // Shared BRAM pixel data
-	.i_trans_bounds(zombie_trans_bounds),    // Transparency bounds from set_trans_arr
+	
 	.o_bg_sram_addr(vga_sram_addr),
 	.o_bg_sram_ce_n(vga_sram_ce_n),
 	.io_bg_sram_dq(SRAM_DQ),
@@ -341,18 +341,18 @@ VGA_Image_Overlay_Combined #(
 );
 
 // Transparency table builder for the shared zombie sprite
-set_trans_arr #(
-	.ZOMBIE_SIZE_X(102),
-	.ZOMBIE_SIZE_Y(149)
-) u_set_trans_arr (
-	.i_clk(vga_clock_74_25),
-	.i_rst_n(KEY[1]),
-	.o_trans_bounds(zombie_trans_bounds),
-	.o_done(trans_done),
-	.o_busy(trans_busy),
-	.o_zombie_addr(zombie_addr_trans),
-	.i_zombie_pixel(zombie_bram_q)
-);
+// set_trans_arr #(
+// 	.ZOMBIE_SIZE_X(102),
+// 	.ZOMBIE_SIZE_Y(149)
+// ) u_set_trans_arr (
+// 	.i_clk(vga_clock_74_25),
+// 	.i_rst_n(KEY[1]),
+// 	.o_trans_bounds(zombie_trans_bounds),
+// 	.o_done(trans_done),
+// 	.o_busy(trans_busy),
+// 	.o_zombie_addr(zombie_addr_trans),
+// 	.i_zombie_pixel(zombie_bram_q)
+// );
 
 // Simple arbiter for shared zombie_1x BRAM:
 // - While trans_busy = 1, set_trans_arr owns the BRAM.
@@ -496,7 +496,7 @@ Position_Controller #(
     assign LEDG[3] = trigger_posedge;
 
     // 觸發次數計數器：每次 trigger_posedge +1
-    always_ff @(posedge clk or negedge rst_n) begin
+    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
         if (!rst_n) begin
             trigger_count <= 4'd0;
         end else if (trigger_posedge) begin
@@ -567,57 +567,15 @@ Position_Controller #(
 	end
 
 
-	// test for transparency bounds display
-// Increment trans_bounds_index when KEY[0] is pressed
-always_ff @(posedge clk or negedge KEY[1]) begin
-    if (!KEY[1]) begin
-        trans_bounds_index <= 7'd0;
-    end else if (key0_posedge) begin
-        if (trans_bounds_index >= 7'd101) begin
-            trans_bounds_index <= 7'd0;  // Wrap around
-        end else begin
-            trans_bounds_index <= trans_bounds_index + 7'd1;
-        end
-    end
-end
-	// Transparency bounds display signals
-	logic [7:0] trans_bounds_display_value;
-	logic [3:0] trans_bounds_ones, trans_bounds_tens;
-	logic [3:0] index_ones, index_tens;
-	
-	// Select which byte to display based on SW[10]
-	assign trans_bounds_display_value = SW[10] ? zombie_trans_bounds[trans_bounds_index][15:8] 
-	                                             : zombie_trans_bounds[trans_bounds_index][7:0];
-	
-	// Extract decimal digits for transparency bounds value (0-255)
-	always_comb begin
-		trans_bounds_ones = trans_bounds_display_value % 10;
-		trans_bounds_tens = (trans_bounds_display_value / 10) % 10;
-	end
-	
-	// Extract decimal digits for index (0-101)
-	always_comb begin
-		index_ones = trans_bounds_index % 10;
-		index_tens = (trans_bounds_index / 10) % 10;
-	end
-
 	// 7段顯示器解碼
 	HexTo7Seg hex0(.i_hex(ones),      .o_seg(HEX0));
 	HexTo7Seg hex1(.i_hex(tens),      .o_seg(HEX1));
 	HexTo7Seg hex2(.i_hex(hundreds),  .o_seg(HEX2));
 	HexTo7Seg hex3(.i_hex(thousands), .o_seg(HEX3));
-	
-    // Display transparency bounds:
-    // HEX[7:6] = index i (0-101)
-    // HEX[5:4] = transparency bounds value (controlled by SW[10]: 0=low byte [7:0], 1=high byte [15:8])
-    HexTo7Seg hex6_index(.i_hex(index_ones), .o_seg(HEX6));
-    HexTo7Seg hex7_index(.i_hex(index_tens), .o_seg(HEX7));
-    HexTo7Seg hex4_trans(.i_hex(trans_bounds_ones), .o_seg(HEX4));
-    HexTo7Seg hex5_trans(.i_hex(trans_bounds_tens), .o_seg(HEX5));
     
     // Original HEX4-HEX5 displays replaced by transparency bounds display above
-    // assign HEX4 = is_negative ? 7'b0111111 : 7'b1111111; // '-' or OFF
-    // HexTo7Seg hex5(.i_hex(trigger_count), .o_seg(HEX5));
+    assign HEX4 = is_negative ? 7'b0111111 : 7'b1111111; // '-' or OFF
+    HexTo7Seg hex5(.i_hex(trigger_count), .o_seg(HEX5));
 
 `ifdef DUT_LAB1
 	initial begin

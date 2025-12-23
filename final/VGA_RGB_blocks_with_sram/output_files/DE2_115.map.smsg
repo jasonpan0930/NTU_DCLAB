@@ -7,3 +7,4 @@ Info (10281): Verilog HDL Declaration information at DE2_115.sv(12): object "HEX
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(13): object "HEX1" differs only in case from object "hex1" in the same scope
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(14): object "HEX2" differs only in case from object "hex2" in the same scope
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(15): object "HEX3" differs only in case from object "hex3" in the same scope
+Info (10281): Verilog HDL Declaration information at DE2_115.sv(17): object "HEX5" differs only in case from object "hex5" in the same scope

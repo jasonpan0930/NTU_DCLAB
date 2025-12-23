@@ -18,7 +18,8 @@ module Random_Position_Generator #(
 	output logic [9:0] o_y [0:MAX_POSITIONS-1],
 	output logic o_valid [0:MAX_POSITIONS-1],
 	output logic [31:0] o_distance [0:MAX_POSITIONS-1],
-	output logic [3:0] o_active_count
+	output logic [3:0] o_active_count,
+	output logic [4:0] o_depth_sorted [0:MAX_POSITIONS-1]  // Sorted zombie indices by depth: [0]=backmost, [N-1]=frontmost
 );
 
 	// ============================================================
@@ -243,6 +244,56 @@ module Random_Position_Generator #(
 		end
 	end
 
+	// Depth Sorted Array: Sort zombie indices by Y position (depth)
+	// o_depth_sorted[0] = index of zombie furthest back (smallest Y)
+	// o_depth_sorted[N-1] = index of zombie most in front (largest Y)
+	// Uses selection sort: for each position k, find zombie with k-th smallest Y
+	always_comb begin
+		integer min_y_val, best_idx_val, found_flag, already_selected;
+		
+		// Initialize all with invalid indices
+		for (int i = 0; i < MAX_POSITIONS; i++) begin
+			o_depth_sorted[i] = 5'd31;
+		end
+		
+		// Selection sort: for each position k, find zombie with k-th smallest Y
+		for (int k = 0; k < MAX_POSITIONS; k++) begin
+			// Initialize for this iteration
+			min_y_val = 2147483647;  // Max 32-bit signed value
+			best_idx_val = 31;       // Invalid index
+			found_flag = 0;          // 0 = not found, 1 = found
+			
+			// Check all zombies to find the k-th smallest
+			for (int i = 0; i < MAX_POSITIONS; i++) begin
+				already_selected = 0;
+				
+				if (position_valid[i]) begin
+					// Check if this zombie is already in sorted array
+					for (int j = 0; j < k; j++) begin
+						if (o_depth_sorted[j] == i[4:0]) begin
+							already_selected = 1;
+							break;
+						end
+					end
+					
+					// If not already selected and has smaller or equal Y
+					if (already_selected == 0) begin
+						if ($signed(pos_y[i]) <= $signed(min_y_val)) begin
+							min_y_val = pos_y[i];
+							best_idx_val = i;
+							found_flag = 1;
+						end
+					end
+				end
+			end
+			
+			// Assign the found zombie index (or keep invalid if none found)
+			if (found_flag == 1) begin
+				o_depth_sorted[k] = best_idx_val[4:0];
+			end
+		end
+	end
+
 	// Position and Distance Output
 	generate
 		for (i = 0; i < MAX_POSITIONS; i++) begin : pos_out
@@ -260,6 +311,7 @@ module Random_Position_Generator #(
 					o_y[i] = TARGET_Y[9:0];
 					o_valid[i] = 1'b0;
 					o_distance[i] = 32'd0;
+					// o_depth_index is calculated separately in depth_calc block (will be 0 for invalid zombies)
 				end else begin
 					// Clamp X
 					if (pos_x[i] < 0) o_x[i] = 11'd0;

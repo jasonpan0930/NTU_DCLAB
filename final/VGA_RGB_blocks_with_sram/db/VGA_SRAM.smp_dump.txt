@@ -16,9 +16,3 @@ r_SM_Main.s_RX_START_BIT 0 0 1 1 0
 r_SM_Main.s_RX_DATA_BITS 0 1 0 1 0 
 r_SM_Main.s_RX_STOP_BIT 1 0 0 1 0 
 r_SM_Main.s_CLEANUP 0 0 0 1 1 
-
-State Machine - |DE2_115|set_trans_arr:u_set_trans_arr|state
-Name state.S_IDLE state.S_DONE state.S_SCAN 
-state.S_IDLE 0 0 0 
-state.S_SCAN 1 0 1 
-state.S_DONE 1 1 0 
