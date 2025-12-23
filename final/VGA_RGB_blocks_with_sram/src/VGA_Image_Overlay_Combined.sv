@@ -90,7 +90,7 @@ module VGA_Image_Overlay_Combined #(
 	
 	genvar z;
 	generate
-		for (z = 0; z < MAX_ZOMBIES; z++) begin : zombie_area_check
+		for (z = 0; z < MAX_ZOMBIES ; z++) begin : zombie_area_check
 			always_comb begin
 				logic [10:0] current_x;
 				logic [9:0] current_y;
@@ -102,12 +102,11 @@ module VGA_Image_Overlay_Combined #(
 				    (i_h_count >= i_zombie_x[z]) && 
 				    (i_h_count < (i_zombie_x[z] + i_zombie_size_x)) &&
 				    (i_v_count >= i_zombie_y[z]) && 
-				    (i_v_count < (i_zombie_y[z] + i_zombie_size_y))
+				    (i_v_count < (i_zombie_y[z] + i_zombie_size_y)) &&
 					// Use precomputed transparent Y-bounds for this column:
 					// [7:0] = min transparent Y, [15:8] = max transparent Y
-					// (current_y >= i_trans_bounds[current_x][7:0]) &&
-					// (current_y <= i_trans_bounds[current_x][15:8])) begin
-				)begin
+					(current_y >= i_trans_bounds[current_x][7:0]) &&
+					(current_y <= i_trans_bounds[current_x][15:8])) begin
 					in_zombie_area[z] = 1'b1;
 					zombie_local_x[z] = current_x;
 					zombie_local_y[z] = current_y;

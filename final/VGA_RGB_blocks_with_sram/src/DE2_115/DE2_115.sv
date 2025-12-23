@@ -341,18 +341,18 @@ VGA_Image_Overlay_Combined #(
 );
 
 // Transparency table builder for the shared zombie sprite
-// set_trans_arr #(
-// 	.ZOMBIE_SIZE_X(102),
-// 	.ZOMBIE_SIZE_Y(149)
-// ) u_set_trans_arr (
-// 	.i_clk(vga_clock_74_25),
-// 	.i_rst_n(KEY[1]),
-// 	.o_trans_bounds(zombie_trans_bounds),
-// 	.o_done(trans_done),
-// 	.o_busy(trans_busy),
-// 	.o_zombie_addr(zombie_addr_trans),
-// 	.i_zombie_pixel(zombie_bram_q)
-// );
+set_trans_arr #(
+	.ZOMBIE_SIZE_X(102),
+	.ZOMBIE_SIZE_Y(149)
+) u_set_trans_arr (
+	.i_clk(vga_clock_74_25),
+	.i_rst_n(KEY[1]),
+	.o_trans_bounds(zombie_trans_bounds),
+	.o_done(trans_done),
+	.o_busy(trans_busy),
+	.o_zombie_addr(zombie_addr_trans),
+	.i_zombie_pixel(zombie_bram_q)
+);
 
 // Simple arbiter for shared zombie_1x BRAM:
 // - While trans_busy = 1, set_trans_arr owns the BRAM.
