@@ -4,7 +4,7 @@ module Random_Position_Generator #(
 	parameter SCREEN_HEIGHT = 720,
 	parameter TARGET_X = 640,
 	parameter TARGET_Y = 719,
-	parameter MAX_POSITIONS = 3,
+	parameter MAX_POSITIONS = 20,
 	parameter VELOCITY = 16'd2,
 	parameter CLOCK_FREQ = 32'd74250000,
 	// Base update rate for zombie movement (120 Hz allows more granular speed steps)
@@ -169,27 +169,39 @@ module Random_Position_Generator #(
 						end
 					end
 					
-					// 1. SPAWN NEW ZOMBIE (overrides counter to ensure clean state)
+					// 1. SPAWN NEW ZOMBIE (priority: when gen_tick arrives, make zombie visible)
+					//    Position was already generated and fixed when previous zombie disappeared
+					//    (or will be generated here if first spawn after reset)
+					//    Now we just make it visible (position_valid=1) - position is already stable
 					if (gen_tick && (available_slot == i) && slot_found) begin
-						pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH);
-						// Spawn all zombies at fixed vertical position Y = 270
-						pos_y[i] <= 32'd270;
-						position_valid[i] <= 1'b1;
+						// If position is at reset value (screen center), generate new random position
+						// Otherwise, position was pre-generated when zombie disappeared - use it
+						if (pos_x[i] == 32'(SCREEN_WIDTH / 2) && pos_y[i] == 32'(SCREEN_HEIGHT / 2)) begin
+							// First spawn after reset - generate random position now
+							pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH);
+							pos_y[i] <= 32'd270;
+						end
+						// Position is already set (either pre-generated or just set above) - make visible
+						position_valid[i] <= 1'b1;  // Zombie becomes visible at stable position
 						error_acc[i] <= 32'd0;
-						move_div_cnt[i] <= 4'd0;  // Reset counter to ensure no immediate movement
+						move_div_cnt[i] <= 4'd0;  // Reset counter: ensures no immediate movement,
+						//                         zombie stays at spawn position until move_div_cnt reaches move_div_val
 					end 
 					// 2. MOVE ZOMBIE (Bresenham-like Logic with variable speed)
-					if (move_enable[i]) begin
+					//    Only executes if not spawning in this cycle
+					else if (move_enable[i]) begin
 						// Reset counter after movement is enabled
 						move_div_cnt[i] <= 4'd0;
 						
 						// Check arrival
 						if ((abs_dx + abs_dy) <= VELOCITY) begin
-							position_valid[i] <= 1'b0; // Disappear
-							// Reset position to prevent old values from being visible when slot is reused
-							// This ensures clean state for next spawn
-							pos_x[i] <= 32'd0;
-							pos_y[i] <= 32'd270;
+							// Zombie arrives at destination: disappear and generate next spawn position
+							// Generate random position NOW (when zombie disappears) and store it
+							// This ensures position is fixed and stable before zombie becomes visible
+							position_valid[i] <= 1'b0; // Disappear - slot becomes available for next gen_tick
+							pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH); // Generate and store random X position
+							pos_y[i] <= 32'd270; // Set spawn Y position
+							// Position is now fixed and waiting - won't change until zombie becomes valid
 						end else begin
 							if (abs_dx >= abs_dy) begin
 								// Move X (Major)
