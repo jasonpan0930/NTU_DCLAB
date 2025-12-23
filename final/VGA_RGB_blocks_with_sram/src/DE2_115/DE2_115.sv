@@ -264,7 +264,8 @@ Debounce #(
     .o_pos      (trigger_posedge)   // 按鈕由未按 → 按下 時產生一個 clock 週期的脈波，可當作板機觸發
 );
 
-
+wire kill_en;
+wire [4:0] kill_index;
 
 // Random Position Generator - DISABLED FOR TESTING
 // Assign all zombie positions to 0 for testing
@@ -274,13 +275,14 @@ Random_Position_Generator #(
 ) zombie_gen(
 	.i_clk(vga_clock_74_25),
 	.i_rst_n(KEY[1]),
-	.i_kill(kill_en),
-	.i_kill_index(kill_index),
 	.o_x(zombie_x),
 	.o_y(zombie_y),
 	.o_valid(zombie_valid),
 	.o_distance(zombie_distance),
-	.o_active_count(active_zombie_count)
+	.o_active_count(active_zombie_count),
+
+	.i_kill(kill_en),
+	.i_kill_index(kill_index)
 );
 
 
@@ -311,8 +313,6 @@ VGA_Controller_720p vga_ctrl_720p(
 	.o_active_video(vga_720p_active_video)
 );
 
-wire [4:0] kill_index;
-wire kill_en;
 // VGA Image Overlay Combined module (handles background + multiple zombie overlays)
 VGA_Image_Overlay_Combined #(
 	.MAX_ZOMBIES(20)  // Must match MAX_POSITIONS in Random_Position_Generator

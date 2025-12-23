@@ -167,11 +167,10 @@ module Random_Position_Generator #(
 					
 					// Update per-zombie divider counter (independent update, runs every update_tick)
 					// Skip counter update if zombie is being killed, spawned, or moved
-					// Note: We check move_div_cnt directly instead of move_enable to avoid comb loop
 					if (update_tick && position_valid[i] && 
-					    !(i_kill && (i_kill_index == i[4:0]) && position_valid[i]) &&
+					    !(i_kill && (i_kill_index == i[4:0])) &&
 					    !(gen_tick && (available_slot == i) && slot_found) &&
-					    !(move_div_cnt[i] == move_div_val[i])) begin
+					    !move_enable[i]) begin
 						if (move_div_cnt[i] >= move_div_val[i]) begin
 							move_div_cnt[i] <= 4'd0;
 						end else begin
@@ -180,9 +179,8 @@ module Random_Position_Generator #(
 					end
 					
 					// 0. KILL ZOMBIE (highest priority: when kill signal arrives, zombie dies)
-					//    Only kill if zombie actually exists (position_valid[i] == 1)
 					//    Generate next spawn position when killed (same as arrival behavior)
-					if (i_kill && (i_kill_index == i[4:0]) && position_valid[i]) begin
+					if (i_kill && (i_kill_index == i[4:0])) begin
 						position_valid[i] <= 1'b0; // Zombie dies - disappears
 						pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH); // Generate and store random X position for next spawn
 						pos_y[i] <= 32'd270; // Set spawn Y position
