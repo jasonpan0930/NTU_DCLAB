@@ -3,7 +3,7 @@
 // Supports multiple zombies from Random_Position_Generator
 // Uses sequential (_r) and combinational (_w) logic separation
 module VGA_Image_Overlay_Combined #(
-	parameter MAX_ZOMBIES = 10,       // Maximum number of zombies (must match Random_Position_Generator)
+	parameter MAX_ZOMBIES = 5,       // Maximum number of zombies (must match Random_Position_Generator)
 	parameter ZOMBIE_SIZE_X = 102,    // Zombie width
 	parameter ZOMBIE_SIZE_Y = 149     // Zombie height
 )(
@@ -23,6 +23,12 @@ module VGA_Image_Overlay_Combined #(
 	// about aim
 	input logic [10:0] i_aim_x,
 	input logic [9:0] i_aim_y,
+
+	// Shared zombie sprite BRAM interface (instantiated at top level)
+	output logic [13:0] o_zombie_addr,
+	input  logic [7:0]  i_zombie_pixel,
+	input  logic [15:0] i_trans_bounds [0:ZOMBIE_SIZE_X-1],
+
 	// Background SRAM interface
 	output logic [19:0] o_bg_sram_addr,
 	output logic o_bg_sram_ce_n,
@@ -86,14 +92,25 @@ module VGA_Image_Overlay_Combined #(
 	generate
 		for (z = 0; z < MAX_ZOMBIES; z++) begin : zombie_area_check
 			always_comb begin
+				logic [10:0] current_x;
+				logic [9:0] current_y;
+				// Local coordinates of current pixel relative to this zombie
+				current_x = i_h_count - i_zombie_x[z];
+				current_y = i_v_count - i_zombie_y[z];
+
 				if (i_zombie_valid[z] && 
 				    (i_h_count >= i_zombie_x[z]) && 
 				    (i_h_count < (i_zombie_x[z] + i_zombie_size_x)) &&
 				    (i_v_count >= i_zombie_y[z]) && 
-				    (i_v_count < (i_zombie_y[z] + i_zombie_size_y))) begin
+				    (i_v_count < (i_zombie_y[z] + i_zombie_size_y))
+					// Use precomputed transparent Y-bounds for this column:
+					// [7:0] = min transparent Y, [15:8] = max transparent Y
+					// (current_y >= i_trans_bounds[current_x][7:0]) &&
+					// (current_y <= i_trans_bounds[current_x][15:8])) begin
+				)begin
 					in_zombie_area[z] = 1'b1;
-					zombie_local_x[z] = i_h_count - i_zombie_x[z];
-					zombie_local_y[z] = i_v_count - i_zombie_y[z];
+					zombie_local_x[z] = current_x;
+					zombie_local_y[z] = current_y;
 				end else begin
 					in_zombie_area[z] = 1'b0;
 					zombie_local_x[z] = 11'd0;
@@ -149,18 +166,6 @@ module VGA_Image_Overlay_Combined #(
 		.q(bg_palette_data)
 	);
 	
-	// Zombie image BRAM
-	logic [13:0] zombie_bram_addr_reg;
-	logic [7:0] zombie_bram_data;
-	
-	zombie_1x zombie_bram(
-		.address(zombie_bram_addr_reg),
-		.clock(i_clk),
-		.data(8'd0),
-		.wren(1'b0),
-		.q(zombie_bram_data)
-	);
-	
 	// Zombie palette BRAM
 	logic [7:0] zombie_palette_addr_reg;
 	logic [15:0] zombie_palette_data;
@@ -208,7 +213,7 @@ module VGA_Image_Overlay_Combined #(
 	// Register zombie BRAM address (BRAM requires registered address, 1 cycle delay)
 	always_ff @(posedge i_clk) begin
 		if (~i_rst_n) begin
-			zombie_bram_addr_reg <= 14'd0;
+			o_zombie_addr <= 14'd0;
 			aim_bram_addr_reg <= 16'd0;
 			bg_pixel_byte_addr_r0 <= 21'd0;
 			bg_pixel_byte_addr_r1 <= 21'd0;
@@ -220,7 +225,7 @@ module VGA_Image_Overlay_Combined #(
 			// Register addresses for pipeline
 			bg_pixel_byte_addr_r0 <= bg_pixel_byte_addr_w;  // Stage 0: register SRAM address
 			bg_pixel_byte_addr_r1 <= bg_pixel_byte_addr_r0;  // Stage 1: SRAM data will be ready next cycle
-			zombie_bram_addr_reg <= zombie_pixel_addr_w;    // BRAM address (1 cycle delay)
+			o_zombie_addr <= zombie_pixel_addr_w;          // BRAM address (1 cycle delay)
 			aim_bram_addr_reg <= aim_pixel_addr_w;          // Aim BRAM address (1 cycle delay)
 			zombie_pixel_addr_r0 <= zombie_pixel_addr_w;
 			in_zombie_area_r0 <= in_zombie_area_w;
@@ -274,8 +279,8 @@ module VGA_Image_Overlay_Combined #(
 			in_aim_area_r <= in_aim_area_r0;
 			
 			// Read zombie pixel index from BRAM (BRAM has registered output, 1 cycle delay)
-			// zombie_bram_addr_reg was set 1 cycle ago, so data is ready now
-			zombie_pixel_index_r <= zombie_bram_data;
+			// o_zombie_addr was set 1 cycle ago, so data is ready now
+			zombie_pixel_index_r <= i_zombie_pixel;
 			
 			// Read aim pixel data from BRAM (BRAM has registered output, 1 cycle delay)
 			aim_pixel_data_r <= aim_bram_data;

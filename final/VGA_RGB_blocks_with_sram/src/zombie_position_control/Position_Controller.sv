@@ -32,13 +32,18 @@ module Position_Controller #(
 	// Example: For 1000Hz update rate (dt = 0.001s) and sensitivity of 100 pixels/(rad/s):
 	//   KX = 100 * 0.001 * 1000 = 100 (scaled by 1000 to avoid decimals)
 	//   Then divide by 1000 in the calculation to get back to pixels
-	parameter KX = 32'd100000,  // Horizontal sensitivity (for ωz → screen X), scaled by 1000
-	parameter KY = 32'd100000,  // Vertical sensitivity (for ωx → screen Y), scaled by 1000
+	// Lower values = less movement per update
+	parameter KX = 32'd1,  // Horizontal sensitivity (for ωz → screen X), scaled by 1000
+	parameter KY = 32'd1,  // Vertical sensitivity (for ωx → screen Y), scaled by 1000
+	
+	// Additional scaling factor to further reduce sensitivity (divide by this value)
+	// Increase this value to make movement smaller (e.g., 2 = half speed, 4 = quarter speed)
+	// parameter SENSITIVITY_DIVIDER = 32'd2,  // Additional divider to reduce movement
 	
 	// Update rate divider (how many clock cycles per position update)
 	// For 74.25MHz clock and 1000Hz update rate: 74,250,000 / 1000 = 74,250
 	// For 60Hz update rate: 74,250,000 / 60 = 1,237,500
-	parameter UPDATE_DIVIDER = 24'd74250,  // Default: ~1000Hz update rate
+	parameter UPDATE_DIVIDER = 24'd742500,  // Default: ~1000Hz update rate
 	
 	// Optional: Enable linear velocity contributions
 	parameter USE_LINEAR_VELOCITY = 0,
@@ -48,9 +53,9 @@ module Position_Controller #(
 	input logic i_rst_n,            // Reset (active low)
 	
 	// Angular velocity inputs (signed) - PRIMARY INPUTS FOR AIMING
-	input logic signed [15:0] i_wx, // Angular velocity X (pitch around X axis, right)
-	input logic signed [15:0] i_wy, // Angular velocity Y (yaw around Y axis, forward) - ignored for 2D cursor
-	input logic signed [15:0] i_wz, // Angular velocity Z (yaw around Z axis, up) - controls horizontal aim
+	input logic signed [31:0] i_wx, // Angular velocity X (pitch around X axis, right)
+	input logic signed [31:0] i_wy, // Angular velocity Y (yaw around Y axis, forward) - ignored for 2D cursor
+	input logic signed [31:0] i_wz, // Angular velocity Z (yaw around Z axis, up) - controls horizontal aim
 	
 	// Linear velocity inputs (signed) - OPTIONAL
 	input logic signed [31:0] i_vx, // Linear velocity X (right/left)
@@ -112,14 +117,17 @@ module Position_Controller #(
 	//   - The negative sign in Δy is because pitch up (positive ωx) moves cursor up (smaller y)
 	//
 	// KX and KY are scaled by 1000 to allow integer arithmetic, so we divide by 1000 at the end
+	// Additional SENSITIVITY_DIVIDER provides extra control to reduce movement
+	// Using $signed() to ensure proper signed arithmetic when mixing signed and unsigned operands
 	always_comb begin
 		// Horizontal movement: ωz → screen X
-		// Δx = (KX/1000) * ωz = (KX * ωz) / 1000
-		delta_x = (KX * i_wz) / 32'd1000;
+		// Δx = (KX/1000) * ωz / SENSITIVITY_DIVIDER = (KX * ωz) / (1000 * SENSITIVITY_DIVIDER)
+		// Ensure signed arithmetic for correct handling of negative angular velocities
+		delta_x = ($signed(KX) * i_wz) / $signed(32'd1000);
 		
 		// Vertical movement: ωx → screen Y (negative because pitch up = cursor up = smaller y)
-		// Δy = -(KY/1000) * ωx = -(KY * ωx) / 1000
-		delta_y = -(KY * i_wx) / 32'd1000;
+		// Δy = -(KY/1000) * ωx / SENSITIVITY_DIVIDER = -(KY * ωx) / (1000 * SENSITIVITY_DIVIDER)
+		delta_y = -($signed(KY) * i_wy) / $signed(32'd1000);
 	end
 	
 	// Optional: Add linear velocity contributions if enabled

@@ -7,7 +7,8 @@ module Random_Position_Generator #(
 	parameter MAX_POSITIONS = 3,
 	parameter VELOCITY = 16'd2,
 	parameter CLOCK_FREQ = 32'd74250000,
-	parameter UPDATE_RATE = 32'd60,
+	// Base update rate for zombie movement (120 Hz allows more granular speed steps)
+	parameter UPDATE_RATE = 32'd120,
 	parameter GENERATION_RATE = 32'd1
 )(
 	input logic i_clk,
@@ -28,10 +29,18 @@ module Random_Position_Generator #(
 	logic position_valid [0:MAX_POSITIONS-1];
 	
 	// Error Accumulator for Bresenham movement
-	logic signed [31:0] error_acc [0:MAX_POSITIONS-1]; 
+	logic signed [31:0] error_acc [0:MAX_POSITIONS-1];
+	
+	// Per-zombie speed control based on Y position
+	// Use 4-bit divider to support more speed steps (2-15 divider range)
+	logic [3:0] move_div_cnt [0:MAX_POSITIONS-1];
+	logic [3:0] move_div_val [0:MAX_POSITIONS-1];
+	logic move_enable [0:MAX_POSITIONS-1]; 
 
 	// Timing Counters
-	localparam UPDATE_DIVIDER = CLOCK_FREQ / UPDATE_RATE;
+	// Base update rate: 60 Hz (can be divided to get 15, 20, 30 Hz per zombie)
+	localparam BASE_UPDATE_RATE = 32'd60;
+	localparam UPDATE_DIVIDER = CLOCK_FREQ / BASE_UPDATE_RATE;
 	localparam GEN_DIVIDER = CLOCK_FREQ / GENERATION_RATE;
 	logic [23:0] update_counter;
 	logic update_tick;
@@ -115,6 +124,31 @@ module Random_Position_Generator #(
 				dy = target_y_fixed - pos_y[i];
 				abs_dx = (dx >= 0) ? dx : -dx;
 				abs_dy = (dy >= 0) ? dy : -dy;
+				
+				// Calculate move_enable based on Y position with more granular steps
+				// Base rate: 120 Hz
+				// Zombies spawn at Y=250, target at Y=719
+				// SLOW at beginning (small Y), FAST as they approach target (large Y)
+				// Larger divider = slower speed (120/divider = Hz)
+				if (pos_y[i] < 32'd280) begin
+					move_div_val[i] = 4'd10; // 120/10 = 12 Hz (slowest - just spawned)
+				end else if (pos_y[i] < 32'd320) begin
+					move_div_val[i] = 4'd8;  // 120/8 = 15 Hz
+				end else if (pos_y[i] < 32'd360) begin
+					move_div_val[i] = 4'd6;  // 120/6 = 20 Hz
+				end else if (pos_y[i] < 32'd400) begin
+					move_div_val[i] = 4'd5;  // 120/5 = 24 Hz
+				end else if (pos_y[i] < 32'd480) begin
+					move_div_val[i] = 4'd4;  // 120/4 = 30 Hz
+				end else if (pos_y[i] < 32'd560) begin
+					move_div_val[i] = 4'd3;  // 120/3 = 40 Hz (faster)
+				end else begin
+					move_div_val[i] = 4'd2;  // 120/2 = 60 Hz (fastest - near target)
+				end
+				
+				// Enable movement when counter matches divider value
+				move_enable[i] = update_tick && position_valid[i] && 
+				                 (move_div_cnt[i] == move_div_val[i]);
 			end
 
 			always_ff @(posedge i_clk or negedge i_rst_n) begin
@@ -123,21 +157,39 @@ module Random_Position_Generator #(
 					pos_y[i] <= 32'(SCREEN_HEIGHT / 2);
 					position_valid[i] <= 1'b0;
 					error_acc[i] <= 32'd0;
+					move_div_cnt[i] <= 4'd0;
 				end else begin
 					
-					// 1. SPAWN NEW ZOMBIE
+					// Update per-zombie divider counter (independent update, runs every update_tick)
+					if (update_tick && position_valid[i] && !(gen_tick && (available_slot == i) && slot_found)) begin
+						if (move_div_cnt[i] >= move_div_val[i]) begin
+							move_div_cnt[i] <= 4'd0;
+						end else begin
+							move_div_cnt[i] <= move_div_cnt[i] + 4'd1;
+						end
+					end
+					
+					// 1. SPAWN NEW ZOMBIE (overrides counter to ensure clean state)
 					if (gen_tick && (available_slot == i) && slot_found) begin
 						pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH);
-						pos_y[i] <= ((lfsr_state[21:11]) % SCREEN_HEIGHT);
+						// Spawn all zombies at fixed vertical position Y = 270
+						pos_y[i] <= 32'd270;
 						position_valid[i] <= 1'b1;
 						error_acc[i] <= 32'd0;
+						move_div_cnt[i] <= 4'd0;  // Reset counter to ensure no immediate movement
 					end 
-					
-					// 2. MOVE ZOMBIE (Bresenham-like Logic)
-					else if (update_tick && position_valid[i]) begin
+					// 2. MOVE ZOMBIE (Bresenham-like Logic with variable speed)
+					if (move_enable[i]) begin
+						// Reset counter after movement is enabled
+						move_div_cnt[i] <= 4'd0;
+						
 						// Check arrival
 						if ((abs_dx + abs_dy) <= VELOCITY) begin
 							position_valid[i] <= 1'b0; // Disappear
+							// Reset position to prevent old values from being visible when slot is reused
+							// This ensures clean state for next spawn
+							pos_x[i] <= 32'd0;
+							pos_y[i] <= 32'd270;
 						end else begin
 							if (abs_dx >= abs_dy) begin
 								// Move X (Major)

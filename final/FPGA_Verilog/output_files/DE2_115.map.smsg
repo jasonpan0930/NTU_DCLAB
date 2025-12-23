@@ -1,0 +1,5 @@
+Warning (10268): Verilog HDL information at velocity_integrator.sv(48): always construct contains both blocking and non-blocking assignments
+Info (10281): Verilog HDL Declaration information at DE2_115.sv(12): object "HEX0" differs only in case from object "hex0" in the same scope
+Info (10281): Verilog HDL Declaration information at DE2_115.sv(13): object "HEX1" differs only in case from object "hex1" in the same scope
+Info (10281): Verilog HDL Declaration information at DE2_115.sv(14): object "HEX2" differs only in case from object "hex2" in the same scope
+Info (10281): Verilog HDL Declaration information at DE2_115.sv(15): object "HEX3" differs only in case from object "hex3" in the same scope

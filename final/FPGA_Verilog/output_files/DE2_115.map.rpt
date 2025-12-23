@@ -1,0 +1,1077 @@
+Analysis & Synthesis report for DE2_115
+Tue Dec 23 01:44:14 2025
+Quartus II 64-Bit Version 15.0.0 Build 145 04/22/2015 SJ Full Version
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. State Machine - |DE2_115|velocity_integrator:u_integrator|state
+  9. State Machine - |DE2_115|imu_parser:u_parser|state
+ 10. State Machine - |DE2_115|uart_rx:u_rx|r_SM_Main
+ 11. Registers Removed During Synthesis
+ 12. General Register Statistics
+ 13. Inverted Register Statistics
+ 14. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 15. Parameter Settings for User Entity Instance: uart_rx:u_rx
+ 16. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod0
+ 17. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod1
+ 18. Parameter Settings for Inferred Entity Instance: lpm_divide:Mod2
+ 19. Parameter Settings for Inferred Entity Instance: lpm_divide:Div2
+ 20. Parameter Settings for Inferred Entity Instance: lpm_divide:Div1
+ 21. Parameter Settings for Inferred Entity Instance: lpm_divide:Div0
+ 22. Post-Synthesis Netlist Statistics for Top Partition
+ 23. Elapsed Time Per Partition
+ 24. Analysis & Synthesis Messages
+ 25. Analysis & Synthesis Suppressed Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus II License Agreement,
+the Altera MegaCore Function License Agreement, or other 
+applicable license agreement, including, without limitation, 
+that your use is for the sole purpose of programming logic 
+devices manufactured by Altera and sold by Altera or its 
+authorized distributors.  Please refer to the applicable 
+agreement for further details.
+
+
+
++----------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                     ;
++------------------------------------+---------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Tue Dec 23 01:44:14 2025       ;
+; Quartus II 64-Bit Version          ; 15.0.0 Build 145 04/22/2015 SJ Full Version ;
+; Revision Name                      ; DE2_115                                     ;
+; Top-level Entity Name              ; DE2_115                                     ;
+; Family                             ; Cyclone IV E                                ;
+; Total logic elements               ; 2,380                                       ;
+;     Total combinational functions  ; 1,754                                       ;
+;     Dedicated logic registers      ; 1,214                                       ;
+; Total registers                    ; 1214                                        ;
+; Total pins                         ; 480                                         ;
+; Total virtual pins                 ; 0                                           ;
+; Total memory bits                  ; 0                                           ;
+; Embedded Multiplier 9-bit elements ; 0                                           ;
+; Total PLLs                         ; 0                                           ;
++------------------------------------+---------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                                        ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                                     ; Setting            ; Default Value      ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                                     ; EP4CE115F29C7      ;                    ;
+; Top-level entity name                                                      ; DE2_115            ; DE2_115            ;
+; Family name                                                                ; Cyclone IV E       ; Cyclone V          ;
+; Use smart compilation                                                      ; Off                ; Off                ;
+; Enable parallel Assembler and TimeQuest Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                                ; Off                ; Off                ;
+; Restructure Multiplexers                                                   ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                                        ; Off                ; Off                ;
+; Preserve fewer node names                                                  ; On                 ; On                 ;
+; Disable OpenCore Plus hardware evaluation                                  ; Off                ; Off                ;
+; Verilog Version                                                            ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                               ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                                   ; Auto               ; Auto               ;
+; Safe State Machine                                                         ; Off                ; Off                ;
+; Extract Verilog State Machines                                             ; On                 ; On                 ;
+; Extract VHDL State Machines                                                ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                          ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                                 ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                             ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                                    ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                                  ; On                 ; On                 ;
+; Parallel Synthesis                                                         ; On                 ; On                 ;
+; DSP Block Balancing                                                        ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                                         ; On                 ; On                 ;
+; Power-Up Don't Care                                                        ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                               ; Off                ; Off                ;
+; Remove Duplicate Registers                                                 ; On                 ; On                 ;
+; Ignore CARRY Buffers                                                       ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                                     ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                                      ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                                  ; Off                ; Off                ;
+; Ignore LCELL Buffers                                                       ; Off                ; Off                ;
+; Ignore SOFT Buffers                                                        ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                             ; Off                ; Off                ;
+; Optimization Technique                                                     ; Balanced           ; Balanced           ;
+; Carry Chain Length                                                         ; 70                 ; 70                 ;
+; Auto Carry Chains                                                          ; On                 ; On                 ;
+; Auto Open-Drain Pins                                                       ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                                      ; Off                ; Off                ;
+; Auto ROM Replacement                                                       ; On                 ; On                 ;
+; Auto RAM Replacement                                                       ; On                 ; On                 ;
+; Auto DSP Block Replacement                                                 ; On                 ; On                 ;
+; Auto Shift Register Replacement                                            ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                            ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                              ; On                 ; On                 ;
+; Strict RAM Replacement                                                     ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                          ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                                     ; Off                ; Off                ;
+; Auto RAM Block Balancing                                                   ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                          ; Off                ; Off                ;
+; Auto Resource Sharing                                                      ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                                         ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                              ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing                        ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                          ; Off                ; Off                ;
+; Timing-Driven Synthesis                                                    ; On                 ; On                 ;
+; Report Parameter Settings                                                  ; On                 ; On                 ;
+; Report Source Assignments                                                  ; On                 ; On                 ;
+; Report Connectivity Checks                                                 ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                                         ; Off                ; Off                ;
+; Synchronization Register Chain Length                                      ; 2                  ; 2                  ;
+; PowerPlay Power Optimization During Synthesis                              ; Normal compilation ; Normal compilation ;
+; HDL message level                                                          ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                            ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report                   ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report                         ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report                  ; 100                ; 100                ;
+; Clock MUX Protection                                                       ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                                ; Off                ; Off                ;
+; Block Design Naming                                                        ; Auto               ; Auto               ;
+; SDC constraint protection                                                  ; Off                ; Off                ;
+; Synthesis Effort                                                           ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal               ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                                       ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                                         ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                                ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                                     ; On                 ; On                 ;
+; Synthesis Seed                                                             ; 1                  ; 1                  ;
++----------------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 8           ;
+; Maximum allowed            ; 8           ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 8           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processors 2-8         ; < 0.1%      ;
++----------------------------+-------------+
+
+
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                               ;
++------------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path   ; Used in Netlist ; File Type                    ; File Name with Absolute Path                                                         ; Library ;
++------------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------+---------+
+; IMU/DE2_115/velocity_integrator.sv ; yes             ; User SystemVerilog HDL File  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/IMU/DE2_115/velocity_integrator.sv ;         ;
+; IMU/DE2_115/uart_rx.sv             ; yes             ; User SystemVerilog HDL File  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/IMU/DE2_115/uart_rx.sv             ;         ;
+; IMU/DE2_115/imu_parser.sv          ; yes             ; User SystemVerilog HDL File  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/IMU/DE2_115/imu_parser.sv          ;         ;
+; IMU/DE2_115/DE2_115.sv             ; yes             ; User SystemVerilog HDL File  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/IMU/DE2_115/DE2_115.sv             ;         ;
+; lpm_divide.tdf                     ; yes             ; Megafunction                 ; c:/altera/15.0/quartus/libraries/megafunctions/lpm_divide.tdf                        ;         ;
+; abs_divider.inc                    ; yes             ; Megafunction                 ; c:/altera/15.0/quartus/libraries/megafunctions/abs_divider.inc                       ;         ;
+; sign_div_unsign.inc                ; yes             ; Megafunction                 ; c:/altera/15.0/quartus/libraries/megafunctions/sign_div_unsign.inc                   ;         ;
+; aglobal150.inc                     ; yes             ; Megafunction                 ; c:/altera/15.0/quartus/libraries/megafunctions/aglobal150.inc                        ;         ;
+; db/lpm_divide_icm.tdf              ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/lpm_divide_icm.tdf              ;         ;
+; db/sign_div_unsign_7nh.tdf         ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/sign_div_unsign_7nh.tdf         ;         ;
+; db/alt_u_div_2af.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/alt_u_div_2af.tdf               ;         ;
+; db/add_sub_7pc.tdf                 ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/add_sub_7pc.tdf                 ;         ;
+; db/add_sub_8pc.tdf                 ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/add_sub_8pc.tdf                 ;         ;
+; db/lpm_divide_2bm.tdf              ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/lpm_divide_2bm.tdf              ;         ;
+; db/sign_div_unsign_nlh.tdf         ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/sign_div_unsign_nlh.tdf         ;         ;
+; db/alt_u_div_27f.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/alt_u_div_27f.tdf               ;         ;
+; db/lpm_divide_l9m.tdf              ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/lpm_divide_l9m.tdf              ;         ;
+; db/sign_div_unsign_akh.tdf         ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/sign_div_unsign_akh.tdf         ;         ;
+; db/alt_u_div_84f.tdf               ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/alt_u_div_84f.tdf               ;         ;
+; db/lpm_divide_ihm.tdf              ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/lpm_divide_ihm.tdf              ;         ;
+; db/lpm_divide_vim.tdf              ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/lpm_divide_vim.tdf              ;         ;
+; db/lpm_divide_fkm.tdf              ; yes             ; Auto-Generated Megafunction  ; C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/db/lpm_divide_fkm.tdf              ;         ;
++------------------------------------+-----------------+------------------------------+--------------------------------------------------------------------------------------+---------+
+
+
++--------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                  ;
++---------------------------------------------+----------------+
+; Resource                                    ; Usage          ;
++---------------------------------------------+----------------+
+; Estimated Total logic elements              ; 2,380          ;
+;                                             ;                ;
+; Total combinational functions               ; 1754           ;
+; Logic element usage by number of LUT inputs ;                ;
+;     -- 4 input functions                    ; 438            ;
+;     -- 3 input functions                    ; 913            ;
+;     -- <=2 input functions                  ; 403            ;
+;                                             ;                ;
+; Logic elements by mode                      ;                ;
+;     -- normal mode                          ; 873            ;
+;     -- arithmetic mode                      ; 881            ;
+;                                             ;                ;
+; Total registers                             ; 1214           ;
+;     -- Dedicated logic registers            ; 1214           ;
+;     -- I/O registers                        ; 0              ;
+;                                             ;                ;
+; I/O pins                                    ; 480            ;
+;                                             ;                ;
+; Embedded Multiplier 9-bit elements          ; 0              ;
+;                                             ;                ;
+; Maximum fan-out node                        ; CLOCK_50~input ;
+; Maximum fan-out                             ; 1214           ;
+; Total fan-out                               ; 10673          ;
+; Average fan-out                             ; 2.62           ;
++---------------------------------------------+----------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                          ;
++----------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+----------------------------------------------------------------------------------------------------------+--------------+
+; Compilation Hierarchy Node             ; LC Combinationals ; LC Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                      ; Library Name ;
++----------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+----------------------------------------------------------------------------------------------------------+--------------+
+; |DE2_115                               ; 1754 (204)        ; 1214 (9)     ; 0           ; 0            ; 0       ; 0         ; 480  ; 0            ; |DE2_115                                                                                                 ; work         ;
+;    |HexTo7Seg:hex0|                    ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex0                                                                                  ; work         ;
+;    |HexTo7Seg:hex1|                    ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex1                                                                                  ; work         ;
+;    |HexTo7Seg:hex2|                    ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex2                                                                                  ; work         ;
+;    |HexTo7Seg:hex3|                    ; 7 (7)             ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|HexTo7Seg:hex3                                                                                  ; work         ;
+;    |imu_parser:u_parser|               ; 131 (131)         ; 390 (390)    ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|imu_parser:u_parser                                                                             ; work         ;
+;    |lpm_divide:Div0|                   ; 189 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0                                                                                 ; work         ;
+;       |lpm_divide_fkm:auto_generated|  ; 189 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_fkm:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_7nh:divider| ; 189 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_fkm:auto_generated|sign_div_unsign_7nh:divider                       ; work         ;
+;             |alt_u_div_2af:divider|    ; 189 (189)         ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div0|lpm_divide_fkm:auto_generated|sign_div_unsign_7nh:divider|alt_u_div_2af:divider ; work         ;
+;    |lpm_divide:Div1|                   ; 72 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1                                                                                 ; work         ;
+;       |lpm_divide_vim:auto_generated|  ; 72 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_vim:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_nlh:divider| ; 72 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_vim:auto_generated|sign_div_unsign_nlh:divider                       ; work         ;
+;             |alt_u_div_27f:divider|    ; 72 (72)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div1|lpm_divide_vim:auto_generated|sign_div_unsign_nlh:divider|alt_u_div_27f:divider ; work         ;
+;    |lpm_divide:Div2|                   ; 46 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2                                                                                 ; work         ;
+;       |lpm_divide_ihm:auto_generated|  ; 46 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_ihm:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_akh:divider| ; 46 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_ihm:auto_generated|sign_div_unsign_akh:divider                       ; work         ;
+;             |alt_u_div_84f:divider|    ; 46 (46)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Div2|lpm_divide_ihm:auto_generated|sign_div_unsign_akh:divider|alt_u_div_84f:divider ; work         ;
+;    |lpm_divide:Mod0|                   ; 221 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0                                                                                 ; work         ;
+;       |lpm_divide_icm:auto_generated|  ; 221 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_icm:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_7nh:divider| ; 221 (0)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_icm:auto_generated|sign_div_unsign_7nh:divider                       ; work         ;
+;             |alt_u_div_2af:divider|    ; 221 (221)         ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod0|lpm_divide_icm:auto_generated|sign_div_unsign_7nh:divider|alt_u_div_2af:divider ; work         ;
+;    |lpm_divide:Mod1|                   ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1                                                                                 ; work         ;
+;       |lpm_divide_2bm:auto_generated|  ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_2bm:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_nlh:divider| ; 91 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_2bm:auto_generated|sign_div_unsign_nlh:divider                       ; work         ;
+;             |alt_u_div_27f:divider|    ; 91 (91)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod1|lpm_divide_2bm:auto_generated|sign_div_unsign_nlh:divider|alt_u_div_27f:divider ; work         ;
+;    |lpm_divide:Mod2|                   ; 51 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2                                                                                 ; work         ;
+;       |lpm_divide_l9m:auto_generated|  ; 51 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_l9m:auto_generated                                                   ; work         ;
+;          |sign_div_unsign_akh:divider| ; 51 (0)            ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_l9m:auto_generated|sign_div_unsign_akh:divider                       ; work         ;
+;             |alt_u_div_84f:divider|    ; 51 (51)           ; 0 (0)        ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|lpm_divide:Mod2|lpm_divide_l9m:auto_generated|sign_div_unsign_akh:divider|alt_u_div_84f:divider ; work         ;
+;    |uart_rx:u_rx|                      ; 63 (63)           ; 43 (43)      ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|uart_rx:u_rx                                                                                    ; work         ;
+;    |velocity_integrator:u_integrator|  ; 658 (658)         ; 772 (772)    ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |DE2_115|velocity_integrator:u_integrator                                                                ; work         ;
++----------------------------------------+-------------------+--------------+-------------+--------------+---------+-----------+------+--------------+----------------------------------------------------------------------------------------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
+Encoding Type:  One-Hot
++-----------------------------------------------------------------+
+; State Machine - |DE2_115|velocity_integrator:u_integrator|state ;
++----------------+------------------------------------------------+
+; Name           ; state.ST_RUN                                   ;
++----------------+------------------------------------------------+
+; state.ST_CALIB ; 0                                              ;
+; state.ST_RUN   ; 1                                              ;
++----------------+------------------------------------------------+
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------+
+; State Machine - |DE2_115|imu_parser:u_parser|state ;
++----------------+-----------------------------------+
+; Name           ; state.READ_NUM                    ;
++----------------+-----------------------------------+
+; state.IDLE     ; 0                                 ;
+; state.READ_NUM ; 1                                 ;
++----------------+-----------------------------------+
+
+
+Encoding Type:  One-Hot
++------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |DE2_115|uart_rx:u_rx|r_SM_Main                                                                                                ;
++--------------------------+-------------------------+--------------------------+--------------------------+---------------+---------------------+
+; Name                     ; r_SM_Main.s_RX_STOP_BIT ; r_SM_Main.s_RX_DATA_BITS ; r_SM_Main.s_RX_START_BIT ; r_SM_Main.000 ; r_SM_Main.s_CLEANUP ;
++--------------------------+-------------------------+--------------------------+--------------------------+---------------+---------------------+
+; r_SM_Main.000            ; 0                       ; 0                        ; 0                        ; 0             ; 0                   ;
+; r_SM_Main.s_RX_START_BIT ; 0                       ; 0                        ; 1                        ; 1             ; 0                   ;
+; r_SM_Main.s_RX_DATA_BITS ; 0                       ; 1                        ; 0                        ; 1             ; 0                   ;
+; r_SM_Main.s_RX_STOP_BIT  ; 1                       ; 0                        ; 0                        ; 1             ; 0                   ;
+; r_SM_Main.s_CLEANUP      ; 0                       ; 0                        ; 0                        ; 1             ; 1                   ;
++--------------------------+-------------------------+--------------------------+--------------------------+---------------+---------------------+
+
+
++-----------------------------------------------------------------------+
+; Registers Removed During Synthesis                                    ;
++--------------------------------------------------+--------------------+
+; Register name                                    ; Reason for Removal ;
++--------------------------------------------------+--------------------+
+; velocity_integrator:u_integrator|state~7         ; Lost fanout        ;
+; imu_parser:u_parser|state~7                      ; Lost fanout        ;
+; imu_parser:u_parser|state~8                      ; Lost fanout        ;
+; uart_rx:u_rx|r_SM_Main~2                         ; Lost fanout        ;
+; uart_rx:u_rx|r_SM_Main~3                         ; Lost fanout        ;
+; velocity_integrator:u_integrator|v_acc_x[32..63] ; Lost fanout        ;
+; velocity_integrator:u_integrator|v_acc_y[32..63] ; Lost fanout        ;
+; velocity_integrator:u_integrator|v_acc_z[32..63] ; Lost fanout        ;
+; velocity_integrator:u_integrator|acc_gy[43..63]  ; Lost fanout        ;
+; velocity_integrator:u_integrator|acc_gx[43..63]  ; Lost fanout        ;
+; velocity_integrator:u_integrator|acc_gz[43..63]  ; Lost fanout        ;
+; velocity_integrator:u_integrator|acc_x[43..63]   ; Lost fanout        ;
+; velocity_integrator:u_integrator|acc_y[43..63]   ; Lost fanout        ;
+; velocity_integrator:u_integrator|acc_z[43..63]   ; Lost fanout        ;
+; Total Number of Removed Registers = 227          ;                    ;
++--------------------------------------------------+--------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 1214  ;
+; Number of registers using Synchronous Clear  ; 162   ;
+; Number of registers using Synchronous Load   ; 1     ;
+; Number of registers using Asynchronous Clear ; 1002  ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 1191  ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++--------------------------------------------------+
+; Inverted Register Statistics                     ;
++----------------------------------------+---------+
+; Inverted Register                      ; Fan out ;
++----------------------------------------+---------+
+; uart_rx:u_rx|r_Rx_Data                 ; 12      ;
+; uart_rx:u_rx|r_Rx_Data_R               ; 1       ;
+; Total number of inverted registers = 2 ;         ;
++----------------------------------------+---------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                             ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                   ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------------------------------+
+; 5:1                ; 16 bits   ; 48 LEs        ; 16 LEs               ; 32 LEs                 ; Yes        ; |DE2_115|velocity_integrator:u_integrator|stability_timer[3] ;
+; 5:1                ; 64 bits   ; 192 LEs       ; 64 LEs               ; 128 LEs                ; Yes        ; |DE2_115|velocity_integrator:u_integrator|v_acc_x[34]        ;
+; 5:1                ; 64 bits   ; 192 LEs       ; 64 LEs               ; 128 LEs                ; Yes        ; |DE2_115|velocity_integrator:u_integrator|v_acc_y[42]        ;
+; 5:1                ; 64 bits   ; 192 LEs       ; 64 LEs               ; 128 LEs                ; Yes        ; |DE2_115|velocity_integrator:u_integrator|v_acc_z[57]        ;
+; 7:1                ; 3 bits    ; 12 LEs        ; 3 LEs                ; 9 LEs                  ; Yes        ; |DE2_115|imu_parser:u_parser|val_index[1]                    ;
+; 8:1                ; 32 bits   ; 160 LEs       ; 32 LEs               ; 128 LEs                ; Yes        ; |DE2_115|imu_parser:u_parser|current_val[1]                  ;
+; 7:1                ; 16 bits   ; 64 LEs        ; 16 LEs               ; 48 LEs                 ; Yes        ; |DE2_115|uart_rx:u_rx|r_Clock_Count[8]                       ;
+; 3:1                ; 4 bits    ; 8 LEs         ; 8 LEs                ; 0 LEs                  ; No         ; |DE2_115|temp_val                                            ;
+; 3:1                ; 3 bits    ; 6 LEs         ; 6 LEs                ; 0 LEs                  ; No         ; |DE2_115|uart_rx:u_rx|r_Bit_Index                            ;
+; 8:1                ; 32 bits   ; 160 LEs       ; 128 LEs              ; 32 LEs                 ; No         ; |DE2_115|Mux7                                                ;
+; 9:1                ; 2 bits    ; 12 LEs        ; 4 LEs                ; 8 LEs                  ; No         ; |DE2_115|imu_parser:u_parser|state                           ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------------------------------+
+
+
++-----------------------------------------------------------+
+; Parameter Settings for User Entity Instance: uart_rx:u_rx ;
++----------------+-------+----------------------------------+
+; Parameter Name ; Value ; Type                             ;
++----------------+-------+----------------------------------+
+; CLKS_PER_BIT   ; 434   ; Signed Integer                   ;
++----------------+-------+----------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod0 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 16             ; Untyped                ;
+; LPM_WIDTHD             ; 10             ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_icm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod1 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 10             ; Untyped                ;
+; LPM_WIDTHD             ; 7              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_2bm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Mod2 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 7              ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_l9m ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div2 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 7              ; Untyped                ;
+; LPM_WIDTHD             ; 4              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_ihm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div1 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 10             ; Untyped                ;
+; LPM_WIDTHD             ; 7              ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_vim ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------+
+; Parameter Settings for Inferred Entity Instance: lpm_divide:Div0 ;
++------------------------+----------------+------------------------+
+; Parameter Name         ; Value          ; Type                   ;
++------------------------+----------------+------------------------+
+; LPM_WIDTHN             ; 16             ; Untyped                ;
+; LPM_WIDTHD             ; 10             ; Untyped                ;
+; LPM_NREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_DREPRESENTATION    ; UNSIGNED       ; Untyped                ;
+; LPM_PIPELINE           ; 0              ; Untyped                ;
+; LPM_REMAINDERPOSITIVE  ; TRUE           ; Untyped                ;
+; MAXIMIZE_SPEED         ; 5              ; Untyped                ;
+; CBXI_PARAMETER         ; lpm_divide_fkm ; Untyped                ;
+; CARRY_CHAIN            ; MANUAL         ; Untyped                ;
+; OPTIMIZE_FOR_SPEED     ; 5              ; Untyped                ;
+; AUTO_CARRY_CHAINS      ; ON             ; AUTO_CARRY             ;
+; IGNORE_CARRY_BUFFERS   ; OFF            ; IGNORE_CARRY           ;
+; AUTO_CASCADE_CHAINS    ; ON             ; AUTO_CASCADE           ;
+; IGNORE_CASCADE_BUFFERS ; OFF            ; IGNORE_CASCADE         ;
++------------------------+----------------+------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; boundary_port         ; 480                         ;
+; cycloneiii_ff         ; 1214                        ;
+;     CLR               ; 3                           ;
+;     CLR SCLR SLD      ; 1                           ;
+;     ENA               ; 177                         ;
+;     ENA CLR           ; 853                         ;
+;     ENA CLR SCLR      ; 145                         ;
+;     ENA SCLR          ; 16                          ;
+;     plain             ; 19                          ;
+; cycloneiii_io_obuf    ; 141                         ;
+; cycloneiii_lcell_comb ; 1760                        ;
+;     arith             ; 881                         ;
+;         2 data inputs ; 78                          ;
+;         3 data inputs ; 803                         ;
+;     normal            ; 879                         ;
+;         0 data inputs ; 32                          ;
+;         1 data inputs ; 12                          ;
+;         2 data inputs ; 287                         ;
+;         3 data inputs ; 110                         ;
+;         4 data inputs ; 438                         ;
+;                       ;                             ;
+; Max LUT depth         ; 53.10                       ;
+; Average LUT depth     ; 18.10                       ;
++-----------------------+-----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:03     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus II 64-Bit Analysis & Synthesis
+    Info: Version 15.0.0 Build 145 04/22/2015 SJ Full Version
+    Info: Processing started: Tue Dec 23 01:44:00 2025
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off IMU -c DE2_115
+Info (20030): Parallel compilation is enabled and will use 8 of the 8 processors detected
+Info (12021): Found 1 design units, including 1 entities, in source file imu/de2_115/velocity_integrator.sv
+    Info (12023): Found entity 1: velocity_integrator
+Info (12021): Found 1 design units, including 1 entities, in source file imu/de2_115/uart_rx.sv
+    Info (12023): Found entity 1: uart_rx
+Info (12021): Found 1 design units, including 1 entities, in source file imu/de2_115/imu_parser.sv
+    Info (12023): Found entity 1: imu_parser
+Info (12021): Found 2 design units, including 2 entities, in source file imu/de2_115/de2_115.sv
+    Info (12023): Found entity 1: DE2_115
+    Info (12023): Found entity 2: HexTo7Seg
+Warning (10222): Verilog HDL Parameter Declaration warning at uart_rx.sv(10): Parameter Declaration in module "uart_rx" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List
+Warning (10222): Verilog HDL Parameter Declaration warning at uart_rx.sv(11): Parameter Declaration in module "uart_rx" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List
+Warning (10222): Verilog HDL Parameter Declaration warning at uart_rx.sv(12): Parameter Declaration in module "uart_rx" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List
+Warning (10222): Verilog HDL Parameter Declaration warning at uart_rx.sv(13): Parameter Declaration in module "uart_rx" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List
+Warning (10222): Verilog HDL Parameter Declaration warning at uart_rx.sv(14): Parameter Declaration in module "uart_rx" behaves as a Local Parameter Declaration because the module has a Module Parameter Port List
+Info (12127): Elaborating entity "DE2_115" for the top level hierarchy
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(279): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(280): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(282): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(283): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(285): truncated value with size 32 to match size of target (4)
+Warning (10230): Verilog HDL assignment warning at DE2_115.sv(286): truncated value with size 32 to match size of target (4)
+Warning (10034): Output port "AUD_DACDAT" at DE2_115.sv(49) has no driver
+Warning (10034): Output port "AUD_XCK" at DE2_115.sv(51) has no driver
+Info (12128): Elaborating entity "uart_rx" for hierarchy "uart_rx:u_rx"
+Warning (10230): Verilog HDL assignment warning at uart_rx.sv(52): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at uart_rx.sv(60): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at uart_rx.sv(67): truncated value with size 32 to match size of target (3)
+Warning (10230): Verilog HDL assignment warning at uart_rx.sv(79): truncated value with size 32 to match size of target (16)
+Info (12128): Elaborating entity "imu_parser" for hierarchy "imu_parser:u_parser"
+Warning (10036): Verilog HDL or VHDL warning at imu_parser.sv(29): object "temp_gz" assigned a value but never read
+Warning (10230): Verilog HDL assignment warning at imu_parser.sv(76): truncated value with size 32 to match size of target (3)
+Info (12128): Elaborating entity "velocity_integrator" for hierarchy "velocity_integrator:u_integrator"
+Warning (10230): Verilog HDL assignment warning at velocity_integrator.sv(71): truncated value with size 32 to match size of target (16)
+Warning (10230): Verilog HDL assignment warning at velocity_integrator.sv(75): truncated value with size 64 to match size of target (32)
+Warning (10230): Verilog HDL assignment warning at velocity_integrator.sv(76): truncated value with size 64 to match size of target (32)
+Warning (10230): Verilog HDL assignment warning at velocity_integrator.sv(77): truncated value with size 64 to match size of target (32)
+Warning (10230): Verilog HDL assignment warning at velocity_integrator.sv(78): truncated value with size 64 to match size of target (32)
+Warning (10230): Verilog HDL assignment warning at velocity_integrator.sv(79): truncated value with size 64 to match size of target (32)
+Warning (10230): Verilog HDL assignment warning at velocity_integrator.sv(80): truncated value with size 64 to match size of target (32)
+Warning (10230): Verilog HDL assignment warning at velocity_integrator.sv(119): truncated value with size 32 to match size of target (16)
+Info (12128): Elaborating entity "HexTo7Seg" for hierarchy "HexTo7Seg:hex0"
+Info (278001): Inferred 6 megafunctions from design logic
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod0"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod1"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Mod2"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div2"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div1"
+    Info (278004): Inferred divider/modulo megafunction ("lpm_divide") from the following logic: "Div0"
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Mod0"
+Info (12133): Instantiated megafunction "lpm_divide:Mod0" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "16"
+    Info (12134): Parameter "LPM_WIDTHD" = "10"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_icm.tdf
+    Info (12023): Found entity 1: lpm_divide_icm
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_7nh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_7nh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_2af.tdf
+    Info (12023): Found entity 1: alt_u_div_2af
+Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_7pc.tdf
+    Info (12023): Found entity 1: add_sub_7pc
+Info (12021): Found 1 design units, including 1 entities, in source file db/add_sub_8pc.tdf
+    Info (12023): Found entity 1: add_sub_8pc
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Mod1"
+Info (12133): Instantiated megafunction "lpm_divide:Mod1" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "10"
+    Info (12134): Parameter "LPM_WIDTHD" = "7"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_2bm.tdf
+    Info (12023): Found entity 1: lpm_divide_2bm
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_nlh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_nlh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_27f.tdf
+    Info (12023): Found entity 1: alt_u_div_27f
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Mod2"
+Info (12133): Instantiated megafunction "lpm_divide:Mod2" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "7"
+    Info (12134): Parameter "LPM_WIDTHD" = "4"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_l9m.tdf
+    Info (12023): Found entity 1: lpm_divide_l9m
+Info (12021): Found 1 design units, including 1 entities, in source file db/sign_div_unsign_akh.tdf
+    Info (12023): Found entity 1: sign_div_unsign_akh
+Info (12021): Found 1 design units, including 1 entities, in source file db/alt_u_div_84f.tdf
+    Info (12023): Found entity 1: alt_u_div_84f
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div2"
+Info (12133): Instantiated megafunction "lpm_divide:Div2" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "7"
+    Info (12134): Parameter "LPM_WIDTHD" = "4"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_ihm.tdf
+    Info (12023): Found entity 1: lpm_divide_ihm
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div1"
+Info (12133): Instantiated megafunction "lpm_divide:Div1" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "10"
+    Info (12134): Parameter "LPM_WIDTHD" = "7"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_vim.tdf
+    Info (12023): Found entity 1: lpm_divide_vim
+Info (12130): Elaborated megafunction instantiation "lpm_divide:Div0"
+Info (12133): Instantiated megafunction "lpm_divide:Div0" with the following parameter:
+    Info (12134): Parameter "LPM_WIDTHN" = "16"
+    Info (12134): Parameter "LPM_WIDTHD" = "10"
+    Info (12134): Parameter "LPM_NREPRESENTATION" = "UNSIGNED"
+    Info (12134): Parameter "LPM_DREPRESENTATION" = "UNSIGNED"
+Info (12021): Found 1 design units, including 1 entities, in source file db/lpm_divide_fkm.tdf
+    Info (12023): Found entity 1: lpm_divide_fkm
+Warning (13039): The following bidirectional pins have no drivers
+    Warning (13040): bidirectional pin "GPIO[0]" has no driver
+    Warning (13040): bidirectional pin "PS2_CLK" has no driver
+    Warning (13040): bidirectional pin "PS2_DAT" has no driver
+    Warning (13040): bidirectional pin "PS2_CLK2" has no driver
+    Warning (13040): bidirectional pin "PS2_DAT2" has no driver
+    Warning (13040): bidirectional pin "SD_CMD" has no driver
+    Warning (13040): bidirectional pin "SD_DAT[0]" has no driver
+    Warning (13040): bidirectional pin "SD_DAT[1]" has no driver
+    Warning (13040): bidirectional pin "SD_DAT[2]" has no driver
+    Warning (13040): bidirectional pin "SD_DAT[3]" has no driver
+    Warning (13040): bidirectional pin "AUD_ADCLRCK" has no driver
+    Warning (13040): bidirectional pin "AUD_BCLK" has no driver
+    Warning (13040): bidirectional pin "AUD_DACLRCK" has no driver
+    Warning (13040): bidirectional pin "EEP_I2C_SDAT" has no driver
+    Warning (13040): bidirectional pin "I2C_SDAT" has no driver
+    Warning (13040): bidirectional pin "GPIO[1]" has no driver
+    Warning (13040): bidirectional pin "GPIO[2]" has no driver
+    Warning (13040): bidirectional pin "GPIO[3]" has no driver
+    Warning (13040): bidirectional pin "GPIO[4]" has no driver
+    Warning (13040): bidirectional pin "GPIO[5]" has no driver
+    Warning (13040): bidirectional pin "GPIO[6]" has no driver
+    Warning (13040): bidirectional pin "GPIO[7]" has no driver
+    Warning (13040): bidirectional pin "GPIO[8]" has no driver
+    Warning (13040): bidirectional pin "GPIO[9]" has no driver
+    Warning (13040): bidirectional pin "GPIO[10]" has no driver
+    Warning (13040): bidirectional pin "GPIO[11]" has no driver
+    Warning (13040): bidirectional pin "GPIO[12]" has no driver
+    Warning (13040): bidirectional pin "GPIO[13]" has no driver
+    Warning (13040): bidirectional pin "GPIO[14]" has no driver
+    Warning (13040): bidirectional pin "GPIO[15]" has no driver
+    Warning (13040): bidirectional pin "GPIO[16]" has no driver
+    Warning (13040): bidirectional pin "GPIO[17]" has no driver
+    Warning (13040): bidirectional pin "GPIO[18]" has no driver
+    Warning (13040): bidirectional pin "GPIO[19]" has no driver
+    Warning (13040): bidirectional pin "GPIO[20]" has no driver
+    Warning (13040): bidirectional pin "GPIO[21]" has no driver
+    Warning (13040): bidirectional pin "GPIO[22]" has no driver
+    Warning (13040): bidirectional pin "GPIO[23]" has no driver
+    Warning (13040): bidirectional pin "GPIO[24]" has no driver
+    Warning (13040): bidirectional pin "GPIO[25]" has no driver
+    Warning (13040): bidirectional pin "GPIO[26]" has no driver
+    Warning (13040): bidirectional pin "GPIO[27]" has no driver
+    Warning (13040): bidirectional pin "GPIO[28]" has no driver
+    Warning (13040): bidirectional pin "GPIO[29]" has no driver
+    Warning (13040): bidirectional pin "GPIO[30]" has no driver
+    Warning (13040): bidirectional pin "GPIO[31]" has no driver
+    Warning (13040): bidirectional pin "GPIO[32]" has no driver
+    Warning (13040): bidirectional pin "GPIO[33]" has no driver
+    Warning (13040): bidirectional pin "GPIO[34]" has no driver
+    Warning (13040): bidirectional pin "GPIO[35]" has no driver
+    Warning (13040): bidirectional pin "HSMC_D[0]" has no driver
+    Warning (13040): bidirectional pin "HSMC_D[1]" has no driver
+    Warning (13040): bidirectional pin "HSMC_D[2]" has no driver
+    Warning (13040): bidirectional pin "HSMC_D[3]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[0]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[1]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[2]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[3]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[4]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[5]" has no driver
+    Warning (13040): bidirectional pin "EX_IO[6]" has no driver
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "SMA_CLKOUT" is stuck at GND
+    Warning (13410): Pin "LEDG[3]" is stuck at GND
+    Warning (13410): Pin "LEDG[4]" is stuck at GND
+    Warning (13410): Pin "LEDG[5]" is stuck at GND
+    Warning (13410): Pin "LEDG[6]" is stuck at GND
+    Warning (13410): Pin "LEDG[7]" is stuck at GND
+    Warning (13410): Pin "LEDG[8]" is stuck at GND
+    Warning (13410): Pin "LEDR[0]" is stuck at GND
+    Warning (13410): Pin "LEDR[1]" is stuck at GND
+    Warning (13410): Pin "LEDR[2]" is stuck at GND
+    Warning (13410): Pin "LEDR[3]" is stuck at GND
+    Warning (13410): Pin "LEDR[4]" is stuck at GND
+    Warning (13410): Pin "LEDR[5]" is stuck at GND
+    Warning (13410): Pin "LEDR[6]" is stuck at GND
+    Warning (13410): Pin "LEDR[7]" is stuck at GND
+    Warning (13410): Pin "LEDR[8]" is stuck at GND
+    Warning (13410): Pin "LEDR[9]" is stuck at GND
+    Warning (13410): Pin "HEX4[0]" is stuck at VCC
+    Warning (13410): Pin "HEX4[1]" is stuck at VCC
+    Warning (13410): Pin "HEX4[2]" is stuck at VCC
+    Warning (13410): Pin "HEX4[3]" is stuck at VCC
+    Warning (13410): Pin "HEX4[4]" is stuck at VCC
+    Warning (13410): Pin "HEX4[5]" is stuck at VCC
+    Warning (13410): Pin "HEX5[0]" is stuck at VCC
+    Warning (13410): Pin "HEX5[1]" is stuck at VCC
+    Warning (13410): Pin "HEX5[2]" is stuck at VCC
+    Warning (13410): Pin "HEX5[3]" is stuck at VCC
+    Warning (13410): Pin "HEX5[4]" is stuck at VCC
+    Warning (13410): Pin "HEX5[5]" is stuck at VCC
+    Warning (13410): Pin "HEX5[6]" is stuck at VCC
+    Warning (13410): Pin "HEX6[0]" is stuck at VCC
+    Warning (13410): Pin "HEX6[1]" is stuck at VCC
+    Warning (13410): Pin "HEX6[2]" is stuck at VCC
+    Warning (13410): Pin "HEX6[3]" is stuck at VCC
+    Warning (13410): Pin "HEX6[4]" is stuck at VCC
+    Warning (13410): Pin "HEX6[5]" is stuck at VCC
+    Warning (13410): Pin "HEX6[6]" is stuck at VCC
+    Warning (13410): Pin "HEX7[0]" is stuck at VCC
+    Warning (13410): Pin "HEX7[1]" is stuck at VCC
+    Warning (13410): Pin "HEX7[2]" is stuck at VCC
+    Warning (13410): Pin "HEX7[3]" is stuck at VCC
+    Warning (13410): Pin "HEX7[4]" is stuck at VCC
+    Warning (13410): Pin "HEX7[5]" is stuck at VCC
+    Warning (13410): Pin "HEX7[6]" is stuck at VCC
+    Warning (13410): Pin "LCD_BLON" is stuck at GND
+    Warning (13410): Pin "LCD_EN" is stuck at GND
+    Warning (13410): Pin "LCD_ON" is stuck at GND
+    Warning (13410): Pin "LCD_RS" is stuck at GND
+    Warning (13410): Pin "LCD_RW" is stuck at GND
+    Warning (13410): Pin "UART_CTS" is stuck at GND
+    Warning (13410): Pin "UART_TXD" is stuck at VCC
+    Warning (13410): Pin "SD_CLK" is stuck at GND
+    Warning (13410): Pin "VGA_B[0]" is stuck at GND
+    Warning (13410): Pin "VGA_B[1]" is stuck at GND
+    Warning (13410): Pin "VGA_B[2]" is stuck at GND
+    Warning (13410): Pin "VGA_B[3]" is stuck at GND
+    Warning (13410): Pin "VGA_B[4]" is stuck at GND
+    Warning (13410): Pin "VGA_B[5]" is stuck at GND
+    Warning (13410): Pin "VGA_B[6]" is stuck at GND
+    Warning (13410): Pin "VGA_B[7]" is stuck at GND
+    Warning (13410): Pin "VGA_BLANK_N" is stuck at GND
+    Warning (13410): Pin "VGA_CLK" is stuck at GND
+    Warning (13410): Pin "VGA_G[0]" is stuck at GND
+    Warning (13410): Pin "VGA_G[1]" is stuck at GND
+    Warning (13410): Pin "VGA_G[2]" is stuck at GND
+    Warning (13410): Pin "VGA_G[3]" is stuck at GND
+    Warning (13410): Pin "VGA_G[4]" is stuck at GND
+    Warning (13410): Pin "VGA_G[5]" is stuck at GND
+    Warning (13410): Pin "VGA_G[6]" is stuck at GND
+    Warning (13410): Pin "VGA_G[7]" is stuck at GND
+    Warning (13410): Pin "VGA_HS" is stuck at GND
+    Warning (13410): Pin "VGA_R[0]" is stuck at GND
+    Warning (13410): Pin "VGA_R[1]" is stuck at GND
+    Warning (13410): Pin "VGA_R[2]" is stuck at GND
+    Warning (13410): Pin "VGA_R[3]" is stuck at GND
+    Warning (13410): Pin "VGA_R[4]" is stuck at GND
+    Warning (13410): Pin "VGA_R[5]" is stuck at GND
+    Warning (13410): Pin "VGA_R[6]" is stuck at GND
+    Warning (13410): Pin "VGA_R[7]" is stuck at GND
+    Warning (13410): Pin "VGA_SYNC_N" is stuck at GND
+    Warning (13410): Pin "VGA_VS" is stuck at GND
+    Warning (13410): Pin "AUD_DACDAT" is stuck at GND
+    Warning (13410): Pin "AUD_XCK" is stuck at GND
+    Warning (13410): Pin "EEP_I2C_SCLK" is stuck at GND
+    Warning (13410): Pin "I2C_SCLK" is stuck at GND
+    Warning (13410): Pin "ENET0_GTX_CLK" is stuck at GND
+    Warning (13410): Pin "ENET0_MDC" is stuck at GND
+    Warning (13410): Pin "ENET0_RST_N" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_DATA[0]" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_DATA[1]" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_DATA[2]" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_DATA[3]" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_EN" is stuck at GND
+    Warning (13410): Pin "ENET0_TX_ER" is stuck at GND
+    Warning (13410): Pin "ENET1_GTX_CLK" is stuck at GND
+    Warning (13410): Pin "ENET1_MDC" is stuck at GND
+    Warning (13410): Pin "ENET1_RST_N" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_DATA[0]" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_DATA[1]" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_DATA[2]" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_DATA[3]" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_EN" is stuck at GND
+    Warning (13410): Pin "ENET1_TX_ER" is stuck at GND
+    Warning (13410): Pin "TD_RESET_N" is stuck at GND
+    Warning (13410): Pin "OTG_ADDR[0]" is stuck at GND
+    Warning (13410): Pin "OTG_ADDR[1]" is stuck at GND
+    Warning (13410): Pin "OTG_CS_N" is stuck at VCC
+    Warning (13410): Pin "OTG_WR_N" is stuck at VCC
+    Warning (13410): Pin "OTG_RD_N" is stuck at VCC
+    Warning (13410): Pin "OTG_RST_N" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[0]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[1]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[2]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[3]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[4]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[5]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[6]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[7]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[8]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[9]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[10]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[11]" is stuck at GND
+    Warning (13410): Pin "DRAM_ADDR[12]" is stuck at GND
+    Warning (13410): Pin "DRAM_BA[0]" is stuck at GND
+    Warning (13410): Pin "DRAM_BA[1]" is stuck at GND
+    Warning (13410): Pin "DRAM_CAS_N" is stuck at VCC
+    Warning (13410): Pin "DRAM_CKE" is stuck at GND
+    Warning (13410): Pin "DRAM_CLK" is stuck at GND
+    Warning (13410): Pin "DRAM_CS_N" is stuck at VCC
+    Warning (13410): Pin "DRAM_DQM[0]" is stuck at GND
+    Warning (13410): Pin "DRAM_DQM[1]" is stuck at GND
+    Warning (13410): Pin "DRAM_DQM[2]" is stuck at GND
+    Warning (13410): Pin "DRAM_DQM[3]" is stuck at GND
+    Warning (13410): Pin "DRAM_RAS_N" is stuck at VCC
+    Warning (13410): Pin "DRAM_WE_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_ADDR[0]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[1]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[2]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[3]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[4]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[5]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[6]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[7]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[8]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[9]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[10]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[11]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[12]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[13]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[14]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[15]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[16]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[17]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[18]" is stuck at GND
+    Warning (13410): Pin "SRAM_ADDR[19]" is stuck at GND
+    Warning (13410): Pin "SRAM_CE_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_LB_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_OE_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_UB_N" is stuck at VCC
+    Warning (13410): Pin "SRAM_WE_N" is stuck at VCC
+    Warning (13410): Pin "FL_ADDR[0]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[1]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[2]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[3]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[4]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[5]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[6]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[7]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[8]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[9]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[10]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[11]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[12]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[13]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[14]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[15]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[16]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[17]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[18]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[19]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[20]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[21]" is stuck at GND
+    Warning (13410): Pin "FL_ADDR[22]" is stuck at GND
+    Warning (13410): Pin "FL_CE_N" is stuck at VCC
+    Warning (13410): Pin "FL_OE_N" is stuck at VCC
+    Warning (13410): Pin "FL_RST_N" is stuck at GND
+    Warning (13410): Pin "FL_WE_N" is stuck at VCC
+    Warning (13410): Pin "FL_WP_N" is stuck at GND
+    Warning (13410): Pin "HSMC_CLKOUT_P1" is stuck at GND
+    Warning (13410): Pin "HSMC_CLKOUT_P2" is stuck at GND
+    Warning (13410): Pin "HSMC_CLKOUT0" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[0]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[1]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[2]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[3]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[4]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[5]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[6]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[7]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[8]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[9]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[10]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[11]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[12]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[13]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[14]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[15]" is stuck at GND
+    Warning (13410): Pin "HSMC_TX_D_P[16]" is stuck at GND
+Info (286030): Timing-Driven Synthesis is running
+Info (17049): 227 registers lost all their fanouts during netlist optimizations.
+Info (144001): Generated suppressed messages file C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/output_files/DE2_115.map.smsg
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Warning (21074): Design contains 86 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "CLOCK2_50"
+    Warning (15610): No output dependent on input pin "CLOCK3_50"
+    Warning (15610): No output dependent on input pin "ENETCLK_25"
+    Warning (15610): No output dependent on input pin "SMA_CLKIN"
+    Warning (15610): No output dependent on input pin "KEY[1]"
+    Warning (15610): No output dependent on input pin "KEY[2]"
+    Warning (15610): No output dependent on input pin "KEY[3]"
+    Warning (15610): No output dependent on input pin "SW[3]"
+    Warning (15610): No output dependent on input pin "SW[4]"
+    Warning (15610): No output dependent on input pin "SW[5]"
+    Warning (15610): No output dependent on input pin "SW[6]"
+    Warning (15610): No output dependent on input pin "SW[7]"
+    Warning (15610): No output dependent on input pin "SW[8]"
+    Warning (15610): No output dependent on input pin "SW[9]"
+    Warning (15610): No output dependent on input pin "SW[10]"
+    Warning (15610): No output dependent on input pin "SW[11]"
+    Warning (15610): No output dependent on input pin "SW[12]"
+    Warning (15610): No output dependent on input pin "SW[13]"
+    Warning (15610): No output dependent on input pin "SW[14]"
+    Warning (15610): No output dependent on input pin "SW[15]"
+    Warning (15610): No output dependent on input pin "SW[16]"
+    Warning (15610): No output dependent on input pin "SW[17]"
+    Warning (15610): No output dependent on input pin "UART_RTS"
+    Warning (15610): No output dependent on input pin "UART_RXD"
+    Warning (15610): No output dependent on input pin "SD_WP_N"
+    Warning (15610): No output dependent on input pin "AUD_ADCDAT"
+    Warning (15610): No output dependent on input pin "ENET0_INT_N"
+    Warning (15610): No output dependent on input pin "ENET0_MDIO"
+    Warning (15610): No output dependent on input pin "ENET0_RX_CLK"
+    Warning (15610): No output dependent on input pin "ENET0_RX_COL"
+    Warning (15610): No output dependent on input pin "ENET0_RX_CRS"
+    Warning (15610): No output dependent on input pin "ENET0_RX_DATA[0]"
+    Warning (15610): No output dependent on input pin "ENET0_RX_DATA[1]"
+    Warning (15610): No output dependent on input pin "ENET0_RX_DATA[2]"
+    Warning (15610): No output dependent on input pin "ENET0_RX_DATA[3]"
+    Warning (15610): No output dependent on input pin "ENET0_RX_DV"
+    Warning (15610): No output dependent on input pin "ENET0_RX_ER"
+    Warning (15610): No output dependent on input pin "ENET0_TX_CLK"
+    Warning (15610): No output dependent on input pin "ENET0_LINK100"
+    Warning (15610): No output dependent on input pin "ENET1_INT_N"
+    Warning (15610): No output dependent on input pin "ENET1_MDIO"
+    Warning (15610): No output dependent on input pin "ENET1_RX_CLK"
+    Warning (15610): No output dependent on input pin "ENET1_RX_COL"
+    Warning (15610): No output dependent on input pin "ENET1_RX_CRS"
+    Warning (15610): No output dependent on input pin "ENET1_RX_DATA[0]"
+    Warning (15610): No output dependent on input pin "ENET1_RX_DATA[1]"
+    Warning (15610): No output dependent on input pin "ENET1_RX_DATA[2]"
+    Warning (15610): No output dependent on input pin "ENET1_RX_DATA[3]"
+    Warning (15610): No output dependent on input pin "ENET1_RX_DV"
+    Warning (15610): No output dependent on input pin "ENET1_RX_ER"
+    Warning (15610): No output dependent on input pin "ENET1_TX_CLK"
+    Warning (15610): No output dependent on input pin "ENET1_LINK100"
+    Warning (15610): No output dependent on input pin "TD_CLK27"
+    Warning (15610): No output dependent on input pin "TD_DATA[0]"
+    Warning (15610): No output dependent on input pin "TD_DATA[1]"
+    Warning (15610): No output dependent on input pin "TD_DATA[2]"
+    Warning (15610): No output dependent on input pin "TD_DATA[3]"
+    Warning (15610): No output dependent on input pin "TD_DATA[4]"
+    Warning (15610): No output dependent on input pin "TD_DATA[5]"
+    Warning (15610): No output dependent on input pin "TD_DATA[6]"
+    Warning (15610): No output dependent on input pin "TD_DATA[7]"
+    Warning (15610): No output dependent on input pin "TD_HS"
+    Warning (15610): No output dependent on input pin "TD_VS"
+    Warning (15610): No output dependent on input pin "OTG_INT"
+    Warning (15610): No output dependent on input pin "IRDA_RXD"
+    Warning (15610): No output dependent on input pin "FL_RY"
+    Warning (15610): No output dependent on input pin "HSMC_CLKIN_P1"
+    Warning (15610): No output dependent on input pin "HSMC_CLKIN_P2"
+    Warning (15610): No output dependent on input pin "HSMC_CLKIN0"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[0]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[1]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[2]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[3]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[4]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[5]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[6]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[7]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[8]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[9]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[10]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[11]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[12]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[13]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[14]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[15]"
+    Warning (15610): No output dependent on input pin "HSMC_RX_D_P[16]"
+Info (21057): Implemented 2894 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 91 input pins
+    Info (21059): Implemented 248 output pins
+    Info (21060): Implemented 141 bidirectional pins
+    Info (21061): Implemented 2414 logic cells
+Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 385 warnings
+    Info: Peak virtual memory: 4918 megabytes
+    Info: Processing ended: Tue Dec 23 01:44:14 2025
+    Info: Elapsed time: 00:00:14
+    Info: Total CPU time (on all processors): 00:00:19
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in C:/Users/user/Desktop/dclab_hw/final/FPGA_Verilog/output_files/DE2_115.map.smsg.
+
+
