@@ -21,13 +21,13 @@
       </signal_vec>
       <presentation>
         <unified_setup_data_view>
-          <node data_index="0" duplicate_name_allowed="false" is_data_input="true" is_node_valid="true" is_selected="true" is_storage_input="true" is_trigger_input="true" name="Debounce:trigger_debounce_inst|o_pos" storage_index="0" tap_mode="classic" trigger_index="0" type="unknown"/>
+          <node data_index="0" duplicate_name_allowed="false" is_data_input="true" is_node_valid="true" is_selected="false" is_storage_input="true" is_trigger_input="true" name="Debounce:trigger_debounce_inst|o_pos" storage_index="0" tap_mode="classic" trigger_index="0" type="unknown"/>
         </unified_setup_data_view>
         <data_view>
-          <net data_index="0" duplicate_name_allowed="false" is_data_input="true" is_node_valid="true" is_selected="true" is_storage_input="true" is_trigger_input="true" name="Debounce:trigger_debounce_inst|o_pos" storage_index="0" tap_mode="classic" trigger_index="0" type="unknown"/>
+          <net data_index="0" duplicate_name_allowed="false" is_data_input="true" is_node_valid="true" is_selected="false" is_storage_input="true" is_trigger_input="true" name="Debounce:trigger_debounce_inst|o_pos" storage_index="0" tap_mode="classic" trigger_index="0" type="unknown"/>
         </data_view>
         <setup_view>
-          <net data_index="0" duplicate_name_allowed="false" is_data_input="true" is_node_valid="true" is_selected="true" is_storage_input="true" is_trigger_input="true" name="Debounce:trigger_debounce_inst|o_pos" storage_index="0" tap_mode="classic" trigger_index="0" type="unknown"/>
+          <net data_index="0" duplicate_name_allowed="false" is_data_input="true" is_node_valid="true" is_selected="false" is_storage_input="true" is_trigger_input="true" name="Debounce:trigger_debounce_inst|o_pos" storage_index="0" tap_mode="classic" trigger_index="0" type="unknown"/>
         </setup_view>
         <trigger_in_editor/>
         <trigger_out_editor/>

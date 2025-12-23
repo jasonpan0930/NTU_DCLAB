@@ -1,5 +1,5 @@
 Analysis & Synthesis report for DE2_115
-Wed Dec 24 03:57:39 2025
+Wed Dec 24 04:10:40 2025
 Quartus II 64-Bit Version 15.0.0 Build 145 04/22/2015 SJ Full Version
 
 
@@ -107,7 +107,7 @@ agreement for further details.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Wed Dec 24 03:57:39 2025       ;
+; Analysis & Synthesis Status        ; Successful - Wed Dec 24 04:10:40 2025       ;
 ; Quartus II 64-Bit Version          ; 15.0.0 Build 145 04/22/2015 SJ Full Version ;
 ; Revision Name                      ; DE2_115                                     ;
 ; Top-level Entity Name              ; DE2_115                                     ;
@@ -3104,7 +3104,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 +----------------+--------------+
 ; Partition Name ; Elapsed Time ;
 +----------------+--------------+
-; Top            ; 00:00:44     ;
+; Top            ; 00:00:43     ;
 +----------------+--------------+
 
 
@@ -3157,7 +3157,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus II 64-Bit Analysis & Synthesis
     Info: Version 15.0.0 Build 145 04/22/2015 SJ Full Version
-    Info: Processing started: Wed Dec 24 03:56:17 2025
+    Info: Processing started: Wed Dec 24 04:09:19 2025
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off VGA_SRAM -c DE2_115
 Warning (125092): Tcl Script File BRAM.qip not found
     Info (125063): set_global_assignment -name QIP_FILE BRAM.qip
@@ -3489,7 +3489,7 @@ Info (12021): Found 1 design units, including 1 entities, in source file db/cmpr
     Info (12023): Found entity 1: cmpr_ngc
 Info (12033): Analysis and Synthesis generated SignalTap II or debug node instance "auto_signaltap_0"
 Info (11170): Start IP generation for the debug fabric within sld_hub.
-Info (11172): 2025.12.24.03:56:48 Progress: Loading sld315cb4d7/alt_sld_fab_wrapper_hw.tcl
+Info (11172): 2025.12.24.04:09:49 Progress: Loading sld315cb4d7/alt_sld_fab_wrapper_hw.tcl
 Info (11172): Alt_sld_fab.alt_sld_fab: SLD fabric agents which did not specify prefer_host were connected to JTAG
 Info (11172): Alt_sld_fab: Generating alt_sld_fab "alt_sld_fab" for QUARTUS_SYNTH
 Info (11172): Alt_sld_fab: "alt_sld_fab" instantiated alt_sld_fab "alt_sld_fab"
@@ -4022,9 +4022,9 @@ Info (21057): Implemented 20726 device resources after synthesis - the final res
     Info (21064): Implemented 106 RAM segments
     Info (21065): Implemented 1 PLLs
 Info: Quartus II 64-Bit Analysis & Synthesis was successful. 0 errors, 457 warnings
-    Info: Peak virtual memory: 5086 megabytes
-    Info: Processing ended: Wed Dec 24 03:57:39 2025
-    Info: Elapsed time: 00:01:22
+    Info: Peak virtual memory: 5094 megabytes
+    Info: Processing ended: Wed Dec 24 04:10:40 2025
+    Info: Elapsed time: 00:01:21
     Info: Total CPU time (on all processors): 00:01:33
 
 
