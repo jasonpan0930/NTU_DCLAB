@@ -1219,5 +1219,6 @@ set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_08x_bound.qip
 set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_08x_bound2.qip
 set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_09x_bound.qip
 set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_09x_bound2.qip
+set_global_assignment -name QIP_FILE BRAMs/background/start_palette.qip
 set_global_assignment -name SLD_FILE db/stp2_auto_stripped.stp
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

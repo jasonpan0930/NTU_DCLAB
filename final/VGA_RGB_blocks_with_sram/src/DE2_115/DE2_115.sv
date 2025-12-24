@@ -272,6 +272,24 @@ Debounce #(
 wire kill_en;
 wire [4:0] kill_index;
 
+// Start Game Detector - detects when game should start (aim in box + trigger pressed)
+logic game_started;  // Output from Start_Game_Detector
+
+Start_Game_Detector #(
+    .START_BOX_X_MIN(11'd494), 
+    .START_BOX_X_MAX(11'd778),  
+    .START_BOX_Y_MIN(10'd571),  
+    .START_BOX_Y_MAX(10'd630) 
+) start_game_detector (
+    .i_clk(vga_clock_74_25),     // Use VGA clock (aim and trigger are in VGA domain)
+    .i_rst_n(KEY[1]),
+    .i_aim_x(aim_x),              // Aim X position
+    .i_aim_y(aim_y),              // Aim Y position
+    .i_trigger_posedge(trigger_posedge),  // Trigger button pulse
+    .i_key3(KEY[3]),              // KEY[3] for manual reset (active low)
+    .o_started(game_started)      // Game started signal (latched until reset)
+);
+
 // Zombie kill counter (for HEX5 & HEX6 display)
 logic [7:0] zombie_kill_count;  // 0-255 counter for HEX5 (low 4 bits) & HEX6 (high 4 bits) display
 
@@ -335,8 +353,9 @@ VGA_Image_Overlay_Combined #(
 	.i_zombie_valid(zombie_valid),  // Array of valid flags
 	.i_zombie_size_x(zombie_size_x),
 	.i_zombie_size_y(zombie_size_y),
-	.i_aim_x(aim_x - 100),                   // Aim X position
-	.i_aim_y(aim_y - 100),                   // Aim Y position
+	.i_aim_x(aim_x),                   // Aim X position
+	.i_aim_y(aim_y),                   // Aim Y position
+	.i_started(game_started),                // Game started signal (0 = start screen, 1 = game playing)
 	.o_zombie_addr(zombie_addr_overlay),     // BRAM address when not busy building transparency
 	.o_zombie_size_sel(zombie_size_sel_overlay), // Size selector: 0=0.5x, 1=0.6x, 2=0.7x, 3=0.8x, 4=0.9x, 5=1.0x
 	.i_zombie_pixel(zombie_bram_q),          // Shared BRAM pixel data (routed)
@@ -485,7 +504,7 @@ Position_Controller #(
 	.UPDATE_DIVIDER(24'd742500), // ~1000Hz update rate at 74.25MHz
 	.USE_LINEAR_VELOCITY(0)    // Disable linear velocity for now
 ) position_controller_inst(
-	.i_clk(vga_clock_74_25),   // Use VGA clock (74.25MHz)
+	.i_clk(CLOCK_50),
 	.i_rst_n(KEY[1]),
 	.i_wx(gx_cal_shifted),    // Angular velocity X (pitch) → controls Y (synchronized, fast divide by 2)
 	.i_wy(gy_cal_shifted),    // Angular velocity Y (roll) → not used (synchronized, fast divide by 2)
@@ -620,8 +639,12 @@ Position_Controller #(
         kill_count_ones = temp_kill_count % 8'd10;
     end
 
-    // 其餘高位 LEDG[8:4] 先關閉
-	assign LEDG[8:4] = 5'b0;
+    // LEDG[7] 顯示遊戲是否已開始 (game_started)
+    assign LEDG[7] = game_started;
+    
+    // 其餘高位 LEDG[8] 和 LEDG[6:4] 先關閉
+    assign LEDG[8] = 1'b0;
+    assign LEDG[6:4] = 3'b0;
 
 	// LEDR 顯示接收到的原始 Byte (除錯用)
     reg [7:0] last_rx_byte;

@@ -26,7 +26,7 @@ module VGA_Image_Overlay_Combined #(
     input logic [9:0] i_zombie_size_y,
     input logic [10:0] i_aim_x,
     input logic [9:0] i_aim_y,
-    input logic i_use_start_bg,
+    input logic i_started,  // 0 = start screen (use START_BG_ADDR), 1 = game playing (use base 0)
 
     // Shared Zombie Pixel BRAM (Stage 3 -> 4)
     output logic [13:0] o_zombie_addr,
@@ -112,9 +112,11 @@ module VGA_Image_Overlay_Combined #(
     // ============================================================
     
     // --- 0.1 Background Address Calc ---
+    // Select base address: start screen uses START_BG_ADDR, game uses 0
+    logic [20:0] bg_base_addr_s0;
     logic [20:0] bg_addr_s0;
-    assign bg_addr_s0 = (i_v_count * BG_WIDTH) + i_h_count;
-    assign start_bg_addr_s0 = START_BG_ADDR + (i_v_count * BG_WIDTH) + i_h_count;
+    assign bg_base_addr_s0 = i_started ? 21'd0 : START_BG_ADDR;
+    assign bg_addr_s0 = bg_base_addr_s0 + (i_v_count * BG_WIDTH) + i_h_count;
     
     // --- 0.1.5 Kill Target Detection ---
     logic at_kill_target_s0;
@@ -123,6 +125,7 @@ module VGA_Image_Overlay_Combined #(
                                 (i_v_count == kill_target_y);
 
     // --- 0.2 Aim Calc ---
+    // Aim is always visible (both in start screen and game playing modes)
     // Convert center coordinates to top-left corner (use signed arithmetic)
     logic signed [11:0] aim_top_left_x_signed;
     logic signed [10:0] aim_top_left_y_signed;
@@ -207,7 +210,8 @@ module VGA_Image_Overlay_Combined #(
             cur_x = i_h_count - i_zombie_x[z];
             cur_y = i_v_count - i_zombie_y[z];
 
-            if (i_zombie_valid[z] && 
+            // Only check for zombie hit if game has started
+            if (i_started && i_zombie_valid[z] && 
                 (i_h_count >= i_zombie_x[z]) && (i_h_count < (i_zombie_x[z] + zombie_width)) &&
                 (i_v_count >= i_zombie_y[z]) && (i_v_count < (i_zombie_y[z] + zombie_height))) 
                 hit = 1'b1;
@@ -238,6 +242,7 @@ module VGA_Image_Overlay_Combined #(
     logic        in_aim_s1;
     logic        active_video_s1;
     logic        at_kill_target_s1;
+    logic        started_s1;  // Pipeline i_started signal
 
     always_ff @(posedge i_clk) begin
         if (~i_rst_n) begin
@@ -257,6 +262,7 @@ module VGA_Image_Overlay_Combined #(
             in_aim_s1       <= in_aim_s0;
             active_video_s1 <= i_active_video;
             at_kill_target_s1 <= at_kill_target_s0;
+            started_s1      <= i_started;  // Pipeline started signal
         end
     end
 
@@ -420,6 +426,7 @@ module VGA_Image_Overlay_Combined #(
     logic        in_aim_s2;
     logic        active_video_s2;
     logic        at_kill_target_s2;
+    logic        started_s2;  // Pipeline i_started signal
 
     always_ff @(posedge i_clk) begin
         if (~i_rst_n) begin
@@ -439,6 +446,7 @@ module VGA_Image_Overlay_Combined #(
             in_aim_s2 <= in_aim_s1;
             active_video_s2 <= active_video_s1;
             at_kill_target_s2 <= at_kill_target_s1;
+            started_s2 <= started_s1;  // Pipeline started signal
         end
     end
 
@@ -457,10 +465,11 @@ module VGA_Image_Overlay_Combined #(
 
     always_comb begin
         // Check Opacity using Data returned from Layer 1
-        is_opaque_s2[0] = (z_valid_s2[0] && (z_y_s2[0] >= bounds_data_0[7:0]) && (z_y_s2[0] <= bounds_data_0[15:8]));
-        is_opaque_s2[1] = (z_valid_s2[1] && (z_y_s2[1] >= bounds_data_1[7:0]) && (z_y_s2[1] <= bounds_data_1[15:8]));
-        is_opaque_s2[2] = (z_valid_s2[2] && (z_y_s2[2] >= bounds_data_2[7:0]) && (z_y_s2[2] <= bounds_data_2[15:8]));
-        is_opaque_s2[3] = (z_valid_s2[3] && (z_y_s2[3] >= bounds_data_3[7:0]) && (z_y_s2[3] <= bounds_data_3[15:8]));
+        // Only check if game has started
+        is_opaque_s2[0] = started_s2 && (z_valid_s2[0] && (z_y_s2[0] >= bounds_data_0[7:0]) && (z_y_s2[0] <= bounds_data_0[15:8]));
+        is_opaque_s2[1] = started_s2 && (z_valid_s2[1] && (z_y_s2[1] >= bounds_data_1[7:0]) && (z_y_s2[1] <= bounds_data_1[15:8]));
+        is_opaque_s2[2] = started_s2 && (z_valid_s2[2] && (z_y_s2[2] >= bounds_data_2[7:0]) && (z_y_s2[2] <= bounds_data_2[15:8]));
+        is_opaque_s2[3] = started_s2 && (z_valid_s2[3] && (z_y_s2[3] >= bounds_data_3[7:0]) && (z_y_s2[3] <= bounds_data_3[15:8]));
 
         // Priority Select
         if (is_opaque_s2[0]) begin
@@ -549,6 +558,7 @@ module VGA_Image_Overlay_Combined #(
     logic        in_aim_s3;
     logic        use_zombie_s3;
     logic        active_video_s3;
+    logic        started_s3;  // Pipeline i_started signal
     
     // NOTE: o_zombie_addr connects directly here to go to BRAM
     // Also pass size selector for BRAM selection in top-level
@@ -573,6 +583,7 @@ module VGA_Image_Overlay_Combined #(
 
             // 4. Control
             active_video_s3 <= active_video_s2;
+            started_s3 <= started_s2;  // Pipeline started signal
         end
     end
 
@@ -598,6 +609,7 @@ module VGA_Image_Overlay_Combined #(
     logic       active_video_s4;
 	logic [7:0] zombie_pixel_index_s4;
 	logic [7:0] bg_pixel_index_s4;
+	logic       started_s4;  // Pipeline i_started signal for palette selection
 
     // Internal wires for Palette BRAM connection
     // logic [7:0] bg_pal_addr;
@@ -617,6 +629,7 @@ module VGA_Image_Overlay_Combined #(
             active_video_s4 <= active_video_s3;
 			zombie_pixel_index_s4 <= i_zombie_pixel;
 			bg_pixel_index_s4 <= bg_pixel_index_s3;
+			started_s4 <= started_s3;  // Pipeline started signal for palette selection
         end
     end
 
@@ -627,13 +640,24 @@ module VGA_Image_Overlay_Combined #(
 
     // --- 4.1 Palette BRAM Instantiation ---
     logic [15:0] bg_rgb565_s5; // Returns in Layer 5
+    logic [15:0] bg_rgb565_game_s5;  // Game background palette output
+    logic [15:0] bg_rgb565_start_s5; // Start screen palette output
     logic [15:0] z_rgb565_s5;  // Returns in Layer 5
 
     // Note: BRAMs latch address on rising edge of Layer 4 input, data ready Layer 5
-    background_palette bg_pal (
+    // Game background palette (used when started = 1)
+    background_palette bg_pal_game (
         .clock(i_clk), .address(bg_pixel_index_s4), 
-        .q(bg_rgb565_s5), .data(0), .wren(0)
+        .q(bg_rgb565_game_s5), .data(0), .wren(0)
     );
+    // Start screen palette (used when started = 0)
+    start_palette bg_pal_start (
+        .clock(i_clk), .address(bg_pixel_index_s4), 
+        .q(bg_rgb565_start_s5)
+    );
+    // Select palette based on started signal
+    assign bg_rgb565_s5 = started_s4 ? bg_rgb565_game_s5 : bg_rgb565_start_s5;
+    
     zombie_1x_palette z_pal (
         .clock(i_clk), .address(zombie_pixel_index_s4), 
         .q(z_rgb565_s5), .data(0), .wren(0)
@@ -677,6 +701,7 @@ module VGA_Image_Overlay_Combined #(
     assign z_b = {z_rgb565_s5[4:0],   z_rgb565_s5[4:2]};
 
     // --- 5.2 Aim Color ---
+    // Aim is always rendered (visible in both start screen and game modes)
     logic use_aim;
     logic [7:0] aim_r, aim_g, aim_b;
 
