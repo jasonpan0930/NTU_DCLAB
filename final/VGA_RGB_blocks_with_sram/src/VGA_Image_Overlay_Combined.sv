@@ -9,7 +9,8 @@
 module VGA_Image_Overlay_Combined #(
     parameter MAX_ZOMBIES = 5,
     parameter ZOMBIE_SIZE_X = 102,
-    parameter ZOMBIE_SIZE_Y = 149
+    parameter ZOMBIE_SIZE_Y = 149,
+    parameter START_BG_ADDR = 21'd921601
 )(
     input logic i_clk,
     input logic i_rst_n,
@@ -25,9 +26,11 @@ module VGA_Image_Overlay_Combined #(
     input logic [9:0] i_zombie_size_y,
     input logic [10:0] i_aim_x,
     input logic [9:0] i_aim_y,
+    input logic i_use_start_bg,
 
     // Shared Zombie Pixel BRAM (Stage 3 -> 4)
     output logic [13:0] o_zombie_addr,
+    output logic [2:0]  o_zombie_size_sel,  // Size selector: 0=0.5x, 1=0.6x, 2=0.7x, 3=0.8x, 4=0.9x, 5=1.0x
     input  logic [7:0]  i_zombie_pixel,
 
     // Background SRAM (Stage 1 -> 2)
@@ -54,6 +57,28 @@ module VGA_Image_Overlay_Combined #(
     localparam BG_WIDTH = 1280;
     localparam AIM_SIZE_X = 200;
     localparam AIM_SIZE_Y = 200;
+    
+    // Zombie size constants (all sizes)
+    localparam ZOMBIE_1X_WIDTH = 102;
+    localparam ZOMBIE_1X_HEIGHT = 149;
+    localparam ZOMBIE_09X_WIDTH = 90;
+    localparam ZOMBIE_09X_HEIGHT = 132;
+    localparam ZOMBIE_08X_WIDTH = 80;
+    localparam ZOMBIE_08X_HEIGHT = 118;
+    localparam ZOMBIE_07X_WIDTH = 70;
+    localparam ZOMBIE_07X_HEIGHT = 103;
+    localparam ZOMBIE_06X_WIDTH = 61;
+    localparam ZOMBIE_06X_HEIGHT = 90;
+    localparam ZOMBIE_05X_WIDTH = 51;
+    localparam ZOMBIE_05X_HEIGHT = 75;
+    
+    // Y position thresholds for size selection (Y range: 270-720)
+    localparam ZOMBIE_SIZE_THRESHOLD_05X = 345;  // Y < 345: 0.5x
+    localparam ZOMBIE_SIZE_THRESHOLD_06X = 420;  // Y < 420: 0.6x
+    localparam ZOMBIE_SIZE_THRESHOLD_07X = 495;  // Y < 495: 0.7x
+    localparam ZOMBIE_SIZE_THRESHOLD_08X = 570;  // Y < 570: 0.8x
+    localparam ZOMBIE_SIZE_THRESHOLD_09X = 645;  // Y < 645: 0.9x
+                                                    // Y >= 645: 1.0x
 
     // ============================================================
     //  Killing Logic: Capture Target Position
@@ -89,6 +114,7 @@ module VGA_Image_Overlay_Combined #(
     // --- 0.1 Background Address Calc ---
     logic [20:0] bg_addr_s0;
     assign bg_addr_s0 = (i_v_count * BG_WIDTH) + i_h_count;
+    assign start_bg_addr_s0 = START_BG_ADDR + (i_v_count * BG_WIDTH) + i_h_count;
     
     // --- 0.1.5 Kill Target Detection ---
     logic at_kill_target_s0;
@@ -122,11 +148,12 @@ module VGA_Image_Overlay_Combined #(
     // Optimize: 200*y + x
     assign aim_addr_s0 = in_aim_s0 ? ((aim_ly_s0 << 7) + (aim_ly_s0 << 6) + (aim_ly_s0 << 3) + aim_lx_s0) : 16'd0;
 
-    // --- 0.3 Zombie Top-4 Selection ---
+    // --- 0.3 Zombie Top-4 Selection with Size Detection ---
     logic [10:0] top_zombies_x_s0 [0:3];
     logic [9:0]  top_zombies_y_s0 [0:3];
     logic [5:0]  top_zombies_idx_s0 [0:3];
     logic        top_zombies_valid_s0 [0:3];
+    logic [2:0]  top_zombies_size_sel_s0 [0:3];  // Size selector: 0=0.5x, 1=0.6x, 2=0.7x, 3=0.8x, 4=0.9x, 5=1.0x
 
     always_comb begin
         int found_count; // Declare at top
@@ -137,6 +164,7 @@ module VGA_Image_Overlay_Combined #(
             top_zombies_y_s0[k]     = 10'd0;
             top_zombies_idx_s0[k]   = 6'd0;
             top_zombies_valid_s0[k] = 1'b0;
+            top_zombies_size_sel_s0[k] = 3'd0;
         end
         
         found_count = 0;
@@ -145,13 +173,43 @@ module VGA_Image_Overlay_Combined #(
             logic [10:0] cur_x;
             logic [9:0]  cur_y;
             logic        hit;
+            logic [2:0]  size_sel;  // Size selector: 0-5
+            logic [10:0] zombie_width;
+            logic [9:0]  zombie_height;
+
+            // Determine zombie size based on Y position (Y range: 270-720)
+            if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_05X) begin
+                size_sel = 3'd0;  // 0.5x
+                zombie_width = ZOMBIE_05X_WIDTH;
+                zombie_height = ZOMBIE_05X_HEIGHT;
+            end else if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_06X) begin
+                size_sel = 3'd1;  // 0.6x
+                zombie_width = ZOMBIE_06X_WIDTH;
+                zombie_height = ZOMBIE_06X_HEIGHT;
+            end else if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_07X) begin
+                size_sel = 3'd2;  // 0.7x
+                zombie_width = ZOMBIE_07X_WIDTH;
+                zombie_height = ZOMBIE_07X_HEIGHT;
+            end else if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_08X) begin
+                size_sel = 3'd3;  // 0.8x
+                zombie_width = ZOMBIE_08X_WIDTH;
+                zombie_height = ZOMBIE_08X_HEIGHT;
+            end else if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_09X) begin
+                size_sel = 3'd4;  // 0.9x
+                zombie_width = ZOMBIE_09X_WIDTH;
+                zombie_height = ZOMBIE_09X_HEIGHT;
+            end else begin
+                size_sel = 3'd5;  // 1.0x
+                zombie_width = ZOMBIE_1X_WIDTH;
+                zombie_height = ZOMBIE_1X_HEIGHT;
+            end
 
             cur_x = i_h_count - i_zombie_x[z];
             cur_y = i_v_count - i_zombie_y[z];
 
             if (i_zombie_valid[z] && 
-                (i_h_count >= i_zombie_x[z]) && (i_h_count < (i_zombie_x[z] + i_zombie_size_x)) &&
-                (i_v_count >= i_zombie_y[z]) && (i_v_count < (i_zombie_y[z] + i_zombie_size_y))) 
+                (i_h_count >= i_zombie_x[z]) && (i_h_count < (i_zombie_x[z] + zombie_width)) &&
+                (i_v_count >= i_zombie_y[z]) && (i_v_count < (i_zombie_y[z] + zombie_height))) 
                 hit = 1'b1;
             else 
                 hit = 1'b0;
@@ -161,6 +219,7 @@ module VGA_Image_Overlay_Combined #(
                 top_zombies_x_s0[found_count]     = cur_x;
                 top_zombies_y_s0[found_count]     = cur_y;
                 top_zombies_valid_s0[found_count] = 1'b1;
+                top_zombies_size_sel_s0[found_count] = size_sel;
                 found_count++;
             end
         end
@@ -173,6 +232,7 @@ module VGA_Image_Overlay_Combined #(
     logic [9:0]  z_y_s1 [0:3];
     logic [5:0]  z_idx_s1 [0:3];
     logic        z_valid_s1 [0:3];
+    logic [2:0]  z_size_sel_s1 [0:3];  // Size selector: 0-5
     logic [20:0] bg_addr_s1;
     logic [15:0] aim_addr_s1;
     logic        in_aim_s1;
@@ -189,6 +249,7 @@ module VGA_Image_Overlay_Combined #(
                 z_y_s1[k] <= top_zombies_y_s0[k];
                 z_idx_s1[k] <= top_zombies_idx_s0[k];
                 z_valid_s1[k] <= top_zombies_valid_s0[k];
+                z_size_sel_s1[k] <= top_zombies_size_sel_s0[k];
             end
             // BG & Aim & Control
             bg_addr_s1      <= bg_addr_s0;
@@ -204,20 +265,129 @@ module VGA_Image_Overlay_Combined #(
     //  LAYER 1: Memory Request (Bounds & Aim & BG Addr)
     // ============================================================
 
-    // --- 1.1 Bounds BRAM Request ---
+    // --- 1.1 Bounds BRAM Request (Multi-size Support) ---
     logic [15:0] bounds_data_0, bounds_data_1; // Returns in Layer 2
     logic [15:0] bounds_data_2, bounds_data_3;
-
-    zombie_1x_bound ram_bounds_1 (
+    
+    // Bounds BRAM data for all sizes (0.5x, 0.6x, 0.7x, 0.8x, 0.9x, 1.0x)
+    logic [15:0] bounds_05x_data_0, bounds_05x_data_1, bounds_05x_data_2, bounds_05x_data_3;
+    logic [15:0] bounds_06x_data_0, bounds_06x_data_1, bounds_06x_data_2, bounds_06x_data_3;
+    logic [15:0] bounds_07x_data_0, bounds_07x_data_1, bounds_07x_data_2, bounds_07x_data_3;
+    logic [15:0] bounds_08x_data_0, bounds_08x_data_1, bounds_08x_data_2, bounds_08x_data_3;
+    logic [15:0] bounds_09x_data_0, bounds_09x_data_1, bounds_09x_data_2, bounds_09x_data_3;
+    logic [15:0] bounds_1x_data_0, bounds_1x_data_1, bounds_1x_data_2, bounds_1x_data_3;
+    
+    // 0.5x bounds BRAM instances (assuming modules named zombie_05x_bound, zombie_05x_bound2)
+    zombie_05x_bound ram_bounds_05x_1 (
         .clock(i_clk),
-        .address_a(z_x_s1[0][6:0]), .q_a(bounds_data_0),
-        .address_b(z_x_s1[1][6:0]), .q_b(bounds_data_1)
+        .address_a(z_x_s1[0][6:0]), .q_a(bounds_05x_data_0),
+        .address_b(z_x_s1[1][6:0]), .q_b(bounds_05x_data_1)
     );
-    zombie_1x_bound2 ram_bounds_2 (
+    zombie_05x_bound2 ram_bounds_05x_2 (
         .clock(i_clk),
-        .address_a(z_x_s1[2][6:0]), .q_a(bounds_data_2),
-        .address_b(z_x_s1[3][6:0]), .q_b(bounds_data_3)
+        .address_a(z_x_s1[2][6:0]), .q_a(bounds_05x_data_2),
+        .address_b(z_x_s1[3][6:0]), .q_b(bounds_05x_data_3)
     );
+    
+    // 0.6x bounds BRAM instances
+    zombie_06x_bound ram_bounds_06x_1 (
+        .clock(i_clk),
+        .address_a(z_x_s1[0][6:0]), .q_a(bounds_06x_data_0),
+        .address_b(z_x_s1[1][6:0]), .q_b(bounds_06x_data_1)
+    );
+    zombie_06x_bound2 ram_bounds_06x_2 (
+        .clock(i_clk),
+        .address_a(z_x_s1[2][6:0]), .q_a(bounds_06x_data_2),
+        .address_b(z_x_s1[3][6:0]), .q_b(bounds_06x_data_3)
+    );
+    
+    // 0.7x bounds BRAM instances
+    zombie_07x_bound ram_bounds_07x_1 (
+        .clock(i_clk),
+        .address_a(z_x_s1[0][6:0]), .q_a(bounds_07x_data_0),
+        .address_b(z_x_s1[1][6:0]), .q_b(bounds_07x_data_1)
+    );
+    zombie_07x_bound2 ram_bounds_07x_2 (
+        .clock(i_clk),
+        .address_a(z_x_s1[2][6:0]), .q_a(bounds_07x_data_2),
+        .address_b(z_x_s1[3][6:0]), .q_b(bounds_07x_data_3)
+    );
+    
+    // 0.8x bounds BRAM instances
+    zombie_08x_bound ram_bounds_08x_1 (
+        .clock(i_clk),
+        .address_a(z_x_s1[0][6:0]), .q_a(bounds_08x_data_0),
+        .address_b(z_x_s1[1][6:0]), .q_b(bounds_08x_data_1)
+    );
+    zombie_08x_bound2 ram_bounds_08x_2 (
+        .clock(i_clk),
+        .address_a(z_x_s1[2][6:0]), .q_a(bounds_08x_data_2),
+        .address_b(z_x_s1[3][6:0]), .q_b(bounds_08x_data_3)
+    );
+    
+    // 0.9x bounds BRAM instances
+    zombie_09x_bound ram_bounds_09x_1 (
+        .clock(i_clk),
+        .address_a(z_x_s1[0][6:0]), .q_a(bounds_09x_data_0),
+        .address_b(z_x_s1[1][6:0]), .q_b(bounds_09x_data_1)
+    );
+    zombie_09x_bound2 ram_bounds_09x_2 (
+        .clock(i_clk),
+        .address_a(z_x_s1[2][6:0]), .q_a(bounds_09x_data_2),
+        .address_b(z_x_s1[3][6:0]), .q_b(bounds_09x_data_3)
+    );
+    
+    // 1x bounds BRAM instances
+    zombie_1x_bound ram_bounds_1x_1 (
+        .clock(i_clk),
+        .address_a(z_x_s1[0][6:0]), .q_a(bounds_1x_data_0),
+        .address_b(z_x_s1[1][6:0]), .q_b(bounds_1x_data_1)
+    );
+    zombie_1x_bound2 ram_bounds_1x_2 (
+        .clock(i_clk),
+        .address_a(z_x_s1[2][6:0]), .q_a(bounds_1x_data_2),
+        .address_b(z_x_s1[3][6:0]), .q_b(bounds_1x_data_3)
+    );
+    
+    // Route bounds data based on size selection (6-way mux)
+    always_comb begin
+        case (z_size_sel_s1[0])
+            3'd0: bounds_data_0 = bounds_05x_data_0;
+            3'd1: bounds_data_0 = bounds_06x_data_0;
+            3'd2: bounds_data_0 = bounds_07x_data_0;
+            3'd3: bounds_data_0 = bounds_08x_data_0;
+            3'd4: bounds_data_0 = bounds_09x_data_0;
+            3'd5: bounds_data_0 = bounds_1x_data_0;
+            default: bounds_data_0 = bounds_1x_data_0;
+        endcase
+        case (z_size_sel_s1[1])
+            3'd0: bounds_data_1 = bounds_05x_data_1;
+            3'd1: bounds_data_1 = bounds_06x_data_1;
+            3'd2: bounds_data_1 = bounds_07x_data_1;
+            3'd3: bounds_data_1 = bounds_08x_data_1;
+            3'd4: bounds_data_1 = bounds_09x_data_1;
+            3'd5: bounds_data_1 = bounds_1x_data_1;
+            default: bounds_data_1 = bounds_1x_data_1;
+        endcase
+        case (z_size_sel_s1[2])
+            3'd0: bounds_data_2 = bounds_05x_data_2;
+            3'd1: bounds_data_2 = bounds_06x_data_2;
+            3'd2: bounds_data_2 = bounds_07x_data_2;
+            3'd3: bounds_data_2 = bounds_08x_data_2;
+            3'd4: bounds_data_2 = bounds_09x_data_2;
+            3'd5: bounds_data_2 = bounds_1x_data_2;
+            default: bounds_data_2 = bounds_1x_data_2;
+        endcase
+        case (z_size_sel_s1[3])
+            3'd0: bounds_data_3 = bounds_05x_data_3;
+            3'd1: bounds_data_3 = bounds_06x_data_3;
+            3'd2: bounds_data_3 = bounds_07x_data_3;
+            3'd3: bounds_data_3 = bounds_08x_data_3;
+            3'd4: bounds_data_3 = bounds_09x_data_3;
+            3'd5: bounds_data_3 = bounds_1x_data_3;
+            default: bounds_data_3 = bounds_1x_data_3;
+        endcase
+    end
 
     // --- 1.2 Aim BRAM Request ---
     logic [1:0] aim_pixel_data_s2; // Returns in Layer 2
@@ -245,6 +415,7 @@ module VGA_Image_Overlay_Combined #(
     logic [9:0]  z_y_s2 [0:3];
     logic [5:0]  z_idx_s2 [0:3];
     logic        z_valid_s2 [0:3];
+    logic [2:0]  z_size_sel_s2 [0:3];  // Size selector passed through
     logic [20:0] bg_addr_s2; // Keep tracking for parsing low/high byte later
     logic        in_aim_s2;
     logic        active_video_s2;
@@ -260,6 +431,7 @@ module VGA_Image_Overlay_Combined #(
                 z_y_s2[k] <= z_y_s1[k];
                 z_idx_s2[k] <= z_idx_s1[k];
                 z_valid_s2[k] <= z_valid_s1[k];
+                z_size_sel_s2[k] <= z_size_sel_s1[k];
             end
             // Pass BG Info
             bg_addr_s2 <= bg_addr_s1;
@@ -280,6 +452,7 @@ module VGA_Image_Overlay_Combined #(
     logic [5:0] final_id_s2;
     logic [10:0] final_x_s2;
     logic [9:0]  final_y_s2;
+    logic [2:0]  final_size_sel_s2;  // Selected zombie's size (0-5)
 	logic use_zombie;
 
     always_comb begin
@@ -291,24 +464,43 @@ module VGA_Image_Overlay_Combined #(
 
         // Priority Select
         if (is_opaque_s2[0]) begin
-            final_id_s2 = z_idx_s2[0]; final_x_s2 = z_x_s2[0]; final_y_s2 = z_y_s2[0]; use_zombie = 1'b1;
+            final_id_s2 = z_idx_s2[0]; final_x_s2 = z_x_s2[0]; final_y_s2 = z_y_s2[0]; 
+            final_size_sel_s2 = z_size_sel_s2[0]; use_zombie = 1'b1;
         end else if (is_opaque_s2[1]) begin
-            final_id_s2 = z_idx_s2[1]; final_x_s2 = z_x_s2[1]; final_y_s2 = z_y_s2[1]; use_zombie = 1'b1;
+            final_id_s2 = z_idx_s2[1]; final_x_s2 = z_x_s2[1]; final_y_s2 = z_y_s2[1]; 
+            final_size_sel_s2 = z_size_sel_s2[1]; use_zombie = 1'b1;
         end else if (is_opaque_s2[2]) begin
-            final_id_s2 = z_idx_s2[2]; final_x_s2 = z_x_s2[2]; final_y_s2 = z_y_s2[2]; use_zombie = 1'b1;
+            final_id_s2 = z_idx_s2[2]; final_x_s2 = z_x_s2[2]; final_y_s2 = z_y_s2[2]; 
+            final_size_sel_s2 = z_size_sel_s2[2]; use_zombie = 1'b1;
         end else if (is_opaque_s2[3]) begin
-            final_id_s2 = z_idx_s2[3]; final_x_s2 = z_x_s2[3]; final_y_s2 = z_y_s2[3]; use_zombie = 1'b1;
+            final_id_s2 = z_idx_s2[3]; final_x_s2 = z_x_s2[3]; final_y_s2 = z_y_s2[3]; 
+            final_size_sel_s2 = z_size_sel_s2[3]; use_zombie = 1'b1;
         end else begin
 			use_zombie = 1'b0;
             final_x_s2 = 0; final_y_s2 = 0; final_id_s2 = 6'd0;
+            final_size_sel_s2 = 3'd0;
         end
     end
 
-    // --- 2.2 Calculate Zombie Pixel Address ---
+    // --- 2.2 Calculate Zombie Pixel Address (with correct width) ---
     logic [13:0] z_pixel_addr_s2;
     logic        use_zombie_s2;
+    logic [10:0] zombie_width_calc;  // Width based on size selection
+    
     assign use_zombie_s2 = use_zombie;
-    assign z_pixel_addr_s2 = use_zombie_s2 ? ((final_y_s2 * i_zombie_size_x) + final_x_s2) : 14'd0;
+    // Select width based on size selector
+    always_comb begin
+        case (final_size_sel_s2)
+            3'd0: zombie_width_calc = ZOMBIE_05X_WIDTH;
+            3'd1: zombie_width_calc = ZOMBIE_06X_WIDTH;
+            3'd2: zombie_width_calc = ZOMBIE_07X_WIDTH;
+            3'd3: zombie_width_calc = ZOMBIE_08X_WIDTH;
+            3'd4: zombie_width_calc = ZOMBIE_09X_WIDTH;
+            3'd5: zombie_width_calc = ZOMBIE_1X_WIDTH;
+            default: zombie_width_calc = ZOMBIE_1X_WIDTH;
+        endcase
+    end
+    assign z_pixel_addr_s2 = use_zombie_s2 ? ((final_y_s2 * zombie_width_calc) + final_x_s2) : 14'd0;
 
     // --- 2.3 Kill Detection Logic ---
     // Check if we're at the kill target position and there's a zombie
@@ -359,12 +551,16 @@ module VGA_Image_Overlay_Combined #(
     logic        active_video_s3;
     
     // NOTE: o_zombie_addr connects directly here to go to BRAM
+    // Also pass size selector for BRAM selection in top-level
     always_ff @(posedge i_clk) begin
         if (~i_rst_n) begin
-            o_zombie_addr <= 0; active_video_s3 <= 0;
+            o_zombie_addr <= 0; 
+            o_zombie_size_sel <= 0;
+            active_video_s3 <= 0;
         end else begin
             // 1. Zombie Request (Send to BRAM)
             o_zombie_addr <= z_pixel_addr_s2;
+            o_zombie_size_sel <= final_size_sel_s2;  // Output size selector for top-level routing
             use_zombie_s3 <= use_zombie_s2;
 
             // 2. BG Data Latch (SRAM Data is ready now, after 2 cycles)

@@ -1110,37 +1110,8 @@ set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_RO
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name SYSTEMVERILOG_FILE src/IMU/velocity_integrator.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/IMU/uart_rx.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/IMU/imu_parser.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/set_trans_arr.sv
-set_global_assignment -name QIP_FILE BRAMs/aim/aim.qip
-set_global_assignment -name SYSTEMVERILOG_FILE src/zombie_position_control/Random_Position_Generator.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/zombie_position_control/Position_Controller.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/Zombie_Position_Test_Controller.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Image_Overlay_Combined.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Image_Overlay.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Image_Display.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/BRAM_Reader.sv
-set_global_assignment -name VERILOG_FILE vga_clock/synthesis/vga_clock.v -library vga_clock
-set_global_assignment -name QIP_FILE vga_clock/synthesis/vga_clock.qip
-set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Pattern_720p.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Pattern.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Controller_720p.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Controller.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/SRAM_Reader.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/SevenHexDecoder.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/HexTo7Seg.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/Debounce.sv
-set_global_assignment -name SYSTEMVERILOG_FILE src/DE2_115/DE2_115.sv
-set_global_assignment -name SDC_FILE src/DE2_115/DE2_115.sdc
-set_global_assignment -name QIP_FILE BRAM.qip
-set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x.qip
-set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x_palette.qip
-set_global_assignment -name QIP_FILE BRAMs/background/background_palette.qip
 set_global_assignment -name ENABLE_SIGNALTAP ON
 set_global_assignment -name USE_SIGNALTAP_FILE output_files/stp2.stp
-set_global_assignment -name SIGNALTAP_FILE stp.stp
 set_global_assignment -name SLD_NODE_CREATOR_ID 110 -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_ENTITY_NAME sld_signaltap -section_id auto_signaltap_0
 set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_clk -to CLOCK_50 -section_id auto_signaltap_0
@@ -1192,9 +1163,6 @@ set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[21] -
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[7] -to auto_signaltap_0|vcc -section_id auto_signaltap_0
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[13] -to auto_signaltap_0|vcc -section_id auto_signaltap_0
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[14] -to auto_signaltap_0|gnd -section_id auto_signaltap_0
-set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x_bound.qip
-set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x_bound2.qip
-set_global_assignment -name SIGNALTAP_FILE output_files/stp2.stp
 set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_trigger_in[0] -to "Debounce:trigger_debounce_inst|o_pos" -section_id auto_signaltap_0
 set_instance_assignment -name CONNECT_TO_SLD_NODE_ENTITY_PORT acq_data_in[0] -to "Debounce:trigger_debounce_inst|o_pos" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_DATA_BITS=1" -section_id auto_signaltap_0
@@ -1203,5 +1171,53 @@ set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=0000000000000000000000000000000000" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=34" -section_id auto_signaltap_0
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[11] -to auto_signaltap_0|vcc -section_id auto_signaltap_0
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name SYSTEMVERILOG_FILE src/Start_Game_Detector.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/IMU/velocity_integrator.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/IMU/uart_rx.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/IMU/imu_parser.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/set_trans_arr.sv
+set_global_assignment -name QIP_FILE BRAMs/aim/aim.qip
+set_global_assignment -name SYSTEMVERILOG_FILE src/zombie_position_control/Random_Position_Generator.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/zombie_position_control/Position_Controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/Zombie_Position_Test_Controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Image_Overlay_Combined.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Image_Overlay.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Image_Display.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/BRAM_Reader.sv
+set_global_assignment -name VERILOG_FILE vga_clock/synthesis/vga_clock.v -library vga_clock
+set_global_assignment -name QIP_FILE vga_clock/synthesis/vga_clock.qip
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Pattern_720p.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Pattern.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Controller_720p.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/VGA_Controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/SRAM_Reader.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/SevenHexDecoder.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/HexTo7Seg.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/Debounce.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/DE2_115/DE2_115.sv
+set_global_assignment -name SDC_FILE src/DE2_115/DE2_115.sdc
+set_global_assignment -name QIP_FILE BRAM.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x_palette.qip
+set_global_assignment -name QIP_FILE BRAMs/background/background_palette.qip
+set_global_assignment -name SIGNALTAP_FILE stp.stp
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x_bound.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_1x_bound2.qip
+set_global_assignment -name SIGNALTAP_FILE output_files/stp2.stp
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_07x.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_07x_bound.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_07x_bound2.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_08x.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_09x.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_05x.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_06x.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_05x_bound.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_05x_bound2.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_06x_bound.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_06x_bound2.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_08x_bound.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_08x_bound2.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_09x_bound.qip
+set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_09x_bound2.qip
 set_global_assignment -name SLD_FILE db/stp2_auto_stripped.stp
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

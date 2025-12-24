@@ -183,7 +183,7 @@ module Random_Position_Generator #(
 					if (i_kill && (i_kill_index == i[4:0])) begin
 						position_valid[i] <= 1'b0; // Zombie dies - disappears
 						pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH); // Generate and store random X position for next spawn
-						pos_y[i] <= 32'd270; // Set spawn Y position
+						pos_y[i] <= 32'd300; // Set spawn Y position
 						error_acc[i] <= 32'd0;
 						move_div_cnt[i] <= 4'd0;
 					end

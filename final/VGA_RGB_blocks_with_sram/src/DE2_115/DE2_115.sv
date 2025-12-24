@@ -175,15 +175,20 @@ assign zombie_size_y = 10'd149;   // Zombie height
 
 // Shared zombie sprite BRAM arbitration signals
 logic [13:0] zombie_addr_overlay;     // Address from VGA overlay module
+logic [2:0]  zombie_size_sel_overlay; // Size selector from VGA overlay module (0=0.5x, 1=0.6x, 2=0.7x, 3=0.8x, 4=0.9x, 5=1.0x)
 logic [13:0] zombie_addr_trans;       // Address from transparency builder
-logic [13:0] zombie_bram_addr;        // Address driven into zombie_1x
-logic [7:0]  zombie_bram_q;           // Pixel data from zombie_1x
+logic [13:0] zombie_bram_addr;        // Address driven into zombie BRAM
+logic [13:0] zombie_bram_05x_addr, zombie_bram_06x_addr, zombie_bram_07x_addr;
+logic [13:0] zombie_bram_08x_addr, zombie_bram_09x_addr, zombie_bram_1x_addr;
+logic [7:0]  zombie_bram_q;           // Pixel data from zombie BRAM (routed)
+logic [7:0]  zombie_bram_05x_q, zombie_bram_06x_q, zombie_bram_07x_q;
+logic [7:0]  zombie_bram_08x_q, zombie_bram_09x_q, zombie_bram_1x_q;
 
 // Transparency bounds and control from set_trans_arr
 // For each X, [7:0] = min transparent Y, [15:8] = max transparent Y
 logic [15:0] zombie_trans_bounds [0:102-1];
 logic        trans_done;
-logic        trans_busy;
+logic        trans_busy = 1'b0;  // Initialize to 0 (trans module is disabled)
 
 // Aim position (controlled by IMU / position controller)
 logic [10:0] aim_x;
@@ -249,7 +254,7 @@ logic imu_data_valid;
 // =========================================================
 // 將 GPIO[4] 作為輸入使用
 // 若 5002A 這類按鈕模組為「按下輸出變低 (active-low)」，在這裡取反，讓按下時 trigger_raw = 1
-assign trigger_raw = ~GPIO[4];
+assign trigger_raw = ~GPIO[6];
 
 // 使用 50MHz 主時鐘 clk 與 KEY[1] 作為 active-low reset 進行去彈跳
 // 調整 CNT_N 讓按鍵需要穩定一段時間才算一次，避免一次按下被彈跳當成多次
@@ -266,6 +271,9 @@ Debounce #(
 
 wire kill_en;
 wire [4:0] kill_index;
+
+// Zombie kill counter (for HEX5 & HEX6 display)
+logic [7:0] zombie_kill_count;  // 0-255 counter for HEX5 (low 4 bits) & HEX6 (high 4 bits) display
 
 // Random Position Generator - DISABLED FOR TESTING
 // Assign all zombie positions to 0 for testing
@@ -330,7 +338,8 @@ VGA_Image_Overlay_Combined #(
 	.i_aim_x(aim_x - 100),                   // Aim X position
 	.i_aim_y(aim_y - 100),                   // Aim Y position
 	.o_zombie_addr(zombie_addr_overlay),     // BRAM address when not busy building transparency
-	.i_zombie_pixel(zombie_bram_q),          // Shared BRAM pixel data
+	.o_zombie_size_sel(zombie_size_sel_overlay), // Size selector: 0=0.5x, 1=0.6x, 2=0.7x, 3=0.8x, 4=0.9x, 5=1.0x
+	.i_zombie_pixel(zombie_bram_q),          // Shared BRAM pixel data (routed)
 	
 	.o_bg_sram_addr(vga_sram_addr),
 	.o_bg_sram_ce_n(vga_sram_ce_n),
@@ -362,19 +371,88 @@ VGA_Image_Overlay_Combined #(
 // 	.i_zombie_pixel(zombie_bram_q)
 // );
 
-// Simple arbiter for shared zombie_1x BRAM:
-// - While trans_busy = 1, set_trans_arr owns the BRAM.
+// Simple arbiter for shared zombie BRAM:
+// - While trans_busy = 1, set_trans_arr owns the BRAM (always uses 1x).
 // - When trans_busy = 0, VGA_Image_Overlay_Combined owns the BRAM.
 assign zombie_bram_addr = trans_busy ? zombie_addr_trans : zombie_addr_overlay;
 
-// Shared zombie sprite BRAM instance
+// Route address to appropriate BRAM based on size selection
+// For now, trans always uses 1x (can be extended later if needed)
+always_comb begin
+    if (trans_busy) begin
+        // Transparency builder always uses 1x
+        zombie_bram_05x_addr = 14'd0;
+        zombie_bram_06x_addr = 14'd0;
+        zombie_bram_07x_addr = 14'd0;
+        zombie_bram_08x_addr = 14'd0;
+        zombie_bram_09x_addr = 14'd0;
+        zombie_bram_1x_addr = zombie_bram_addr;
+    end else begin
+        // Route based on size selector
+        zombie_bram_05x_addr = (zombie_size_sel_overlay == 3'd0) ? zombie_bram_addr : 14'd0;
+        zombie_bram_06x_addr = (zombie_size_sel_overlay == 3'd1) ? zombie_bram_addr : 14'd0;
+        zombie_bram_07x_addr = (zombie_size_sel_overlay == 3'd2) ? zombie_bram_addr : 14'd0;
+        zombie_bram_08x_addr = (zombie_size_sel_overlay == 3'd3) ? zombie_bram_addr : 14'd0;
+        zombie_bram_09x_addr = (zombie_size_sel_overlay == 3'd4) ? zombie_bram_addr : 14'd0;
+        zombie_bram_1x_addr = (zombie_size_sel_overlay == 3'd5) ? zombie_bram_addr : 14'd0;
+    end
+end
+
+// Shared zombie sprite BRAM instances
+zombie_05x u_zombie_05x (
+	.address(zombie_bram_05x_addr),
+	.clock  (vga_clock_74_25),
+	.q      (zombie_bram_05x_q)
+);
+
+zombie_06x u_zombie_06x (
+	.address(zombie_bram_06x_addr),
+	.clock  (vga_clock_74_25),
+	.q      (zombie_bram_06x_q)
+);
+
+zombie_07x u_zombie_07x (
+	.address(zombie_bram_07x_addr),
+	.clock  (vga_clock_74_25),
+	.q      (zombie_bram_07x_q)
+);
+
+zombie_08x u_zombie_08x (
+	.address(zombie_bram_08x_addr),
+	.clock  (vga_clock_74_25),
+	.q      (zombie_bram_08x_q)
+);
+
+zombie_09x u_zombie_09x (
+	.address(zombie_bram_09x_addr),
+	.clock  (vga_clock_74_25),
+	.q      (zombie_bram_09x_q)
+);
+
 zombie_1x u_zombie_1x (
-	.address(zombie_bram_addr),
+	.address(zombie_bram_1x_addr),
 	.clock  (vga_clock_74_25),
 	.data   (8'd0),
 	.wren   (1'b0),
-	.q      (zombie_bram_q)
+	.q      (zombie_bram_1x_q)
 );
+
+// Route pixel data based on size selection
+always_comb begin
+    if (trans_busy) begin
+        zombie_bram_q = zombie_bram_1x_q;  // Trans always uses 1x
+    end else begin
+        case (zombie_size_sel_overlay)
+            3'd0: zombie_bram_q = zombie_bram_05x_q;
+            3'd1: zombie_bram_q = zombie_bram_06x_q;
+            3'd2: zombie_bram_q = zombie_bram_07x_q;
+            3'd3: zombie_bram_q = zombie_bram_08x_q;
+            3'd4: zombie_bram_q = zombie_bram_09x_q;
+            3'd5: zombie_bram_q = zombie_bram_1x_q;
+            default: zombie_bram_q = zombie_bram_1x_q;
+        endcase
+    end
+end
 
 // SRAM interface connections (for background image data)
 assign SRAM_ADDR = vga_sram_addr;
@@ -512,6 +590,36 @@ Position_Controller #(
         end
     end
 
+    // 殭屍擊殺計數器：每次 kill_en 為高時 +1 (0-99，限制為兩位數)
+    logic kill_en_prev;  // 用來檢測 kill_en 的上升緣
+    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
+        if (!rst_n) begin
+            zombie_kill_count <= 8'd0;
+            kill_en_prev <= 1'b0;
+        end else begin
+            kill_en_prev <= kill_en;
+            // 檢測 kill_en 的上升緣
+            if (kill_en && !kill_en_prev) begin
+                if (zombie_kill_count < 8'd99) begin
+                    zombie_kill_count <= zombie_kill_count + 8'd1;  // 0-99
+                end else begin
+                    zombie_kill_count <= 8'd99;  // 最大顯示 99
+                end
+            end
+        end
+    end
+
+    // 將擊殺計數轉換為十進制的十位和個位
+    logic [3:0] kill_count_tens;   // 十位數 (0-9)
+    logic [3:0] kill_count_ones;   // 個位數 (0-9)
+    logic [7:0] temp_kill_count;
+    
+    always_comb begin
+        temp_kill_count = zombie_kill_count;
+        kill_count_tens = temp_kill_count / 8'd10;
+        kill_count_ones = temp_kill_count % 8'd10;
+    end
+
     // 其餘高位 LEDG[8:4] 先關閉
 	assign LEDG[8:4] = 5'b0;
 
@@ -583,7 +691,8 @@ Position_Controller #(
     
     // Original HEX4-HEX5 displays replaced by transparency bounds display above
     assign HEX4 = is_negative ? 7'b0111111 : 7'b1111111; // '-' or OFF
-    HexTo7Seg hex5(.i_hex(trigger_count), .o_seg(HEX5));
+    HexTo7Seg hex5(.i_hex(kill_count_ones), .o_seg(HEX5));  // 顯示擊殺數量的個位數 (0-9)
+    HexTo7Seg hex6(.i_hex(kill_count_tens), .o_seg(HEX6));  // 顯示擊殺數量的十位數 (0-9)
 
 `ifdef DUT_LAB1
 	initial begin
