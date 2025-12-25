@@ -39,6 +39,24 @@ reg [9:0] v_count_r;
 reg [10:0] h_active_count_r;
 reg [9:0] v_active_count_r;
 
+// Internal signals before delay pipeline
+logic hsync_int;
+logic vsync_int;
+logic blank_n_int;
+logic sync_n_int;
+logic [10:0] h_count_int;
+logic [9:0] v_count_int;
+logic active_video_int;
+
+// 5-cycle delay pipeline registers
+logic [4:0] hsync_delay;
+logic [4:0] vsync_delay;
+logic [4:0] blank_n_delay;
+logic [4:0] sync_n_delay;
+logic [10:0] h_count_delay [0:4];
+logic [9:0] v_count_delay [0:4];
+logic [4:0] active_video_delay;
+
 // Combinational logic: next state calculation (write values, w)
 logic [10:0] h_count_w;
 logic [9:0] v_count_w;
@@ -101,25 +119,69 @@ always_ff @(posedge i_clk or negedge i_rst_n) begin
     end
 end
 
-// --- VGA 輸出訊號 ---
+// --- VGA 輸出訊號 (內部訊號，延遲前) ---
 
 // Horizontal sync signal (使用標準的 H_SYNC_START)
-assign o_hsync = (h_count_r >= H_SYNC_START) && 
-                 (h_count_r < H_SYNC_START + H_SYNC_PULSE) ? 1'b0 : 1'b1;
+assign hsync_int = (h_count_r >= H_SYNC_START) && 
+                   (h_count_r < H_SYNC_START + H_SYNC_PULSE) ? 1'b0 : 1'b1;
 
 // Vertical sync signal (使用標準的 V_SYNC_START)
-assign o_vsync = (v_count_r >= V_SYNC_START) && 
-                 (v_count_r < V_SYNC_START + V_SYNC_PULSE) ? 1'b0 : 1'b1;
+assign vsync_int = (v_count_r >= V_SYNC_START) && 
+                   (v_count_r < V_SYNC_START + V_SYNC_PULSE) ? 1'b0 : 1'b1;
 
 // Active video region
-assign o_active_video = (h_count_r >= H_BACK_PORCH) && (h_count_r < H_BACK_PORCH + H_DISPLAY) && (v_count_r >= V_BACK_PORCH) && (v_count_r < V_BACK_PORCH + V_DISPLAY);
+assign active_video_int = (h_count_r >= H_BACK_PORCH) && (h_count_r < H_BACK_PORCH + H_DISPLAY) && (v_count_r >= V_BACK_PORCH) && (v_count_r < V_BACK_PORCH + V_DISPLAY);
 
 // Blank and sync signals
-assign o_blank_n = o_active_video;
-assign o_sync_n = 1'b0; // Low for standard VGA
+assign blank_n_int = active_video_int;
+assign sync_n_int = 1'b0; // Low for standard VGA
 
 // Output pixel coordinates
-assign o_h_count = h_active_count_r; // 此訊號應連接到 BRAM 的 Address 埠
-assign o_v_count = v_active_count_r; // 此訊號應連接到 BRAM 的 Address 埠
+assign h_count_int = h_active_count_r; // 此訊號應連接到 BRAM 的 Address 埠
+assign v_count_int = v_active_count_r; // 此訊號應連接到 BRAM 的 Address 埠
+
+// --- 5-cycle delay pipeline ---
+always_ff @(posedge i_clk or negedge i_rst_n) begin
+    if (!i_rst_n) begin
+        // Initialize all delay stages to 0
+        hsync_delay <= 5'b0;
+        vsync_delay <= 5'b0;
+        blank_n_delay <= 5'b0;
+        sync_n_delay <= 5'b0;
+        active_video_delay <= 5'b0;
+        for (int i = 0; i < 5; i++) begin
+            h_count_delay[i] <= 11'd0;
+            v_count_delay[i] <= 10'd0;
+        end
+    end else begin
+        // Shift pipeline: stage 0 gets new value, stages 1-4 shift forward
+        hsync_delay <= {hsync_delay[3:0], hsync_int};
+        vsync_delay <= {vsync_delay[3:0], vsync_int};
+        blank_n_delay <= {blank_n_delay[3:0], blank_n_int};
+        sync_n_delay <= {sync_n_delay[3:0], sync_n_int};
+        active_video_delay <= {active_video_delay[3:0], active_video_int};
+        
+        h_count_delay[0] <= h_count_int;
+        h_count_delay[1] <= h_count_delay[0];
+        h_count_delay[2] <= h_count_delay[1];
+        h_count_delay[3] <= h_count_delay[2];
+        h_count_delay[4] <= h_count_delay[3];
+        
+        v_count_delay[0] <= v_count_int;
+        v_count_delay[1] <= v_count_delay[0];
+        v_count_delay[2] <= v_count_delay[1];
+        v_count_delay[3] <= v_count_delay[2];
+        v_count_delay[4] <= v_count_delay[3];
+    end
+end
+
+// --- 延遲後的輸出訊號 (5 cycles delayed) ---
+assign o_hsync = hsync_delay[4];
+assign o_vsync = vsync_delay[4];
+assign o_blank_n = blank_n_delay[4];
+assign o_sync_n = sync_n_delay[4];
+assign o_h_count = h_count_int;
+assign o_v_count = v_count_int;
+assign o_active_video = active_video_delay[4];
 
 endmodule

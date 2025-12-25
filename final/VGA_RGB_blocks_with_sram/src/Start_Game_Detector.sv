@@ -20,6 +20,9 @@ module Start_Game_Detector #(
     // Manual reset button (KEY[3], active low, synchronized to VGA clock domain)
     input logic i_key3,  // KEY[3] input (active low)
     
+    // Enable signal (when low, detector is disabled)
+    input logic i_enable,  // Enable signal: 1 = enabled, 0 = disabled
+    
     // Output
     output logic o_started  // 0 = not started, 1 = started (latched until reset)
 );
@@ -50,10 +53,10 @@ module Start_Game_Detector #(
                            (i_aim_y >= START_BOX_Y_MIN) && (i_aim_y <= START_BOX_Y_MAX);
     end
     
-    // Combined condition: aim in box AND trigger pressed
-    // Only allow start condition when NOT in reset
+    // Combined condition: aim in box AND trigger pressed AND enabled
+    // Only allow start condition when NOT in reset AND enabled
     logic start_condition_met;
-    assign start_condition_met = i_rst_n && aim_in_start_box && i_trigger_posedge;
+    assign start_condition_met = i_rst_n && i_enable && aim_in_start_box && i_trigger_posedge;
     
     // Internal started signal: latch the started signal, once it becomes 1, it stays 1 until reset
     logic started_internal;

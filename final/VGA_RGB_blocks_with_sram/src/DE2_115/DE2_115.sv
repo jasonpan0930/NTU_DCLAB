@@ -267,9 +267,44 @@ Debounce #(
 
 wire kill_en;
 wire [4:0] kill_index;
+wire zombie_died_started;  // Pulse when a zombie starts dying (becomes gray)
 
 // Start Game Detector - detects when game should start (aim in box + trigger pressed)
 logic game_started;  // Output from Start_Game_Detector
+logic start_game_rst_n;  // Combined reset for start game detector
+
+// Win/Lose signals (declared early for use in retry logic)
+logic win_signal;  // High when kill_count reaches 100
+logic lose_signal;  // High when life_count reaches 0
+
+// Retry Button Detector - detects when retry button is pressed in end game mode
+// Retry button bounds: X: 500-780, Y: 400-553 (from RETRY_POS_X/Y + WIDTH/HEIGHT)
+logic retry_button_pressed;  // Output from retry detector
+logic retry_reset;  // Combined reset signal (active high)
+logic retry_reset_prev;  // For edge detection
+
+// Detect retry reset condition: in end mode AND retry button pressed
+always_ff @(posedge vga_clock_74_25 or negedge KEY[1]) begin
+    if (!KEY[1]) begin
+        retry_reset <= 1'b0;
+        retry_reset_prev <= 1'b0;
+    end else begin
+        retry_reset_prev <= retry_reset;
+        // Activate retry reset when in end mode and retry button is pressed
+        if ((win_signal || lose_signal) && retry_button_pressed && !retry_reset) begin
+            retry_reset <= 1'b1;
+        end
+        // Clear retry reset after one cycle
+        if (retry_reset) begin
+            retry_reset <= 1'b0;
+        end
+    end
+end
+
+// Combined reset signals
+assign start_game_rst_n = KEY[1] && !retry_reset;  // For start game detector
+logic game_rst_n;  // Combined reset for all game logic
+assign game_rst_n = KEY[1] && !retry_reset;
 
 Start_Game_Detector #(
     .START_BOX_X_MIN(11'd494), 
@@ -278,12 +313,29 @@ Start_Game_Detector #(
     .START_BOX_Y_MAX(10'd630) 
 ) start_game_detector (
     .i_clk(vga_clock_74_25),     // Use VGA clock (aim and trigger are in VGA domain)
-    .i_rst_n(KEY[1]),
+    .i_rst_n(start_game_rst_n),  // Combined reset: KEY[1] and retry reset
     .i_aim_x(aim_x),              // Aim X position
     .i_aim_y(aim_y),              // Aim Y position
     .i_trigger_posedge(trigger_posedge),  // Trigger button pulse
     .i_key3(KEY[3]),              // KEY[3] for manual reset (active low)
+    .i_enable(1'b1),              // Always enabled for start game detector
     .o_started(game_started)      // Game started signal (latched until reset)
+);
+
+Start_Game_Detector #(
+    .START_BOX_X_MIN(11'd500),   // RETRY_POS_X
+    .START_BOX_X_MAX(11'd780),   // RETRY_POS_X + RETRY_WIDTH - 1 = 500 + 280 - 1
+    .START_BOX_Y_MIN(10'd400),   // RETRY_POS_Y
+    .START_BOX_Y_MAX(10'd553)    // RETRY_POS_Y + RETRY_HEIGHT - 1 = 400 + 153 - 1
+) retry_button_detector (
+    .i_clk(vga_clock_74_25),     // Use VGA clock
+    .i_rst_n(start_game_rst_n),  // Reset when game resets
+    .i_aim_x(aim_x),              // Aim X position
+    .i_aim_y(aim_y),              // Aim Y position
+    .i_trigger_posedge(trigger_posedge),  // Trigger button pulse
+    .i_key3(1'b1),                // Don't use KEY[3] for retry detector (keep high)
+    .i_enable(win_signal || lose_signal),  // Only enabled when in end game mode
+    .o_started(retry_button_pressed)  // Retry button pressed signal (latched)
 );
 
 // Zombie kill counter (for HEX6 & HEX7 display)
@@ -293,10 +345,6 @@ logic [7:0] zombie_kill_count;  // 0-100 counter for kill count display
 logic [7:0] life_count;  // 0-99 life counter, starts at 10
 logic zombie_hit;  // Hit signal from zombie generator
 
-// Win/Lose signals
-logic win_signal;  // High when kill_count reaches 100
-logic lose_signal;  // High when life_count reaches 0
-
 // Random Position Generator - DISABLED FOR TESTING
 // Assign all zombie positions to 0 for testing
 Random_Position_Generator #(
@@ -304,7 +352,7 @@ Random_Position_Generator #(
 	.CLOCK_FREQ(32'd74250000)  // 74.25MHz
 ) zombie_gen(
 	.i_clk(vga_clock_74_25),
-	.i_rst_n(KEY[1]),
+	.i_rst_n(game_rst_n),  // Use combined reset (KEY[1] and retry reset)
 	.i_game_started(game_started),  // Zombies only move when game is started
 	.i_win_signal(win_signal),  // Win signal: hide all zombies
 	.i_lose_signal(lose_signal),  // Lose signal: stop zombie movement
@@ -355,10 +403,10 @@ VGA_Image_Overlay_Combined #(
 	.MAX_ZOMBIES(20)  // Must match MAX_POSITIONS in Random_Position_Generator
 ) vga_image_overlay_combined(
 	.i_clk(vga_clock_74_25),
-	.i_rst_n(KEY[1]),
+	.i_rst_n(game_rst_n),  // Use combined reset (KEY[1] and retry reset)
 	.i_h_count(vga_720p_h_count),
 	.i_v_count(vga_720p_v_count),
-	.i_active_video(vga_720p_active_video),
+	.i_active_video(1'b1),
 	.i_zombie_x(zombie_x),          // Array of X positions
 	.i_zombie_y(zombie_y),          // Array of Y positions
 	.i_zombie_valid(zombie_valid),  // Array of valid flags
@@ -384,22 +432,14 @@ VGA_Image_Overlay_Combined #(
 
 	.i_killing(trigger_posedge),
 	.o_kill_idx(kill_index),
-	.o_kill_en(kill_en)
+	.o_kill_en(kill_en),
+	.o_died_started(zombie_died_started),  // Pulse when zombie starts dying (becomes gray)
+
+	.i_win_signal(win_signal),
+	.i_lose_signal(lose_signal),
+	.i_zombie_hit(zombie_hit)  // Hit signal for red flash effect
 );
 
-// Transparency table builder for the shared zombie sprite
-set_trans_arr #(
-	.ZOMBIE_SIZE_X(102),
-	.ZOMBIE_SIZE_Y(149)
-) u_set_trans_arr (
-	.i_clk(vga_clock_74_25),
-	.i_rst_n(KEY[1]),
-	.o_trans_bounds(zombie_trans_bounds),
-	.o_done(trans_done),
-	.o_busy(trans_busy),
-	.o_zombie_addr(zombie_addr_trans),
-	.i_zombie_pixel(zombie_bram_q)
-);
 
 // Simple arbiter for shared zombie BRAM:
 // - While trans_busy = 1, set_trans_arr owns the BRAM (always uses 1x).
@@ -516,7 +556,7 @@ Position_Controller #(
 	.USE_LINEAR_VELOCITY(0)    // Disable linear velocity for now
 ) position_controller_inst(
 	.i_clk(CLOCK_50),
-	.i_rst_n(KEY[1]),
+	.i_rst_n(game_rst_n),  // Use combined reset (KEY[1] and retry reset)
 	.i_wx(gx_cal_shifted),    // Angular velocity X (pitch) → controls Y (synchronized, fast divide by 2)
 	.i_wy(gy_cal_shifted),    // Angular velocity Y (roll) → not used (synchronized, fast divide by 2)
 	.i_wz(gz_cal_shifted),    // Angular velocity Z (yaw) → controls X (synchronized, fast divide by 2)
@@ -623,8 +663,8 @@ Position_Controller #(
 
     // 殭屍擊殺計數器：每次 kill_en 為高時 +1 (0-100，限制為三位數)
     logic kill_en_prev;  // 用來檢測 kill_en 的上升緣
-    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
-        if (!rst_n) begin
+    always_ff @(posedge vga_clock_74_25 or negedge game_rst_n) begin
+        if (!game_rst_n) begin
             zombie_kill_count <= 8'd0;
             kill_en_prev <= 1'b0;
         end else begin
@@ -642,31 +682,31 @@ Position_Controller #(
 
     // 生命計數器：從 10 開始，每次 zombie_hit 為高時 -1
     logic zombie_hit_prev;  // 用來檢測 zombie_hit 的上升緣
-    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
-        if (!rst_n) begin
+    always_ff @(posedge vga_clock_74_25 or negedge game_rst_n) begin
+        if (!game_rst_n) begin
             life_count <= 8'd10;  // 初始生命值為 10
             zombie_hit_prev <= 1'b0;
             lose_signal <= 1'b0;
         end else begin
             zombie_hit_prev <= zombie_hit;
-            // 檢測 zombie_hit 的上升緣
-            if (zombie_hit && !zombie_hit_prev) begin
+            // 檢測 zombie_hit 的上升緣 (only if not already won)
+            if (zombie_hit && !zombie_hit_prev && !win_signal && !lose_signal) begin
                 if (life_count > 8'd0) begin
                     life_count <= life_count - 8'd1;  // 減少生命值
                 end else begin
                     life_count <= 8'd0;  // 最小為 0
                 end
             end
-            // 檢測輸掉條件：生命值為 0
-            if (life_count == 8'd0) begin
+            // 檢測輸掉條件：生命值為 0 AND not won yet
+            if (life_count == 8'd0 && !win_signal) begin
                 lose_signal <= 1'b1;  // 保持高電平
             end
         end
     end
 
     // 勝利信號：當擊殺數達到 100 時
-    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
-        if (!rst_n) begin
+    always_ff @(posedge vga_clock_74_25 or negedge game_rst_n) begin
+        if (!game_rst_n) begin
             win_signal <= 1'b0;
         end else begin
             if (zombie_kill_count >= 8'd100) begin
@@ -731,324 +771,27 @@ Position_Controller #(
     // 音訊播放系統
     // =========================================================
     
-    // 音訊狀態機
-    typedef enum logic [2:0] {
-        AUD_IDLE,
-        AUD_I2C_INIT,
-        AUD_PLAY_BGM,
-        AUD_PLAY_KILLED,
-        AUD_RESET_ADDR  // 用於重置地址的中間狀態
-    } audio_state_t;
-    
-    audio_state_t audio_state, audio_state_next;
-    
-    // I2C初始化完成標誌（避免每次按鍵都重新初始化）
+    // 音訊控制器信號
+    logic audio_playing;
     logic i2c_init_done;
-    
-    // 擊殺信號檢測（用於觸發killed音效）
-    logic kill_en_prev_audio;  // 用於檢測kill_en的上升緣
-    
-    // 按鍵去抖動（KEY2和KEY3）
-    logic key2_debounced, key3_debounced;
-    logic key2_posedge, key3_posedge;
-    
-    Debounce #(
-        .CNT_N(250000) // ~5ms at 50MHz
-    ) key2_debounce (
-        .i_in(~KEY[2]),  // KEY[2] is active low
-        .i_clk(clk),
-        .i_rst_n(rst_n),
-        .o_debounced(key2_debounced),
-        .o_neg(),
-        .o_pos(key2_posedge)
-    );
-    
-    Debounce #(
-        .CNT_N(250000) // ~5ms at 50MHz
-    ) key3_debounce (
-        .i_in(~KEY[3]),  // KEY[3] is active low
-        .i_clk(clk),
-        .i_rst_n(rst_n),
-        .o_debounced(key3_debounced),
-        .o_neg(),
-        .o_pos(key3_posedge)
-    );
-    
-    // I2C 初始化信號
-    logic i2c_start, i2c_finished;
-    logic i2c_sdat, i2c_oen;
     logic i2c_ledr_nack;
     
-    // 音訊播放控制信號
-    logic audio_playing;
-    logic [19:0] bram_addr;  // 地址計數器
-    logic signed [15:0] bram_data;
-    logic signed [15:0] dac_data;
-    
-    // DACLRCK邊緣檢測
-    logic daclrck_prev;
-    logic daclrck_posedge;
-    
-    // BRAM 選擇信號（根據按鍵選擇bgm或killed）
-    logic [15:0] bgm_data;
-    logic [15:0] killed_data;
-    logic [16:0] bgm_addr;  // bgm使用17位地址（117520個樣本）
-    logic [15:0] killed_addr;
-    
-    // 根據當前狀態選擇BRAM地址和數據
-    // KEY2按下時讀取bgm BRAM，KEY3按下時讀取killed BRAM
-    always_comb begin
-        if (audio_state == AUD_PLAY_BGM) begin
-            // 播放BGM時，從bgm BRAM讀取，地址從0開始
-            bgm_addr = bram_addr[16:0];  // 使用低17位（bgm使用17位地址）
-            killed_addr = 16'd0;  // killed BRAM不使用
-            bram_data = bgm_data;  // 使用bgm BRAM的數據
-        end else if (audio_state == AUD_PLAY_KILLED) begin
-            // 播放KILLED時，從killed BRAM讀取，地址從0開始
-            bgm_addr = 17'd0;  // bgm BRAM不使用
-            killed_addr = bram_addr[15:0];  // 使用低16位（killed使用16位地址）
-            bram_data = killed_data;  // 使用killed BRAM的數據
-        end else begin
-            // 其他狀態時，兩個BRAM都不使用
-            bgm_addr = 17'd0;
-            killed_addr = 16'd0;
-            bram_data = 16'd0;
-        end
-    end
-    
-    // 擊殺信號檢測（用於觸發killed音效）
-    // 直接在74.25MHz的vga_clock_74_25域檢測kill_en的上升緣
-    logic kill_en_prev_vga;
-    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
-        if (!rst_n) begin
-            kill_en_prev_vga <= 1'b0;
-        end else begin
-            kill_en_prev_vga <= kill_en;
-        end
-    end
-    
-    // 在VGA時鐘域中檢測上升緣
-    logic kill_en_posedge_vga;
-    assign kill_en_posedge_vga = kill_en && !kill_en_prev_vga;
-    
-    // 產生持續兩個cycle的脈衝
-    logic kill_en_posedge_pulse;
-    logic [1:0] kill_en_pulse_counter;
-    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
-        if (!rst_n) begin
-            kill_en_posedge_pulse <= 1'b0;
-            kill_en_pulse_counter <= 2'd0;
-        end else begin
-            if (kill_en_posedge_vga) begin
-                kill_en_posedge_pulse <= 1'b1;
-                kill_en_pulse_counter <= 2'd2;  // 持續兩個cycle
-            end else if (kill_en_pulse_counter > 2'd0) begin
-                // counter遞減，當遞減後的counter > 0時保持脈衝為1
-                logic [1:0] next_counter;
-                next_counter = kill_en_pulse_counter - 2'd1;
-                kill_en_pulse_counter <= next_counter;
-                kill_en_posedge_pulse <= (next_counter > 2'd0);
-            end else begin
-                kill_en_posedge_pulse <= 1'b0;
-            end
-        end
-    end
-    
-    // 將kill_en_posedge_pulse同步到clk域（用於狀態機控制）
-    logic kill_en_posedge_pulse_sync1, kill_en_posedge_pulse_sync2;
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            kill_en_posedge_pulse_sync1 <= 1'b0;
-            kill_en_posedge_pulse_sync2 <= 1'b0;
-        end else begin
-            kill_en_posedge_pulse_sync1 <= kill_en_posedge_pulse;
-            kill_en_posedge_pulse_sync2 <= kill_en_posedge_pulse_sync1;
-        end
-    end
-    
-    // 檢測同步後的上升緣（用於狀態機）
-    logic kill_en_posedge;
-    assign kill_en_posedge = kill_en_posedge_pulse_sync2;
-    
-    // I2C初始化完成標誌
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            i2c_init_done <= 1'b0;
-        end else begin
-            if (i2c_finished && (audio_state == AUD_I2C_INIT)) begin
-                i2c_init_done <= 1'b1;
-            end
-        end
-    end
-    
-    // 音訊狀態機
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            audio_state <= AUD_IDLE;
-        end else begin
-            audio_state <= audio_state_next;
-        end
-    end
-    
-    // 狀態機組合邏輯
-    always_comb begin
-        audio_state_next = audio_state;
-        i2c_start = 1'b0;
-        audio_playing = 1'b0;
-        
-        case (audio_state)
-            AUD_IDLE: begin
-                // 系統啟動後自動開始播放BGM
-                if (i2c_init_done) begin
-                    audio_state_next = AUD_PLAY_BGM;  // 直接開始播放BGM
-                end else begin
-                    audio_state_next = AUD_I2C_INIT;
-                end
-            end
-            
-            AUD_I2C_INIT: begin
-                // 保持i2c_start為高直到初始化完成
-                i2c_start = 1'b1;
-                if (i2c_finished) begin
-                    // I2C初始化完成，自動開始播放BGM
-                    audio_state_next = AUD_PLAY_BGM;
-                end
-            end
-            
-            AUD_PLAY_BGM: begin
-                audio_playing = 1'b1;
-                // 擊殺發生時，切換到播放killed音效（打斷BGM）
-                if (kill_en_posedge) begin
-                    audio_state_next = AUD_PLAY_KILLED;  // 切換到播放killed
-                end
-                // BGM播放完成後循環播放（重新開始）
-                else if (bram_addr >= 20'd117519) begin  // bgm有117520個樣本（0-117519）
-                    audio_state_next = AUD_PLAY_BGM;  // 循環播放，地址會重置
-                end
-            end
-            
-            AUD_PLAY_KILLED: begin
-                audio_playing = 1'b1;
-                // 如果播放killed時再次擊殺，重置地址重新播放killed
-                if (kill_en_posedge) begin
-                    audio_state_next = AUD_PLAY_KILLED;  // 保持KILLED狀態，但會觸發地址重置
-                end
-                // killed播放完成後，恢復播放BGM
-                else if (bram_addr >= 20'd41519) begin  // killed有41520個樣本（0-41519）
-                    audio_state_next = AUD_PLAY_BGM;  // 恢復播放BGM，地址會重置
-                end
-            end
-            
-            AUD_RESET_ADDR: begin
-                // 這個狀態不再需要，直接轉換到播放狀態
-                audio_state_next = AUD_PLAY_BGM;
-            end
-            
-            default: audio_state_next = AUD_IDLE;
-        endcase
-    end
-    
-    // I2C 初始化器
-    I2cInitializer i2c_init (
-        .i_rst_n(rst_n),
-        .i_clk(clk_100k),
-        .i_start(i2c_start),
-        .i_sdat(I2C_SDAT),
-        .o_finished(i2c_finished),
-        .o_sclk(I2C_SCLK),
-        .o_sdat(i2c_sdat),
-        .o_oen(i2c_oen),
-        .o_ledr(i2c_ledr_nack)
-    );
-    
-    // I2C SDA 開漏輸出
-    assign I2C_SDAT = (i2c_oen) ? i2c_sdat : 1'bz;
-    
-    // =========================================================
-    // 簡單音訊播放邏輯（直接在DE2_115中實現）
-    // =========================================================
-    
-    // DACLRCK邊緣檢測（用於遞增地址）
-    always_ff @(posedge AUD_BCLK or negedge rst_n) begin
-        if (!rst_n) begin
-            daclrck_prev <= 1'b0;
-        end else begin
-            daclrck_prev <= AUD_DACLRCK;
-        end
-    end
-    
-    assign daclrck_posedge = AUD_DACLRCK && !daclrck_prev;
-    
-    // 地址計數器（根據DACLRCK上升緣遞增）
-    // 記錄上一個狀態，用於檢測狀態切換
-    audio_state_t audio_state_prev;
-    // 將kill_en_posedge同步到AUD_BCLK時鐘域（用於地址重置）
-    logic kill_en_posedge_sync_bclk1, kill_en_posedge_sync_bclk2;
-    always_ff @(posedge AUD_BCLK or negedge rst_n) begin
-        if (!rst_n) begin
-            bram_addr <= 20'd0;
-            audio_state_prev <= AUD_IDLE;
-            kill_en_posedge_sync_bclk1 <= 1'b0;
-            kill_en_posedge_sync_bclk2 <= 1'b0;
-        end else begin
-            audio_state_prev <= audio_state;
-            // 同步kill_en_posedge到AUD_BCLK時鐘域
-            kill_en_posedge_sync_bclk1 <= kill_en_posedge;
-            kill_en_posedge_sync_bclk2 <= kill_en_posedge_sync_bclk1;
-            
-            // 狀態切換時重置地址
-            if (audio_state != audio_state_prev) begin
-                bram_addr <= 20'd0;
-            end
-            // 在AUD_PLAY_KILLED狀態時，如果kill_en_posedge為true，重置地址
-            else if (audio_state == AUD_PLAY_KILLED && kill_en_posedge_sync_bclk2) begin
-                bram_addr <= 20'd0;  // 重置地址，重新播放killed
-            end
-            // 正常播放時遞增地址
-            else if (audio_playing && daclrck_posedge) begin
-                // 根據當前狀態決定最大地址
-                if (audio_state == AUD_PLAY_BGM) begin
-                    if (bram_addr >= 20'd117519) begin
-                        bram_addr <= 20'd0;  // BGM循環播放
-                    end else begin
-                        bram_addr <= bram_addr + 20'd1;
-                    end
-                end else if (audio_state == AUD_PLAY_KILLED) begin
-                    if (bram_addr >= 20'd41519) begin
-                        bram_addr <= 20'd0;  // Killed播放完成，會切換回BGM
-                    end else begin
-                        bram_addr <= bram_addr + 20'd1;
-                    end
-                end
-            end
-        end
-    end
-    
-    // 直接將BRAM數據輸出到DAC（簡單播放，無特殊處理）
-    assign dac_data = bram_data;
-    
-    // 音訊播放器
-    AudPlayer audio_player (
-        .i_rst_n(rst_n),
-        .i_bclk(AUD_BCLK),
-        .i_daclrck(AUD_DACLRCK),
-        .i_en(audio_playing),
-        .i_dac_data(dac_data),
-        .o_aud_dacdat(AUD_DACDAT)
-    );
-    
-    // BGM BRAM 實例化
-    bgm bgm_rom (
-        .address(bgm_addr),
-        .clock(clk_12m),
-        .q(bgm_data)
-    );
-    
-    // Killed BRAM 實例化
-    killed killed_rom (
-        .address(killed_addr),
-        .clock(clk_12m),
-        .q(killed_data)
+    // 音訊控制器實例化
+    audio_control audio_ctrl (
+        .clk(clk),
+        .clk_12m(clk_12m),
+        .clk_100k(clk_100k),
+        .vga_clock_74_25(vga_clock_74_25),
+        .rst_n(rst_n),
+        .kill_en(zombie_died_started || SW[11]),
+        .I2C_SCLK(I2C_SCLK),
+        .I2C_SDAT(I2C_SDAT),
+        .AUD_BCLK(AUD_BCLK),
+        .AUD_DACLRCK(AUD_DACLRCK),
+        .AUD_DACDAT(AUD_DACDAT),
+        .audio_playing(audio_playing),
+        .i2c_init_done(i2c_init_done),
+        .i2c_ledr_nack(i2c_ledr_nack)
     );
 
 	// =========================================================

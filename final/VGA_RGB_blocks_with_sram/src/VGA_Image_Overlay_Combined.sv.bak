@@ -1,4 +1,4 @@
-// VGA Image Overlay Module (Combined & Layered)
+/ VGA Image Overlay Module (Combined & Layered)
 // Architecture: 5-Stage Pipeline
 // Layer 0: Candidate Selection & Address Calculation
 // Layer 1: Bounds Request & SRAM Address Out
@@ -67,8 +67,7 @@ module VGA_Image_Overlay_Combined #(
 	// killing part
 	input logic i_killing,
 	output logic o_kill_en,
-	output logic [4:0] o_kill_idx,
-	output logic o_died_started  // High for one cycle when a zombie starts dying (becomes gray)
+	output logic [4:0] o_kill_idx
 );
 
     // Constants
@@ -557,9 +556,6 @@ module VGA_Image_Overlay_Combined #(
     // - End game images: always 8-bit mode (select byte)
     // - Start screen (not started): 4-bit mode (read both bytes)
     // - Game (started): 8-bit mode (select byte)
-    // CRITICAL: Use started_s1 that matches bg_addr_s1 to ensure synchronization
-    // bg_addr_s1 was calculated in Layer 0 using i_started, then pipelined to Layer 1
-    // So started_s1 should match the mode used to calculate bg_addr_s1
     assign o_bg_sram_lb_n = (end_img_active_s1 || started_s1) ? final_sram_addr_s1[0] : 1'b0;
     assign o_bg_sram_ub_n = (end_img_active_s1 || started_s1) ? ~final_sram_addr_s1[0] : 1'b0;
     assign io_bg_sram_dq  = 16'hZZZZ;
@@ -707,7 +703,6 @@ module VGA_Image_Overlay_Combined #(
     logic [21:0] flash_sub_timer [0:MAX_ZOMBIES-1];  // Sub-timer for toggle (0.05 sec)
     logic kill_en_reg;
     logic [4:0] kill_idx_reg;
-    logic died_started_pulse;  // Pulse signal when a zombie starts dying
     
     // Initialize flash state and timers
     integer i;
@@ -721,7 +716,6 @@ module VGA_Image_Overlay_Combined #(
             end
             kill_en_reg <= 1'b0;
             kill_idx_reg <= 5'd0;
-            died_started_pulse <= 1'b0;
         end else begin
             // Check for new kill detection
             if (kill_detected_s2) begin
@@ -733,7 +727,6 @@ module VGA_Image_Overlay_Combined #(
                     zombie_flash_toggle[killed_idx] <= 1'b1;  // Start with gray
                     flash_timer[killed_idx] <= 26'd1;  // Start counting
                     flash_sub_timer[killed_idx] <= 22'd1;  // Start sub-timer
-                    died_started_pulse <= 1'b1;  // Pulse when zombie starts dying
                 end
             end
             
@@ -764,19 +757,15 @@ module VGA_Image_Overlay_Combined #(
                 end
             end
             
-            // Clear pulses after one cycle
+            // Clear kill_en after one cycle
             if (kill_en_reg) begin
                 kill_en_reg <= 1'b0;
-            end
-            if (died_started_pulse) begin
-                died_started_pulse <= 1'b0;
             end
         end
     end
     
     assign o_kill_en = kill_en_reg && !i_win_signal && !i_lose_signal;
     assign o_kill_idx = kill_idx_reg;
-    assign o_died_started = died_started_pulse;
 
     // ------------------------------------------------------------
     // === PIPELINE REGISTER PASSING (Layer 2 -> Layer 3) ===
@@ -813,9 +802,6 @@ module VGA_Image_Overlay_Combined #(
             zombie_id_s3 <= final_id_s2;  // Pass zombie ID through pipeline
 
             // 2. Shared SRAM Data Latch (could be BG or end game data)
-            // NOTE: SRAM read latency - data is available 1 cycle after address is output
-            // Address is output in Layer 1, so data should be valid here in Layer 2->3 transition
-            // However, if SRAM has 2-cycle latency, we may need to add an extra stage
             sram_data_latched_s3 <= io_bg_sram_dq; 
             bg_low_byte_s3       <= bg_addr_s2[0]; // Needed to split 16-bit to 8-bit (game mode or end game)
             bg_pixel_offset_s3   <= bg_pixel_offset_s2; // Pixel offset for 4-bit mode (start screen)
@@ -941,7 +927,7 @@ module VGA_Image_Overlay_Combined #(
         .q(bg_rgb565_game_s5), .data(0), .wren(0)
     );
     // Start screen palette (used when started = 0)
-    start_palette bg_pal_start (
+    start_small_palette bg_pal_start (
         .clock(i_clk), .address(bg_pixel_index_s4), 
         .q(bg_rgb565_start_s5)
     );
