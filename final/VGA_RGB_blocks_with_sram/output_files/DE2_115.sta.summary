@@ -3,19 +3,19 @@ TimeQuest Timing Analyzer Summary
 ------------------------------------------------------------
 
 Type  : Slow 1200mV 85C Model Setup 'CLOCK_50'
-Slack : -74.646
-TNS   : -1557.430
+Slack : -75.463
+TNS   : -1579.321
 
 Type  : Slow 1200mV 85C Model Setup 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
-Slack : -31.305
-TNS   : -8434.695
+Slack : -31.906
+TNS   : -40509.195
 
 Type  : Slow 1200mV 85C Model Setup 'altera_reserved_tck'
-Slack : 42.628
+Slack : 41.709
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Hold 'CLOCK_50'
-Slack : 0.348
+Slack : 0.351
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Hold 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
@@ -23,23 +23,23 @@ Slack : 0.401
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Hold 'altera_reserved_tck'
-Slack : 0.405
+Slack : 0.402
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Recovery 'altera_reserved_tck'
-Slack : 48.098
+Slack : 48.134
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Removal 'altera_reserved_tck'
-Slack : 1.004
+Slack : 1.211
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Minimum Pulse Width 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
-Slack : 6.421
+Slack : 6.424
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Minimum Pulse Width 'CLOCK_50'
-Slack : 9.553
+Slack : 9.554
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Minimum Pulse Width 'CLOCK2_50'
@@ -51,39 +51,39 @@ Slack : 16.000
 TNS   : 0.000
 
 Type  : Slow 1200mV 85C Model Minimum Pulse Width 'altera_reserved_tck'
-Slack : 49.491
+Slack : 49.500
 TNS   : 0.000
 
 Type  : Slow 1200mV 0C Model Setup 'CLOCK_50'
-Slack : -65.685
-TNS   : -1370.709
+Slack : -66.419
+TNS   : -1390.504
 
 Type  : Slow 1200mV 0C Model Setup 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
-Slack : -27.249
-TNS   : -5523.790
+Slack : -27.707
+TNS   : -34006.698
 
 Type  : Slow 1200mV 0C Model Setup 'altera_reserved_tck'
-Slack : 43.255
-TNS   : 0.000
-
-Type  : Slow 1200mV 0C Model Hold 'CLOCK_50'
-Slack : 0.348
+Slack : 42.431
 TNS   : 0.000
 
 Type  : Slow 1200mV 0C Model Hold 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
-Slack : 0.353
+Slack : 0.352
 TNS   : 0.000
 
 Type  : Slow 1200mV 0C Model Hold 'altera_reserved_tck'
-Slack : 0.355
+Slack : 0.353
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'CLOCK_50'
+Slack : 0.354
 TNS   : 0.000
 
 Type  : Slow 1200mV 0C Model Recovery 'altera_reserved_tck'
-Slack : 48.364
+Slack : 48.397
 TNS   : 0.000
 
 Type  : Slow 1200mV 0C Model Removal 'altera_reserved_tck'
-Slack : 0.907
+Slack : 1.116
 TNS   : 0.000
 
 Type  : Slow 1200mV 0C Model Minimum Pulse Width 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
@@ -103,39 +103,39 @@ Slack : 16.000
 TNS   : 0.000
 
 Type  : Slow 1200mV 0C Model Minimum Pulse Width 'altera_reserved_tck'
-Slack : 49.401
+Slack : 49.414
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Setup 'CLOCK_50'
-Slack : -26.458
-TNS   : -550.014
+Slack : -27.148
+TNS   : -564.754
 
 Type  : Fast 1200mV 0C Model Setup 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
-Slack : -8.311
-TNS   : -1048.610
+Slack : -8.647
+TNS   : -3735.623
 
 Type  : Fast 1200mV 0C Model Setup 'altera_reserved_tck'
-Slack : 46.588
+Slack : 46.081
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Hold 'CLOCK_50'
-Slack : 0.147
+Slack : 0.143
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Hold 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
-Slack : 0.180
+Slack : 0.179
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Hold 'altera_reserved_tck'
-Slack : 0.183
+Slack : 0.181
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Recovery 'altera_reserved_tck'
-Slack : 49.393
+Slack : 49.405
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Removal 'altera_reserved_tck'
-Slack : 0.492
+Slack : 0.566
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Minimum Pulse Width 'vga_clk_pll|altpll_0|sd1|pll7|clk[1]'
@@ -143,7 +143,7 @@ Slack : 6.481
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Minimum Pulse Width 'CLOCK_50'
-Slack : 9.201
+Slack : 9.200
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Minimum Pulse Width 'CLOCK2_50'
@@ -155,7 +155,7 @@ Slack : 16.000
 TNS   : 0.000
 
 Type  : Fast 1200mV 0C Model Minimum Pulse Width 'altera_reserved_tck'
-Slack : 49.285
+Slack : 49.283
 TNS   : 0.000
 
 ------------------------------------------------------------

@@ -14,6 +14,12 @@ module Random_Position_Generator #(
 	input logic i_clk,
 	input logic i_rst_n,
 	
+	// Game state: zombies only move when game is started
+	input logic i_game_started,
+	
+	// Kill count: used to adjust zombie base speed (0-100)
+	input logic [7:0] i_kill_count,
+	
 	// Kill signal: when i_kill=1, zombie at i_kill_index dies
 	input logic i_kill,
 	input logic [4:0] i_kill_index,
@@ -22,8 +28,7 @@ module Random_Position_Generator #(
 	output logic [9:0] o_y [0:MAX_POSITIONS-1],
 	output logic o_valid [0:MAX_POSITIONS-1],
 	output logic [31:0] o_distance [0:MAX_POSITIONS-1],
-	output logic [3:0] o_active_count,
-	output logic [4:0] o_depth_sorted [0:MAX_POSITIONS-1]  // Sorted zombie indices by depth: [0]=backmost, [N-1]=frontmost
+	output logic [3:0] o_active_count
 );
 
 	// ============================================================
@@ -124,35 +129,75 @@ module Random_Position_Generator #(
 			assign target_x_fixed = TARGET_X;
 			assign target_y_fixed = TARGET_Y;
 			
+			// Speed multiplier based on kill count thresholds
+			// Thresholds: 20, 30, 50, 70, 90
+			// Smaller multiplier = faster speed (reduces divider value)
+			logic [3:0] base_speed_multiplier;
+			logic [3:0] base_div_val;
+			logic [7:0] scaled_div_val;
+			
 			always_comb begin
 				dx = target_x_fixed - pos_x[i];
 				dy = target_y_fixed - pos_y[i];
 				abs_dx = (dx >= 0) ? dx : -dx;
 				abs_dy = (dy >= 0) ? dy : -dy;
 				
-				// Calculate move_enable based on Y position with more granular steps
+				// Determine base speed multiplier based on kill count
+				// 0-19 kills: multiplier = 10 (normal speed)
+				// 20-29 kills: multiplier = 9 (10% faster)
+				// 30-49 kills: multiplier = 8 (20% faster)
+				// 50-69 kills: multiplier = 7 (30% faster)
+				// 70-89 kills: multiplier = 6 (40% faster)
+				// 90+ kills: multiplier = 5 (50% faster)
+				if (i_kill_count < 8'd20) begin
+					base_speed_multiplier = 4'd10;
+				end else if (i_kill_count < 8'd30) begin
+					base_speed_multiplier = 4'd9;
+				end else if (i_kill_count < 8'd50) begin
+					base_speed_multiplier = 4'd8;
+				end else if (i_kill_count < 8'd70) begin
+					base_speed_multiplier = 4'd7;
+				end else if (i_kill_count < 8'd90) begin
+					base_speed_multiplier = 4'd6;
+				end else begin
+					base_speed_multiplier = 4'd5;
+				end
+				
+				// Calculate base divider value based on Y position
 				// Base rate: 120 Hz
 				// Zombies spawn at Y=250, target at Y=719
 				// SLOW at beginning (small Y), FAST as they approach target (large Y)
 				// Larger divider = slower speed (120/divider = Hz)
 				if (pos_y[i] < 32'd280) begin
-					move_div_val[i] = 4'd10; // 120/10 = 12 Hz (slowest - just spawned)
+					base_div_val = 4'd10; // 120/10 = 12 Hz (slowest - just spawned)
 				end else if (pos_y[i] < 32'd320) begin
-					move_div_val[i] = 4'd8;  // 120/8 = 15 Hz
+					base_div_val = 4'd8;  // 120/8 = 15 Hz
 				end else if (pos_y[i] < 32'd360) begin
-					move_div_val[i] = 4'd6;  // 120/6 = 20 Hz
+					base_div_val = 4'd6;  // 120/6 = 20 Hz
 				end else if (pos_y[i] < 32'd400) begin
-					move_div_val[i] = 4'd5;  // 120/5 = 24 Hz
+					base_div_val = 4'd5;  // 120/5 = 24 Hz
 				end else if (pos_y[i] < 32'd480) begin
-					move_div_val[i] = 4'd4;  // 120/4 = 30 Hz
+					base_div_val = 4'd4;  // 120/4 = 30 Hz
 				end else if (pos_y[i] < 32'd560) begin
-					move_div_val[i] = 4'd3;  // 120/3 = 40 Hz (faster)
+					base_div_val = 4'd3;  // 120/3 = 40 Hz (faster)
 				end else begin
-					move_div_val[i] = 4'd2;  // 120/2 = 60 Hz (fastest - near target)
+					base_div_val = 4'd2;  // 120/2 = 60 Hz (fastest - near target)
 				end
 				
-				// Enable movement when counter matches divider value
-				move_enable[i] = update_tick && position_valid[i] && 
+				// Apply speed multiplier: multiply base_div_val by multiplier/10
+				// This scales the speed based on kill count
+				// Result is clamped to minimum of 2 (fastest) and maximum of 10 (slowest)
+				scaled_div_val = (base_div_val * base_speed_multiplier) / 4'd10;
+				if (scaled_div_val < 4'd2) begin
+					move_div_val[i] = 4'd2;  // Minimum divider (fastest)
+				end else if (scaled_div_val > 4'd10) begin
+					move_div_val[i] = 4'd10; // Maximum divider (slowest)
+				end else begin
+					move_div_val[i] = scaled_div_val[3:0];
+				end
+				
+				// Enable movement when counter matches divider value AND game is started
+				move_enable[i] = update_tick && position_valid[i] && i_game_started &&
 				                 (move_div_cnt[i] == move_div_val[i]);
 			end
 
@@ -167,7 +212,8 @@ module Random_Position_Generator #(
 					
 					// Update per-zombie divider counter (independent update, runs every update_tick)
 					// Skip counter update if zombie is being killed, spawned, or moved
-					if (update_tick && position_valid[i] && 
+					// Also skip if game is not started (zombies don't move in start screen)
+					if (update_tick && position_valid[i] && i_game_started &&
 					    !(i_kill && (i_kill_index == i[4:0])) &&
 					    !(gen_tick && (available_slot == i) && slot_found) &&
 					    !move_enable[i]) begin
@@ -261,56 +307,6 @@ module Random_Position_Generator #(
 		end
 	end
 
-	// Depth Sorted Array: Sort zombie indices by Y position (depth)
-	// o_depth_sorted[0] = index of zombie furthest back (smallest Y)
-	// o_depth_sorted[N-1] = index of zombie most in front (largest Y)
-	// Uses selection sort: for each position k, find zombie with k-th smallest Y
-	always_comb begin
-		integer min_y_val, best_idx_val, found_flag, already_selected;
-		
-		// Initialize all with invalid indices
-		for (int i = 0; i < MAX_POSITIONS; i++) begin
-			o_depth_sorted[i] = 5'd31;
-		end
-		
-		// Selection sort: for each position k, find zombie with k-th smallest Y
-		for (int k = 0; k < MAX_POSITIONS; k++) begin
-			// Initialize for this iteration
-			min_y_val = 2147483647;  // Max 32-bit signed value
-			best_idx_val = 31;       // Invalid index
-			found_flag = 0;          // 0 = not found, 1 = found
-			
-			// Check all zombies to find the k-th smallest
-			for (int i = 0; i < MAX_POSITIONS; i++) begin
-				already_selected = 0;
-				
-				if (position_valid[i]) begin
-					// Check if this zombie is already in sorted array
-					for (int j = 0; j < k; j++) begin
-						if (o_depth_sorted[j] == i[4:0]) begin
-							already_selected = 1;
-							break;
-						end
-					end
-					
-					// If not already selected and has smaller or equal Y
-					if (already_selected == 0) begin
-						if ($signed(pos_y[i]) <= $signed(min_y_val)) begin
-							min_y_val = pos_y[i];
-							best_idx_val = i;
-							found_flag = 1;
-						end
-					end
-				end
-			end
-			
-			// Assign the found zombie index (or keep invalid if none found)
-			if (found_flag == 1) begin
-				o_depth_sorted[k] = best_idx_val[4:0];
-			end
-		end
-	end
-
 	// Position and Distance Output
 	generate
 		for (i = 0; i < MAX_POSITIONS; i++) begin : pos_out
@@ -328,7 +324,6 @@ module Random_Position_Generator #(
 					o_y[i] = TARGET_Y[9:0];
 					o_valid[i] = 1'b0;
 					o_distance[i] = 32'd0;
-					// o_depth_index is calculated separately in depth_calc block (will be 0 for invalid zombies)
 				end else begin
 					// Clamp X
 					if (pos_x[i] < 0) o_x[i] = 11'd0;

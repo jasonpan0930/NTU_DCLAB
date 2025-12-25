@@ -462,6 +462,11 @@ module VGA_Image_Overlay_Combined #(
     logic [9:0]  final_y_s2;
     logic [2:0]  final_size_sel_s2;  // Selected zombie's size (0-5)
 	logic use_zombie;
+	
+	// Variables for priority selection (lowest Y)
+	integer min_y_val;
+	integer best_idx;
+	integer found_opaque;
 
     always_comb begin
         // Check Opacity using Data returned from Layer 1
@@ -471,22 +476,34 @@ module VGA_Image_Overlay_Combined #(
         is_opaque_s2[2] = started_s2 && (z_valid_s2[2] && (z_y_s2[2] >= bounds_data_2[7:0]) && (z_y_s2[2] <= bounds_data_2[15:8]));
         is_opaque_s2[3] = started_s2 && (z_valid_s2[3] && (z_y_s2[3] >= bounds_data_3[7:0]) && (z_y_s2[3] <= bounds_data_3[15:8]));
 
-        // Priority Select
-        if (is_opaque_s2[0]) begin
-            final_id_s2 = z_idx_s2[0]; final_x_s2 = z_x_s2[0]; final_y_s2 = z_y_s2[0]; 
-            final_size_sel_s2 = z_size_sel_s2[0]; use_zombie = 1'b1;
-        end else if (is_opaque_s2[1]) begin
-            final_id_s2 = z_idx_s2[1]; final_x_s2 = z_x_s2[1]; final_y_s2 = z_y_s2[1]; 
-            final_size_sel_s2 = z_size_sel_s2[1]; use_zombie = 1'b1;
-        end else if (is_opaque_s2[2]) begin
-            final_id_s2 = z_idx_s2[2]; final_x_s2 = z_x_s2[2]; final_y_s2 = z_y_s2[2]; 
-            final_size_sel_s2 = z_size_sel_s2[2]; use_zombie = 1'b1;
-        end else if (is_opaque_s2[3]) begin
-            final_id_s2 = z_idx_s2[3]; final_x_s2 = z_x_s2[3]; final_y_s2 = z_y_s2[3]; 
-            final_size_sel_s2 = z_size_sel_s2[3]; use_zombie = 1'b1;
+        // Priority Select: Choose zombie with lowest Y (backmost) among opaque zombies
+        min_y_val = 1023;  // Initialize to maximum (Y is 10 bits, max value is 1023)
+        best_idx = 0;
+        found_opaque = 0;
+        
+        // Find the opaque zombie with the lowest Y value
+        for (int i = 0; i < 4; i++) begin
+            if (is_opaque_s2[i]) begin
+                if (found_opaque == 0 || z_y_s2[i] < min_y_val) begin
+                    min_y_val = z_y_s2[i];
+                    best_idx = i;
+                    found_opaque = 1;
+                end
+            end
+        end
+        
+        // Select the best zombie if found
+        if (found_opaque) begin
+            final_id_s2 = z_idx_s2[best_idx];
+            final_x_s2 = z_x_s2[best_idx];
+            final_y_s2 = z_y_s2[best_idx];
+            final_size_sel_s2 = z_size_sel_s2[best_idx];
+            use_zombie = 1'b1;
         end else begin
-			use_zombie = 1'b0;
-            final_x_s2 = 0; final_y_s2 = 0; final_id_s2 = 6'd0;
+            use_zombie = 1'b0;
+            final_x_s2 = 0;
+            final_y_s2 = 0;
+            final_id_s2 = 6'd0;
             final_size_sel_s2 = 3'd0;
         end
     end
@@ -516,32 +533,75 @@ module VGA_Image_Overlay_Combined #(
     logic kill_detected_s2;
     assign kill_detected_s2 = at_kill_target_s2 && use_zombie_s2;
     
-    // Hold kill outputs for 10 cycles
-    logic [3:0] kill_hold_counter; // 0-10 counter
+    // Flash state tracking: track which zombies are in flashing (dying) state
+    // 0.5 seconds at 74.25 MHz = 37,125,000 cycles (need 26 bits: 2^26 = 67,108,864)
+    // 0.05 seconds at 74.25 MHz = 3,712,500 cycles (need 22 bits: 2^22 = 4,194,304)
+    localparam FLASH_DURATION = 26'd37125000;  // 0.5 seconds at 74.25 MHz
+    localparam FLASH_TOGGLE_PERIOD = 22'd3712500;  // 0.05 seconds at 74.25 MHz
+    
+    logic zombie_flashing [0:MAX_ZOMBIES-1];  // Flashing state for each zombie
+    logic zombie_flash_toggle [0:MAX_ZOMBIES-1];  // Toggle state: 1 = gray, 0 = background
+    logic [25:0] flash_timer [0:MAX_ZOMBIES-1];  // Total timer for each zombie (0.5 sec)
+    logic [21:0] flash_sub_timer [0:MAX_ZOMBIES-1];  // Sub-timer for toggle (0.05 sec)
     logic kill_en_reg;
     logic [4:0] kill_idx_reg;
     
+    // Initialize flash state and timers
+    integer i;
     always_ff @(posedge i_clk) begin
         if (~i_rst_n) begin
-            kill_hold_counter <= 4'd0;
+            for (i = 0; i < MAX_ZOMBIES; i = i + 1) begin
+                zombie_flashing[i] <= 1'b0;
+                zombie_flash_toggle[i] <= 1'b0;
+                flash_timer[i] <= 26'd0;
+                flash_sub_timer[i] <= 22'd0;
+            end
             kill_en_reg <= 1'b0;
             kill_idx_reg <= 5'd0;
         end else begin
-            if (kill_detected_s2 && (kill_hold_counter == 4'd0)) begin
-                // New kill detected, latch values and start counter
-                kill_en_reg <= 1'b1;
-                kill_idx_reg <= final_id_s2[4:0];
-                kill_hold_counter <= 4'd1; // Start counting
-            end else if (kill_hold_counter > 4'd0) begin
-                // Counting down
-                if (kill_hold_counter < 4'd10) begin
-                    kill_hold_counter <= kill_hold_counter + 4'd1;
-                end else begin
-                    // Reached 10 cycles, clear outputs
-                    kill_hold_counter <= 4'd0;
-                    kill_en_reg <= 1'b0;
-                    kill_idx_reg <= 5'd0;
+            // Check for new kill detection
+            if (kill_detected_s2) begin
+                logic [4:0] killed_idx;
+                killed_idx = final_id_s2[4:0];
+                // Only start flashing state if not already flashing and index is valid
+                if ((killed_idx < MAX_ZOMBIES) && !zombie_flashing[killed_idx]) begin
+                    zombie_flashing[killed_idx] <= 1'b1;
+                    zombie_flash_toggle[killed_idx] <= 1'b1;  // Start with gray
+                    flash_timer[killed_idx] <= 26'd1;  // Start counting
+                    flash_sub_timer[killed_idx] <= 22'd1;  // Start sub-timer
                 end
+            end
+            
+            // Update timers for all zombies
+            for (i = 0; i < MAX_ZOMBIES; i = i + 1) begin
+                if (zombie_flashing[i]) begin
+                    // Update total timer
+                    if (flash_timer[i] < FLASH_DURATION) begin
+                        flash_timer[i] <= flash_timer[i] + 26'd1;
+                    end else begin
+                        // Total timer expired: clear flashing state and assert kill_en
+                        zombie_flashing[i] <= 1'b0;
+                        zombie_flash_toggle[i] <= 1'b0;
+                        flash_timer[i] <= 26'd0;
+                        flash_sub_timer[i] <= 22'd0;
+                        kill_en_reg <= 1'b1;
+                        kill_idx_reg <= i[4:0];
+                    end
+                    
+                    // Update sub-timer for toggle (every 0.05 seconds)
+                    if (flash_sub_timer[i] < FLASH_TOGGLE_PERIOD) begin
+                        flash_sub_timer[i] <= flash_sub_timer[i] + 22'd1;
+                    end else begin
+                        // Sub-timer expired: toggle between gray and background
+                        zombie_flash_toggle[i] <= ~zombie_flash_toggle[i];
+                        flash_sub_timer[i] <= 22'd1;  // Reset sub-timer
+                    end
+                end
+            end
+            
+            // Clear kill_en after one cycle
+            if (kill_en_reg) begin
+                kill_en_reg <= 1'b0;
             end
         end
     end
@@ -559,6 +619,7 @@ module VGA_Image_Overlay_Combined #(
     logic        use_zombie_s3;
     logic        active_video_s3;
     logic        started_s3;  // Pipeline i_started signal
+    logic [5:0]  zombie_id_s3;  // Zombie ID for gray state check
     
     // NOTE: o_zombie_addr connects directly here to go to BRAM
     // Also pass size selector for BRAM selection in top-level
@@ -572,6 +633,7 @@ module VGA_Image_Overlay_Combined #(
             o_zombie_addr <= z_pixel_addr_s2;
             o_zombie_size_sel <= final_size_sel_s2;  // Output size selector for top-level routing
             use_zombie_s3 <= use_zombie_s2;
+            zombie_id_s3 <= final_id_s2;  // Pass zombie ID through pipeline
 
             // 2. BG Data Latch (SRAM Data is ready now, after 2 cycles)
             sram_data_latched_s3 <= io_bg_sram_dq; 
@@ -610,6 +672,7 @@ module VGA_Image_Overlay_Combined #(
 	logic [7:0] zombie_pixel_index_s4;
 	logic [7:0] bg_pixel_index_s4;
 	logic       started_s4;  // Pipeline i_started signal for palette selection
+	logic [5:0] zombie_id_s4;  // Zombie ID for gray state check
 
     // Internal wires for Palette BRAM connection
     // logic [7:0] bg_pal_addr;
@@ -630,6 +693,7 @@ module VGA_Image_Overlay_Combined #(
 			zombie_pixel_index_s4 <= i_zombie_pixel;
 			bg_pixel_index_s4 <= bg_pixel_index_s3;
 			started_s4 <= started_s3;  // Pipeline started signal for palette selection
+			zombie_id_s4 <= zombie_id_s3;  // Pass zombie ID through pipeline
         end
     end
 
@@ -670,6 +734,7 @@ module VGA_Image_Overlay_Combined #(
     logic       in_aim_s5;
     logic       use_zombie_s5;
     logic       active_video_s5;
+    logic [5:0] zombie_id_s5;  // Zombie ID for gray state check
 
     always_ff @(posedge i_clk) begin
         if(~i_rst_n) begin
@@ -680,6 +745,7 @@ module VGA_Image_Overlay_Combined #(
             in_aim_s5       <= in_aim_s4;
             use_zombie_s5   <= use_zombie_s4 && (zombie_pixel_index_s4 != 8'h00);
             active_video_s5 <= active_video_s4;
+            zombie_id_s5 <= zombie_id_s4;  // Pass zombie ID through pipeline
         end
     end
 
@@ -712,12 +778,36 @@ module VGA_Image_Overlay_Combined #(
 
     // --- 5.3 Final Mixer ---
     logic [7:0] fin_r, fin_g, fin_b;
+    logic zombie_is_flashing_s5;  // Check if current zombie is in flashing state
+    logic zombie_show_gray_s5;  // Check if we should show gray (toggle state)
+    
+    // Check if the zombie being rendered is in flashing state
+    always_comb begin
+        zombie_is_flashing_s5 = 1'b0;
+        zombie_show_gray_s5 = 1'b0;
+        if (use_zombie_s5 && (zombie_id_s5 < MAX_ZOMBIES)) begin
+            zombie_is_flashing_s5 = zombie_flashing[zombie_id_s5];
+            zombie_show_gray_s5 = zombie_flash_toggle[zombie_id_s5];
+        end
+    end
 
     always_comb begin
         if (use_aim) begin
             fin_r = aim_r; fin_g = aim_g; fin_b = aim_b;
         end else if (use_zombie_s5) begin
-            fin_r = z_r;   fin_g = z_g;   fin_b = z_b;
+            // If zombie is flashing, alternate between gray and background
+            if (zombie_is_flashing_s5) begin
+                if (zombie_show_gray_s5) begin
+                    // Show gray color (128, 128, 128)
+                    fin_r = 8'd128; fin_g = 8'd128; fin_b = 8'd128;
+                end else begin
+                    // Show background color
+                    fin_r = bg_r; fin_g = bg_g; fin_b = bg_b;
+                end
+            end else begin
+                // Normal zombie color
+                fin_r = z_r;   fin_g = z_g;   fin_b = z_b;
+            end
         end else begin
             fin_r = bg_r;  fin_g = bg_g;  fin_b = bg_b;
         end

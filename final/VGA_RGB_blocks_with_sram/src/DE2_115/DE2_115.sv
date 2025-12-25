@@ -301,6 +301,8 @@ Random_Position_Generator #(
 ) zombie_gen(
 	.i_clk(vga_clock_74_25),
 	.i_rst_n(KEY[1]),
+	.i_game_started(game_started),  // Zombies only move when game is started
+	.i_kill_count(zombie_kill_count),  // Kill count for speed scaling
 	.o_x(zombie_x),
 	.o_y(zombie_y),
 	.o_valid(zombie_valid),
@@ -609,7 +611,7 @@ Position_Controller #(
         end
     end
 
-    // 殭屍擊殺計數器：每次 kill_en 為高時 +1 (0-99，限制為兩位數)
+    // 殭屍擊殺計數器：每次 kill_en 為高時 +1 (0-100，限制為三位數)
     logic kill_en_prev;  // 用來檢測 kill_en 的上升緣
     always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
         if (!rst_n) begin
@@ -619,24 +621,28 @@ Position_Controller #(
             kill_en_prev <= kill_en;
             // 檢測 kill_en 的上升緣
             if (kill_en && !kill_en_prev) begin
-                if (zombie_kill_count < 8'd99) begin
-                    zombie_kill_count <= zombie_kill_count + 8'd1;  // 0-99
+                if (zombie_kill_count < 8'd100) begin
+                    zombie_kill_count <= zombie_kill_count + 8'd1;  // 0-100
                 end else begin
-                    zombie_kill_count <= 8'd99;  // 最大顯示 99
+                    zombie_kill_count <= 8'd100;  // 最大顯示 100
                 end
             end
         end
     end
 
-    // 將擊殺計數轉換為十進制的十位和個位
-    logic [3:0] kill_count_tens;   // 十位數 (0-9)
-    logic [3:0] kill_count_ones;   // 個位數 (0-9)
+    // 將擊殺計數轉換為十進制的百位、十位和個位
+    logic [3:0] kill_count_hundreds;  // 百位數 (0-1)
+    logic [3:0] kill_count_tens;      // 十位數 (0-9)
+    logic [3:0] kill_count_ones;       // 個位數 (0-9)
     logic [7:0] temp_kill_count;
+    logic [7:0] temp_remainder;
     
     always_comb begin
         temp_kill_count = zombie_kill_count;
-        kill_count_tens = temp_kill_count / 8'd10;
-        kill_count_ones = temp_kill_count % 8'd10;
+        kill_count_hundreds = temp_kill_count / 8'd100;
+        temp_remainder = temp_kill_count % 8'd100;
+        kill_count_tens = temp_remainder / 8'd10;
+        kill_count_ones = temp_remainder % 8'd10;
     end
 
     // LEDG[7] 顯示遊戲是否已開始 (game_started)
@@ -712,10 +718,11 @@ Position_Controller #(
 	HexTo7Seg hex2(.i_hex(hundreds),  .o_seg(HEX2));
 	HexTo7Seg hex3(.i_hex(thousands), .o_seg(HEX3));
     
-    // Original HEX4-HEX5 displays replaced by transparency bounds display above
-    assign HEX4 = is_negative ? 7'b0111111 : 7'b1111111; // '-' or OFF
-    HexTo7Seg hex5(.i_hex(kill_count_ones), .o_seg(HEX5));  // 顯示擊殺數量的個位數 (0-9)
-    HexTo7Seg hex6(.i_hex(kill_count_tens), .o_seg(HEX6));  // 顯示擊殺數量的十位數 (0-9)
+    // HEX4, HEX6, HEX7 display zombie kill count (0-100)
+    HexTo7Seg hex4(.i_hex(kill_count_hundreds), .o_seg(HEX4));  // 顯示擊殺數量的百位數 (0-1)
+    assign HEX5 = 7'b1111111;  // Blank
+    HexTo7Seg hex6(.i_hex(kill_count_ones), .o_seg(HEX6));      // 顯示擊殺數量的個位數 (0-9)
+    HexTo7Seg hex7(.i_hex(kill_count_tens), .o_seg(HEX7));      // 顯示擊殺數量的十位數 (0-9)
 
 `ifdef DUT_LAB1
 	initial begin
