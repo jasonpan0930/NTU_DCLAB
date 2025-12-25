@@ -290,8 +290,16 @@ Start_Game_Detector #(
     .o_started(game_started)      // Game started signal (latched until reset)
 );
 
-// Zombie kill counter (for HEX5 & HEX6 display)
-logic [7:0] zombie_kill_count;  // 0-255 counter for HEX5 (low 4 bits) & HEX6 (high 4 bits) display
+// Zombie kill counter (for HEX6 & HEX7 display)
+logic [7:0] zombie_kill_count;  // 0-100 counter for kill count display
+
+// Life counter (for HEX4 & HEX5 display)
+logic [7:0] life_count;  // 0-99 life counter, starts at 10
+logic zombie_hit;  // Hit signal from zombie generator
+
+// Win/Lose signals
+logic win_signal;  // High when kill_count reaches 100
+logic lose_signal;  // High when life_count reaches 0
 
 // Random Position Generator - DISABLED FOR TESTING
 // Assign all zombie positions to 0 for testing
@@ -302,12 +310,15 @@ Random_Position_Generator #(
 	.i_clk(vga_clock_74_25),
 	.i_rst_n(KEY[1]),
 	.i_game_started(game_started),  // Zombies only move when game is started
+	.i_win_signal(win_signal),  // Win signal: hide all zombies
+	.i_lose_signal(lose_signal),  // Lose signal: stop zombie movement
 	.i_kill_count(zombie_kill_count),  // Kill count for speed scaling
 	.o_x(zombie_x),
 	.o_y(zombie_y),
 	.o_valid(zombie_valid),
 	.o_distance(zombie_distance),
 	.o_active_count(active_zombie_count),
+	.o_hit(zombie_hit),  // Hit signal when zombie arrives at destination
 
 	.i_kill(kill_en),
 	.i_kill_index(kill_index)
@@ -630,6 +641,41 @@ Position_Controller #(
         end
     end
 
+    // 生命計數器：從 10 開始，每次 zombie_hit 為高時 -1
+    logic zombie_hit_prev;  // 用來檢測 zombie_hit 的上升緣
+    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
+        if (!rst_n) begin
+            life_count <= 8'd10;  // 初始生命值為 10
+            zombie_hit_prev <= 1'b0;
+            lose_signal <= 1'b0;
+        end else begin
+            zombie_hit_prev <= zombie_hit;
+            // 檢測 zombie_hit 的上升緣
+            if (zombie_hit && !zombie_hit_prev) begin
+                if (life_count > 8'd0) begin
+                    life_count <= life_count - 8'd1;  // 減少生命值
+                end else begin
+                    life_count <= 8'd0;  // 最小為 0
+                end
+            end
+            // 檢測輸掉條件：生命值為 0
+            if (life_count == 8'd0) begin
+                lose_signal <= 1'b1;  // 保持高電平
+            end
+        end
+    end
+
+    // 勝利信號：當擊殺數達到 100 時
+    always_ff @(posedge vga_clock_74_25 or negedge rst_n) begin
+        if (!rst_n) begin
+            win_signal <= 1'b0;
+        end else begin
+            if (zombie_kill_count >= 8'd100) begin
+                win_signal <= 1'b1;  // 保持高電平
+            end
+        end
+    end
+
     // 將擊殺計數轉換為十進制的百位、十位和個位
     logic [3:0] kill_count_hundreds;  // 百位數 (0-1)
     logic [3:0] kill_count_tens;      // 十位數 (0-9)
@@ -645,12 +691,31 @@ Position_Controller #(
         kill_count_ones = temp_remainder % 8'd10;
     end
 
+    // 將生命計數轉換為十進制的十位和個位
+    logic [3:0] life_count_tens;   // 十位數 (0-9)
+    logic [3:0] life_count_ones;    // 個位數 (0-9)
+    logic [7:0] temp_life_count;
+    logic [7:0] temp_life_remainder;
+    
+    always_comb begin
+        temp_life_count = life_count;
+        temp_life_remainder = temp_life_count % 8'd100;
+        life_count_tens = temp_life_remainder / 8'd10;
+        life_count_ones = temp_life_remainder % 8'd10;
+    end
+
     // LEDG[7] 顯示遊戲是否已開始 (game_started)
     assign LEDG[7] = game_started;
     
-    // 其餘高位 LEDG[8] 和 LEDG[6:4] 先關閉
+    // LEDG[6] 顯示勝利信號 (win_signal) - 保持高電平
+    assign LEDG[6] = win_signal;
+    
+    // LEDG[5] 顯示失敗信號 (lose_signal) - 保持高電平
+    assign LEDG[5] = lose_signal;
+    
+    // 其餘高位 LEDG[8] 和 LEDG[4] 先關閉
     assign LEDG[8] = 1'b0;
-    assign LEDG[6:4] = 3'b0;
+    assign LEDG[4] = 1'b0;
 
 	// LEDR 顯示接收到的原始 Byte (除錯用)
     reg [7:0] last_rx_byte;
@@ -718,9 +783,11 @@ Position_Controller #(
 	HexTo7Seg hex2(.i_hex(hundreds),  .o_seg(HEX2));
 	HexTo7Seg hex3(.i_hex(thousands), .o_seg(HEX3));
     
-    // HEX4, HEX6, HEX7 display zombie kill count (0-100)
-    HexTo7Seg hex4(.i_hex(kill_count_hundreds), .o_seg(HEX4));  // 顯示擊殺數量的百位數 (0-1)
-    assign HEX5 = 7'b1111111;  // Blank
+    // HEX4, HEX5 display life count (0-99, starts at 10)
+    HexTo7Seg hex4(.i_hex(life_count_ones), .o_seg(HEX4));   // 顯示生命值的個位數 (0-9)
+    HexTo7Seg hex5(.i_hex(life_count_tens), .o_seg(HEX5));   // 顯示生命值的十位數 (0-9)
+    
+    // HEX6, HEX7 display zombie kill count (0-100)
     HexTo7Seg hex6(.i_hex(kill_count_ones), .o_seg(HEX6));      // 顯示擊殺數量的個位數 (0-9)
     HexTo7Seg hex7(.i_hex(kill_count_tens), .o_seg(HEX7));      // 顯示擊殺數量的十位數 (0-9)
 

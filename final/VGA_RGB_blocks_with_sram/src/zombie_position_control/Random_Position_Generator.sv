@@ -5,7 +5,7 @@ module Random_Position_Generator #(
 	parameter TARGET_X = 640,
 	parameter TARGET_Y = 719,
 	parameter MAX_POSITIONS = 20,
-	parameter VELOCITY = 16'd2,
+	parameter VELOCITY = 16'd3,  // Increased from 2 to 3 for faster movement
 	parameter CLOCK_FREQ = 32'd74250000,
 	// Base update rate for zombie movement (120 Hz allows more granular speed steps)
 	parameter UPDATE_RATE = 32'd120,
@@ -16,6 +16,10 @@ module Random_Position_Generator #(
 	
 	// Game state: zombies only move when game is started
 	input logic i_game_started,
+	
+	// Win/Lose signals
+	input logic i_win_signal,   // When high, hide all zombies (win condition)
+	input logic i_lose_signal,  // When high, stop all zombie movement (lose condition)
 	
 	// Kill count: used to adjust zombie base speed (0-100)
 	input logic [7:0] i_kill_count,
@@ -28,7 +32,10 @@ module Random_Position_Generator #(
 	output logic [9:0] o_y [0:MAX_POSITIONS-1],
 	output logic o_valid [0:MAX_POSITIONS-1],
 	output logic [31:0] o_distance [0:MAX_POSITIONS-1],
-	output logic [3:0] o_active_count
+	output logic [3:0] o_active_count,
+	
+	// Hit signal: goes high for one clock cycle when a zombie arrives at destination (not killed)
+	output logic o_hit
 );
 
 	// ============================================================
@@ -51,11 +58,12 @@ module Random_Position_Generator #(
 	// Base update rate: 60 Hz (can be divided to get 15, 20, 30 Hz per zombie)
 	localparam BASE_UPDATE_RATE = 32'd60;
 	localparam UPDATE_DIVIDER = CLOCK_FREQ / BASE_UPDATE_RATE;
-	localparam GEN_DIVIDER = CLOCK_FREQ / GENERATION_RATE;
+	localparam BASE_GEN_DIVIDER = CLOCK_FREQ / GENERATION_RATE;  // Base divider for 1 Hz
 	logic [23:0] update_counter;
 	logic update_tick;
 	logic [31:0] gen_counter;
 	logic gen_tick;
+	logic [31:0] gen_divider;  // Dynamic generation divider based on kill count
 
 	// Random Number Generator (LFSR)
 	logic [31:0] lfsr_state;
@@ -63,6 +71,37 @@ module Random_Position_Generator #(
 	// Helper signals
 	logic [3:0] available_slot;
 	logic slot_found;
+	
+	// Hit detection: track when a zombie arrives at destination
+	logic hit_detected [0:MAX_POSITIONS-1];
+	logic hit_any;
+
+	// ============================================================
+	// Dynamic Generation Rate Calculation (based on kill count)
+	// ============================================================
+	// Calculate generation divider based on kill count thresholds
+	// Higher kill count = faster generation (smaller divider)
+	always_comb begin
+		if (i_kill_count < 8'd20) begin
+			// 0-19 kills: 0.9 Hz (base speed)
+			gen_divider = (BASE_GEN_DIVIDER * 32'd10) / 32'd9;
+		end else if (i_kill_count < 8'd30) begin
+			// 20-29 kills: 1.1 Hz (22% faster)
+			gen_divider = (BASE_GEN_DIVIDER * 32'd10) / 32'd11;
+		end else if (i_kill_count < 8'd50) begin
+			// 30-49 kills: 1.35 Hz (50% faster)
+			gen_divider = (BASE_GEN_DIVIDER * 32'd20) / 32'd27;
+		end else if (i_kill_count < 8'd70) begin
+			// 50-69 kills: 1.8 Hz (100% faster)
+			gen_divider = (BASE_GEN_DIVIDER * 32'd5) / 32'd9;
+		end else if (i_kill_count < 8'd90) begin
+			// 70-89 kills: 2.25 Hz (150% faster)
+			gen_divider = (BASE_GEN_DIVIDER * 32'd4) / 32'd9;
+		end else begin
+			// 90+ kills: 2.7 Hz (200% faster)
+			gen_divider = (BASE_GEN_DIVIDER * 32'd10) / 32'd27;
+		end
+	end
 
 	// ============================================================
 	// Clock Dividers & LFSR
@@ -84,12 +123,19 @@ module Random_Position_Generator #(
 				update_tick <= 1'b0;
 			end
 
-			// Generation Tick (1Hz)
-			if (gen_counter >= GEN_DIVIDER - 1) begin
-				gen_counter <= 32'd0;
-				gen_tick <= 1'b1;
+			// Generation Tick (dynamic rate based on kill count)
+			// Only advance counter when game is started
+			if (i_game_started) begin
+				if (gen_counter >= gen_divider - 1) begin
+					gen_counter <= 32'd0;
+					gen_tick <= 1'b1;
+				end else begin
+					gen_counter <= gen_counter + 32'd1;
+					gen_tick <= 1'b0;
+				end
 			end else begin
-				gen_counter <= gen_counter + 32'd1;
+				// Reset counter when game is not started
+				gen_counter <= 32'd0;
 				gen_tick <= 1'b0;
 			end
 
@@ -168,18 +214,19 @@ module Random_Position_Generator #(
 				// Zombies spawn at Y=250, target at Y=719
 				// SLOW at beginning (small Y), FAST as they approach target (large Y)
 				// Larger divider = slower speed (120/divider = Hz)
+				// Reduced divider values for faster overall movement
 				if (pos_y[i] < 32'd280) begin
-					base_div_val = 4'd10; // 120/10 = 12 Hz (slowest - just spawned)
+					base_div_val = 4'd8;  // 120/8 = 15 Hz (faster - just spawned)
 				end else if (pos_y[i] < 32'd320) begin
-					base_div_val = 4'd8;  // 120/8 = 15 Hz
-				end else if (pos_y[i] < 32'd360) begin
 					base_div_val = 4'd6;  // 120/6 = 20 Hz
-				end else if (pos_y[i] < 32'd400) begin
+				end else if (pos_y[i] < 32'd360) begin
 					base_div_val = 4'd5;  // 120/5 = 24 Hz
-				end else if (pos_y[i] < 32'd480) begin
+				end else if (pos_y[i] < 32'd400) begin
 					base_div_val = 4'd4;  // 120/4 = 30 Hz
+				end else if (pos_y[i] < 32'd480) begin
+					base_div_val = 4'd3;  // 120/3 = 40 Hz
 				end else if (pos_y[i] < 32'd560) begin
-					base_div_val = 4'd3;  // 120/3 = 40 Hz (faster)
+					base_div_val = 4'd2;  // 120/2 = 60 Hz (faster)
 				end else begin
 					base_div_val = 4'd2;  // 120/2 = 60 Hz (fastest - near target)
 				end
@@ -196,8 +243,8 @@ module Random_Position_Generator #(
 					move_div_val[i] = scaled_div_val[3:0];
 				end
 				
-				// Enable movement when counter matches divider value AND game is started
-				move_enable[i] = update_tick && position_valid[i] && i_game_started &&
+				// Enable movement when counter matches divider value AND game is started AND not lost AND not won
+				move_enable[i] = update_tick && position_valid[i] && i_game_started && !i_lose_signal && !i_win_signal &&
 				                 (move_div_cnt[i] == move_div_val[i]);
 			end
 
@@ -208,12 +255,15 @@ module Random_Position_Generator #(
 					position_valid[i] <= 1'b0;
 					error_acc[i] <= 32'd0;
 					move_div_cnt[i] <= 4'd0;
+					hit_detected[i] <= 1'b0;
 				end else begin
+					// Clear hit_detected at the start of each cycle (will be set if zombie arrives)
+					hit_detected[i] <= 1'b0;
 					
 					// Update per-zombie divider counter (independent update, runs every update_tick)
 					// Skip counter update if zombie is being killed, spawned, or moved
-					// Also skip if game is not started (zombies don't move in start screen)
-					if (update_tick && position_valid[i] && i_game_started &&
+					// Also skip if game is not started, lost, or won (zombies don't move in start screen, when lost, or when won)
+					if (update_tick && position_valid[i] && i_game_started && !i_lose_signal && !i_win_signal &&
 					    !(i_kill && (i_kill_index == i[4:0])) &&
 					    !(gen_tick && (available_slot == i) && slot_found) &&
 					    !move_enable[i]) begin
@@ -237,7 +287,8 @@ module Random_Position_Generator #(
 					//    Position was already generated and fixed when previous zombie disappeared/killed
 					//    (or will be generated here if first spawn after reset)
 					//    Now we just make it visible (position_valid=1) - position is already stable
-					else if (gen_tick && (available_slot == i) && slot_found) begin
+					//    Only spawn when game is started, not lost, and not won
+					else if (gen_tick && (available_slot == i) && slot_found && i_game_started && !i_lose_signal && !i_win_signal) begin
 						// If position is at reset value (screen center), generate new random position
 						// Otherwise, position was pre-generated when zombie disappeared - use it
 						if (pos_x[i] == 32'(SCREEN_WIDTH / 2) && pos_y[i] == 32'(SCREEN_HEIGHT / 2)) begin
@@ -266,6 +317,8 @@ module Random_Position_Generator #(
 							pos_x[i] <= (lfsr_state[10:0] % SCREEN_WIDTH); // Generate and store random X position
 							pos_y[i] <= 32'd270; // Set spawn Y position
 							// Position is now fixed and waiting - won't change until zombie becomes valid
+							// Signal that player got hit (zombie arrived without being killed)
+							hit_detected[i] <= 1'b1;
 						end else begin
 							if (abs_dx >= abs_dy) begin
 								// Move X (Major)
@@ -306,7 +359,8 @@ module Random_Position_Generator #(
 			if (position_valid[k]) o_active_count = o_active_count + 4'd1;
 		end
 	end
-
+	
+	// Hit signal: goes high for one clock cycle when a zombie arrives
 	// Position and Distance Output
 	generate
 		for (i = 0; i < MAX_POSITIONS; i++) begin : pos_out
@@ -319,7 +373,8 @@ module Random_Position_Generator #(
 				d_out_x = 32'd0;
 				d_out_y = 32'd0;
 
-				if (!position_valid[i]) begin
+				// If win signal is high, hide all zombies
+				if (i_win_signal || !position_valid[i]) begin
 					o_x[i] = TARGET_X[10:0];
 					o_y[i] = TARGET_Y[9:0];
 					o_valid[i] = 1'b0;
@@ -345,5 +400,17 @@ module Random_Position_Generator #(
 			end
 		end
 	endgenerate
+
+	// ============================================================
+	// Hit Signal Output
+	// ============================================================
+	// Combine all hit_detected signals from all zombies (combinational)
+	always_comb begin
+		hit_any = 1'b0;
+		for (int k = 0; k < MAX_POSITIONS; k++) begin
+			if (hit_detected[k]) hit_any = 1'b1;
+		end
+		o_hit = hit_any;  // Output hit signal directly
+	end
 
 endmodule
