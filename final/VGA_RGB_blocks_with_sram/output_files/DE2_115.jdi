@@ -1,6 +1,6 @@
 <sld_project_info>
   <project>
-    <hash md5_digest_80b="114f8bd4d80c6e3f0665"/>
+    <hash md5_digest_80b="a5a9bdcb3e37b42b78e3"/>
   </project>
   <file_info>
     <file device="EP4CE115F29C7" path="DE2_115.sof" usercode="0xFFFFFFFF"/>
@@ -71,7 +71,7 @@
   <sld_infos>
     <sld_info hpath="vga_clock:vga_clk_pll" name="vga_clk_pll">
       <assignment_values>
-        <assignment_value text="QSYS_NAME vga_clock HAS_SOPCINFO 1 GENERATION_ID 1763651584"/>
+        <assignment_value text="QSYS_NAME vga_clock HAS_SOPCINFO 1 GENERATION_ID 1766671084"/>
       </assignment_values>
       <parameters/>
     </sld_info>

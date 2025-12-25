@@ -5,6 +5,8 @@
 `timescale 1 ps / 1 ps
 module vga_clock (
 		input  wire  clk_clk,             //             clk.clk
+		output wire  clock_100k_clk,      //      clock_100k.clk
+		output wire  clock_12m_clk,       //       clock_12m.clk
 		input  wire  reset_reset_n,       //           reset.reset_n
 		output wire  vga_clock_25_clk,    //    vga_clock_25.clk
 		output wire  vga_clock_74_25_clk  // vga_clock_74_25.clk
@@ -22,6 +24,8 @@ module vga_clock (
 		.writedata (),                               //                      .writedata
 		.c0        (vga_clock_25_clk),               //                    c0.clk
 		.c1        (vga_clock_74_25_clk),            //                    c1.clk
+		.c2        (clock_100k_clk),                 //                    c2.clk
+		.c3        (clock_12m_clk),                  //                    c3.clk
 		.areset    (),                               //        areset_conduit.export
 		.locked    (),                               //        locked_conduit.export
 		.phasedone ()                                //     phasedone_conduit.export

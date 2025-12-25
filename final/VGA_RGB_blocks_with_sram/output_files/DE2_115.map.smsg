@@ -1,9 +1,14 @@
+Warning (10268): Verilog HDL information at audio_controller.sv(101): always construct contains both blocking and non-blocking assignments
+Info (10281): Verilog HDL Declaration information at audio_controller.sv(14): object "I2C_SDAT" differs only in case from object "i2c_sdat" in the same scope
+Warning (10268): Verilog HDL information at AudDSP_BRAM.sv(292): always construct contains both blocking and non-blocking assignments
 Warning (10268): Verilog HDL information at velocity_integrator.sv(48): always construct contains both blocking and non-blocking assignments
 Warning (10268): Verilog HDL information at set_trans_arr.sv(36): always construct contains both blocking and non-blocking assignments
 Warning (10268): Verilog HDL information at VGA_Image_Overlay_Combined.sv(551): always construct contains both blocking and non-blocking assignments
+Warning (10268): Verilog HDL information at DE2_115.sv(837): always construct contains both blocking and non-blocking assignments
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(43): object "VGA_R" differs only in case from object "vga_r" in the same scope
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(41): object "VGA_G" differs only in case from object "vga_g" in the same scope
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(38): object "VGA_B" differs only in case from object "vga_b" in the same scope
+Info (10281): Verilog HDL Declaration information at DE2_115.sv(55): object "I2C_SDAT" differs only in case from object "i2c_sdat" in the same scope
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(12): object "HEX0" differs only in case from object "hex0" in the same scope
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(13): object "HEX1" differs only in case from object "hex1" in the same scope
 Info (10281): Verilog HDL Declaration information at DE2_115.sv(14): object "HEX2" differs only in case from object "hex2" in the same scope

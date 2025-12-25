@@ -3,7 +3,9 @@
 			clk_clk             : in  std_logic := 'X'; -- clk
 			reset_reset_n       : in  std_logic := 'X'; -- reset_n
 			vga_clock_25_clk    : out std_logic;        -- clk
-			vga_clock_74_25_clk : out std_logic         -- clk
+			vga_clock_74_25_clk : out std_logic;        -- clk
+			clock_100k_clk      : out std_logic;        -- clk
+			clock_12m_clk       : out std_logic         -- clk
 		);
 	end component vga_clock;
 
@@ -12,6 +14,8 @@
 			clk_clk             => CONNECTED_TO_clk_clk,             --             clk.clk
 			reset_reset_n       => CONNECTED_TO_reset_reset_n,       --           reset.reset_n
 			vga_clock_25_clk    => CONNECTED_TO_vga_clock_25_clk,    --    vga_clock_25.clk
-			vga_clock_74_25_clk => CONNECTED_TO_vga_clock_74_25_clk  -- vga_clock_74_25.clk
+			vga_clock_74_25_clk => CONNECTED_TO_vga_clock_74_25_clk, -- vga_clock_74_25.clk
+			clock_100k_clk      => CONNECTED_TO_clock_100k_clk,      --      clock_100k.clk
+			clock_12m_clk       => CONNECTED_TO_clock_12m_clk        --       clock_12m.clk
 		);
 

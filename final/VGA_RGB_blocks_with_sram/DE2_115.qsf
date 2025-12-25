@@ -1171,6 +1171,10 @@ set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_STORAGE_QUALIFIER
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK=0000000000000000000000000000000000" -section_id auto_signaltap_0
 set_global_assignment -name SLD_NODE_PARAMETER_ASSIGNMENT "SLD_INVERSION_MASK_LENGTH=34" -section_id auto_signaltap_0
 set_instance_assignment -name POST_FIT_CONNECT_TO_SLD_NODE_ENTITY_PORT crc[11] -to auto_signaltap_0|vcc -section_id auto_signaltap_0
+set_global_assignment -name SYSTEMVERILOG_FILE src/audio_controller.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/I2cInitializer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/AudPlayer.sv
+set_global_assignment -name SYSTEMVERILOG_FILE src/AudDSP_BRAM.sv
 set_global_assignment -name SYSTEMVERILOG_FILE src/Start_Game_Detector.sv
 set_global_assignment -name SYSTEMVERILOG_FILE src/IMU/velocity_integrator.sv
 set_global_assignment -name SYSTEMVERILOG_FILE src/IMU/uart_rx.sv
@@ -1220,5 +1224,7 @@ set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_08x_bound2.qip
 set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_09x_bound.qip
 set_global_assignment -name QIP_FILE BRAMs/zombies/zombie_09x_bound2.qip
 set_global_assignment -name QIP_FILE BRAMs/background/start_palette.qip
+set_global_assignment -name QIP_FILE BRAMs/audio/killed.qip
+set_global_assignment -name QIP_FILE BRAMs/audio/bgm.qip
 set_global_assignment -name SLD_FILE db/stp2_auto_stripped.stp
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
