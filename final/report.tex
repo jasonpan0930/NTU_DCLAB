@@ -1,0 +1,529 @@
+\documentclass[12pt,a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{cite}
+\usepackage{enumitem}
+\usepackage{subcaption}
+\usepackage{booktabs}
+
+% Page setup
+\geometry{margin=1in}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red}
+}
+
+% Title information
+\title{FPGA-Based Zombie Shooting Game with VGA Display and Audio System}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+% Title page
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% Table of contents
+\tableofcontents
+\newpage
+
+% ============================================
+% 1. Topic
+% ============================================
+\section{Topic}
+
+This project presents a fully functional, real-time zombie shooting game implemented entirely on an FPGA platform. The system delivers an immersive gaming experience through high-definition 720p VGA graphics, dynamic audio feedback, and intuitive motion-based aiming control using an Inertial Measurement Unit (IMU). Players engage in an action-packed survival scenario where they must eliminate waves of zombies approaching from various positions on screen, with the game dynamically adjusting difficulty based on performance.
+
+The core innovation lies in the seamless integration of multiple complex subsystems operating in parallel: a pixel-perfect VGA display engine capable of rendering multiple animated sprites simultaneously, a sophisticated audio playback system providing background music and sound effects, and a responsive motion control interface that translates physical movements into precise on-screen aiming. The game features intelligent zombie spawning algorithms, real-time collision detection, dynamic sprite scaling for depth perception, and comprehensive game state management including win/lose conditions and scoring mechanisms.
+
+\subsection{Key Advantages}
+
+The FPGA-based implementation offers several significant advantages over traditional software-based game systems:
+
+\begin{itemize}
+    \item \textbf{Ultra-Low Latency}: Hardware-accelerated rendering and processing eliminate software overhead, providing near-instantaneous response to player inputs. The parallel architecture ensures that VGA timing, audio playback, and game logic execute simultaneously without interference.
+    
+    \item \textbf{Real-Time Performance}: The dedicated hardware pipeline guarantees consistent 60 frames per second rendering at 1280x720 resolution, with deterministic timing for all game mechanics. Unlike software implementations that may suffer from frame drops or timing jitter, this system maintains precise synchronization across all subsystems.
+    
+    \item \textbf{Memory Efficiency}: By utilizing palette-based color indexing and strategic use of SRAM for large background images and BRAM for frequently accessed sprite data, the system achieves high-quality graphics while minimizing memory footprint. Multiple zombie sprites at different scales are stored efficiently, enabling up to 20 simultaneous zombies on screen.
+    
+    \item \textbf{Deterministic Behavior}: All game logic executes in fixed clock cycles, ensuring predictable and reproducible gameplay. This determinism is crucial for game mechanics such as collision detection, zombie movement patterns, and audio synchronization.
+    
+    \item \textbf{Modular Architecture}: The system is designed with clear module boundaries, making it easy to modify, extend, or debug individual components. Each subsystem (VGA, audio, input control, game logic) operates independently while communicating through well-defined interfaces.
+    
+    \item \textbf{Power Efficiency}: FPGA implementations can be more power-efficient than general-purpose processors for dedicated tasks, as only the required logic is active, and there is no instruction fetch overhead.
+    
+    \item \textbf{Educational Value}: This project demonstrates practical application of digital design principles including state machines, pipeline architectures, memory interfaces, clock domain crossing, and real-time system design.
+\end{itemize}
+
+The system successfully demonstrates that complex, interactive multimedia applications can be efficiently implemented on FPGA platforms, providing a foundation for future embedded gaming systems, interactive displays, or real-time graphics applications.
+
+% ============================================
+% 2. Overview
+% ============================================
+\section{Overview}
+% TODO: Write overview of the project
+
+\subsection{System Architecture}
+% TODO: Write system architecture overview
+
+\subsection{Hardware Platform}
+% TODO: Write hardware platform (DE2-115)
+
+\subsection{Main Features}
+% TODO: Write main features
+
+% ============================================
+% 3. Methods
+% ============================================
+\section{Methods}
+
+This section describes the key algorithms and memory management techniques employed in the system to achieve efficient image processing and rendering.
+
+\subsection{Algorithms}
+
+\subsubsection{K-means Color Quantization}
+The system uses K-means clustering algorithm to reduce the color space of source images from 24-bit RGB (16.7 million colors) to 8-bit indexed color (256 colors). This compression technique is essential for fitting large images into limited FPGA memory resources while maintaining acceptable visual quality.
+
+\paragraph{Algorithm Overview}
+The K-means quantization process works as follows:
+\begin{enumerate}
+    \item \textbf{Image Preprocessing}: Source images are loaded in RGBA format, where the alpha channel (A) is used to identify transparent pixels.
+    \item \textbf{Transparent Pixel Handling}: All pixels with alpha channel value of 0 are automatically assigned index 0, which maps to white (255, 255, 255) in the palette. This white color serves as the transparent key.
+    \item \textbf{Cluster Initialization}: The algorithm creates K-1 clusters (where K=256) from all non-transparent pixels. The remaining cluster (index 0) is reserved for transparency.
+    \item \textbf{K-means Clustering}: The scikit-learn KMeans algorithm is applied to the RGB values of all opaque pixels, finding optimal cluster centers that minimize the sum of squared distances from pixels to their nearest cluster center.
+    \item \textbf{White Color Avoidance}: If any cluster center results in pure white (255, 255, 255), it is automatically adjusted to (254, 254, 254) to avoid conflicts with the transparency key.
+    \item \textbf{Index Assignment}: Each pixel is assigned to its nearest cluster center using Euclidean distance in RGB space:
+    \begin{equation}
+    \text{distance} = \sqrt{(R - R_c)^2 + (G - G_c)^2 + (B - B_c)^2}
+    \end{equation}
+    where $(R_c, G_c, B_c)$ are the cluster center coordinates.
+    \item \textbf{Palette Generation}: The final palette consists of 256 entries: index 0 = white (transparent), indices 1-255 = K-means cluster centers converted to RGB565 format.
+\end{enumerate}
+
+\paragraph{RGB565 Conversion}
+The palette colors are stored in RGB565 format (16 bits) to match the BRAM data width:
+\begin{equation}
+\text{RGB565} = (R \gg 3) \ll 11 \mid (G \gg 2) \ll 5 \mid (B \gg 3)
+\end{equation}
+This format allocates 5 bits for red, 6 bits for green, and 5 bits for blue, providing a good balance between color accuracy and memory efficiency.
+
+\paragraph{Output Format}
+The quantization process generates three types of output files:
+\begin{itemize}
+    \item \textbf{Index Map (.bin/.mif)}: Binary file containing 8-bit pixel indices, stored row by row
+    \item \textbf{Palette File (.mif)}: Memory initialization file containing 256 RGB565 color values
+    \item \textbf{Preview Image (.png)}: Reconstructed image for visual verification
+\end{itemize}
+
+\subsubsection{Image Overlay with Bounds Checking}
+To properly composite multiple image layers (background, zombies, aim cursor) without artifacts, the system implements sophisticated bounds checking and transparency handling.
+
+\paragraph{Bounds Calculation}
+For each sprite (zombie), the system pre-computes transparency bounds to optimize rendering performance. The bounds calculation algorithm:
+\begin{enumerate}
+    \item \textbf{Column-wise Scanning}: For each column (X coordinate) in the sprite, the algorithm scans from top to bottom (Y coordinate).
+    \item \textbf{Min/Max Detection}: For each column, it finds:
+    \begin{itemize}
+        \item \textbf{Min Y}: The first (topmost) non-transparent pixel (index $\neq$ 0)
+        \item \textbf{Max Y}: The last (bottommost) non-transparent pixel (index $\neq$ 0)
+    \end{itemize}
+    \item \textbf{Bounds Storage}: The result is stored as a 16-bit value per column: [15:8] = Max Y, [7:0] = Min Y
+    \item \textbf{Full Transparent Columns}: If a column contains only transparent pixels, Min Y = 0xFF and Max Y = 0x00, indicating the entire column should be skipped
+\end{enumerate}
+
+\paragraph{Overlay Rendering Algorithm}
+The image compositor uses a multi-stage pipeline to determine the final pixel color:
+\begin{enumerate}
+    \item \textbf{Stage 0 - Candidate Selection}: For each pixel coordinate (h\_count, v\_count), determine which sprites might overlap this position based on their bounding boxes.
+    \item \textbf{Stage 1 - Bounds Check}: For each candidate sprite, check if the current pixel is within the sprite's bounds and within the non-transparent region (using pre-computed bounds).
+    \item \textbf{Stage 2 - Priority Resolution}: If multiple sprites overlap the same pixel, determine rendering priority (typically: aim cursor > zombies > background).
+    \item \textbf{Stage 3 - Pixel Index Fetch}: Read the pixel index from the appropriate memory (SRAM for background, BRAM for sprites).
+    \item \textbf{Stage 4 - Palette Lookup}: Convert the 8-bit index to RGB565 color using the palette BRAM.
+    \item \textbf{Stage 5 - RGB Conversion}: Convert RGB565 to RGB888 for VGA output, applying any special effects (hit flash, grayscale for dying zombies).
+\end{enumerate}
+
+\paragraph{Transparency Handling}
+Transparent pixels (index = 0x00) are handled by:
+\begin{itemize}
+    \item Skipping palette lookup for transparent pixels
+    \item Falling through to the next layer (background) when a sprite pixel is transparent
+    \item Using bounds information to avoid unnecessary memory accesses for fully transparent regions
+\end{itemize}
+
+\subsection{Memory Management}
+
+\subsubsection{Index-Based Storage}
+The system uses an 8-bit index-based storage scheme to minimize memory requirements:
+\begin{itemize}
+    \item \textbf{Background Images}: Stored in external SRAM as 8-bit indices (1 byte per pixel)
+    \item \textbf{Sprite Images}: Stored in BRAM as 8-bit indices (1 byte per pixel)
+    \item \textbf{Memory Savings}: A 1280×720 image requires only 921,600 bytes (900 KB) instead of 2,764,800 bytes (2.7 MB) for 24-bit RGB
+    \item \textbf{Address Calculation}: Pixel address = Y × WIDTH + X, stored in row-major order
+\end{itemize}
+
+\subsubsection{Palette System}
+The palette system provides color lookup for indexed images:
+\begin{itemize}
+    \item \textbf{Palette Storage}: Each palette is stored in BRAM as 256 entries of 16-bit RGB565 values
+    \item \textbf{Memory Layout}: Palette BRAM address = pixel index (0-255), data = RGB565 color value
+    \item \textbf{Multiple Palettes}: Different palettes are used for different image types:
+    \begin{itemize}
+        \item Background palette: For start screen and game background
+        \item Zombie palette: For zombie sprites at different scales
+        \item End game palettes: For win/lose/retry screens
+    \end{itemize}
+    \item \textbf{Palette Lookup}: The conversion from index to color is a single-cycle BRAM read operation
+\end{itemize}
+
+\subsubsection{Bounds Management}
+To optimize rendering performance, the system maintains bounds information for sprites:
+\begin{itemize}
+    \item \textbf{Pre-computed Bounds}: Transparency bounds are calculated once per sprite and stored in registers
+    \item \textbf{Bounds Format}: For each X coordinate, bounds store [Max Y, Min Y] as a 16-bit value
+    \item \textbf{Bounds Usage}: During rendering, bounds are checked before accessing sprite pixel data:
+    \begin{itemize}
+        \item If current Y < Min Y or Y > Max Y: Skip sprite pixel fetch (column is transparent at this Y)
+        \item If Min Y ≤ Y ≤ Max Y: Fetch sprite pixel and check if index = 0 (pixel-level transparency)
+    \end{itemize}
+    \item \textbf{Performance Benefit}: Bounds checking eliminates unnecessary memory accesses for transparent regions, reducing memory bandwidth and improving timing closure
+\end{itemize}
+
+\subsubsection{Memory Hierarchy}
+The system employs a hierarchical memory architecture optimized for different access patterns:
+\begin{itemize}
+    \item \textbf{SRAM (External)}: 
+    \begin{itemize}
+        \item Capacity: 2MB (1M × 16-bit words)
+        \item Usage: Large background images (1280×720 = 921,600 bytes)
+        \item Access: Sequential, predictable pattern (row-by-row scanning)
+        \item Latency: 2 clock cycles
+    \end{itemize}
+    \item \textbf{BRAM (On-chip)}:
+    \begin{itemize}
+        \item Capacity: Multiple 256×8-bit blocks for sprites, 256×16-bit blocks for palettes
+        \item Usage: Frequently accessed sprite data and palette lookups
+        \item Access: Random access for sprite rendering
+        \item Latency: 1 clock cycle
+    \end{itemize}
+    \item \textbf{Register Arrays}:
+    \begin{itemize}
+        \item Usage: Bounds information, game state, zombie positions
+        \item Access: Immediate (combinational)
+        \item Latency: 0 cycles (combinational logic)
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Address Mapping}
+The system uses different address mapping strategies for different memory types:
+\begin{itemize}
+    \item \textbf{SRAM Address}: 
+    \begin{equation}
+    \text{SRAM\_ADDR} = \text{Y} \times \text{WIDTH} + \text{X}
+    \end{equation}
+    Since SRAM is 16-bit wide, byte address is divided by 2, and the lower bit selects high/low byte.
+    \item \textbf{BRAM Address (Sprites)}:
+    \begin{equation}
+    \text{BRAM\_ADDR} = (\text{Y} - \text{sprite\_y}) \times \text{sprite\_width} + (\text{X} - \text{sprite\_x})
+    \end{equation}
+    where sprite coordinates are relative to the sprite's top-left corner.
+    \item \textbf{BRAM Address (Palette)}:
+    \begin{equation}
+    \text{Palette\_ADDR} = \text{pixel\_index}
+    \end{equation}
+    Direct mapping from pixel index to palette entry.
+\end{itemize}
+
+% ============================================
+% 4. Module Introduction
+% ============================================
+\section{Module Introduction}
+
+\subsection{VGA Display Modules}
+\subsubsection{VGA Controller 720p}
+
+\paragraph{Module Goals}
+The VGA Controller 720p generates timing signals for 1280x720@60Hz VGA output at 74.25MHz. It produces sync, blanking signals, and pixel coordinates with a 5-cycle delay pipeline to compensate for BRAM latency.
+
+\paragraph{Detailed Description}
+
+The VGA Controller 720p module implements a complete VGA timing generator conforming to the VESA standard for 1280x720@60Hz (720p) resolution. This module serves as the foundation of the display system, providing all necessary timing signals and pixel coordinate information to downstream rendering modules.
+
+\paragraph{Timing Parameters}
+The module implements the standard 720p timing parameters as defined in the VESA specification:
+\begin{itemize}
+    \item \textbf{Horizontal Timing}: Total line length of 1650 pixels, consisting of 1280 active display pixels, 110 front porch, 40 sync pulse, and 220 back porch pixels
+    \item \textbf{Vertical Timing}: Total frame length of 750 lines, consisting of 720 active display lines, 5 front porch, 5 sync pulse, and 20 back porch lines
+    \item \textbf{Clock Frequency}: 74.25MHz, generated by a PLL from the 50MHz system clock
+    \item \textbf{Refresh Rate}: 60Hz, calculated as 74.25MHz / (1650 × 750) = 60.0 Hz
+\end{itemize}
+
+\paragraph{Architecture and Design}
+The module employs a clean separation between combinational logic (denoted with `\_w` suffix for "write" values) and sequential logic (denoted with `\_r` suffix for "register" values). This design pattern improves code readability and facilitates timing analysis.
+
+The core functionality consists of two main counters:
+\begin{itemize}
+    \item \textbf{Horizontal Counter (h\_count\_r)}: Counts from 0 to 1649 (H\_TOTAL - 1), incrementing every clock cycle
+    \item \textbf{Vertical Counter (v\_count\_r)}: Counts from 0 to 749 (V\_TOTAL - 1), incrementing when the horizontal counter wraps around
+\end{itemize}
+
+\paragraph{BRAM Delay Compensation}
+A critical feature of this controller is its ability to compensate for BRAM read latency. The module calculates active pixel coordinates one cycle ahead of when they are actually needed. Specifically:
+\begin{itemize}
+    \item At cycle T, the module calculates the active coordinates (h\_active\_count\_w, v\_active\_count\_w) based on the current counter values (h\_count\_r, v\_count\_r)
+    \item These calculated coordinates are registered in the next cycle (T+1) as h\_active\_count\_r and v\_active\_count\_r
+    \item These registered coordinates are then output as o\_h\_count and o\_v\_count, which are used by the VGA Image Compositor to fetch pixel data
+    \item This 1-cycle advance compensates for the 1-cycle read latency of BRAM, ensuring pixel data arrives at the correct time for display
+\end{itemize}
+
+The active coordinate calculation logic checks if the current position is within the active display region:
+\begin{align}
+\text{h\_active\_count\_w} &= \begin{cases}
+\text{h\_count\_r} - \text{H\_BACK\_PORCH} & \text{if } \text{H\_BACK\_PORCH} \leq \text{h\_count\_r} < \text{H\_BACK\_PORCH} + \text{H\_DISPLAY} \\
+0 & \text{otherwise}
+\end{cases}
+\end{align}
+
+\paragraph{Signal Generation}
+The module generates all standard VGA timing signals:
+\begin{itemize}
+    \item \textbf{HSYNC (o\_hsync)}: Horizontal synchronization pulse, active low during the sync period (pixels 1610-1649)
+    \item \textbf{VSYNC (o\_vsync)}: Vertical synchronization pulse, active low during the sync period (lines 745-749)
+    \item \textbf{BLANK\_N (o\_blank\_n)}: Active high during the visible display region, low during blanking periods
+    \item \textbf{SYNC\_N (o\_sync\_n)}: Always low for standard VGA operation
+    \item \textbf{VGA\_CLK (o\_vga\_clk)}: Pass-through of the 74.25MHz clock to the VGA connector
+\end{itemize}
+
+\paragraph{5-Cycle Delay Pipeline}
+To ensure proper synchronization with downstream processing stages, the module implements a 5-cycle delay pipeline for all output signals. This pipeline:
+\begin{itemize}
+    \item Delays HSYNC, VSYNC, BLANK\_N, SYNC\_N, and active\_video signals by 5 clock cycles
+    \item Delays h\_count and v\_count coordinate outputs by 5 clock cycles
+    \item Ensures that timing signals and pixel coordinates remain synchronized even after multiple pipeline stages in the image compositor
+\end{itemize}
+
+The pipeline uses shift registers to implement the delay:
+\begin{lstlisting}[language=Verilog, basicstyle=\ttfamily\small]
+hsync_delay <= {hsync_delay[3:0], hsync_int};
+vsync_delay <= {vsync_delay[3:0], vsync_int};
+// ... similar for other signals
+\end{lstlisting}
+
+\paragraph{Output Signals}
+The module provides the following outputs to the VGA Image Compositor:
+\begin{itemize}
+    \item \textbf{o\_h\_count [10:0]}: Horizontal pixel coordinate (0-1279) within the active display region
+    \item \textbf{o\_v\_count [9:0]}: Vertical pixel coordinate (0-719) within the active display region
+    \item \textbf{o\_active\_video}: High when the current pixel position is within the active display region
+\end{itemize}
+
+These outputs are used by the VGA Image Compositor to determine which pixel data to fetch from SRAM (for background) and BRAM (for sprites), ensuring that the correct image data is displayed at each pixel position.
+
+\paragraph{Reset Behavior}
+Upon reset (i\_rst\_n = 0), all counters and delay pipeline registers are initialized to zero, placing the controller in a known state at the beginning of a frame. The module immediately begins generating valid timing signals after reset is released.
+
+\subsubsection{VGA Image Compositor}
+\paragraph{Module Goals}
+The VGA Image Compositor is the core rendering engine that composites multiple image layers (background, up to 20 zombie sprites, aim cursor, and end-game screens) into a single RGB output stream. It implements a 6-stage pipeline architecture with sprite scaling (0.5x to 1.0x), transparency handling, collision detection, and visual effects. The module manages SRAM and BRAM interfaces with different access latencies and uses bounds checking to optimize rendering performance.
+
+\paragraph{Detailed Description}
+The VGA Image Compositor is a sophisticated 6-stage pipelined rendering engine that composites multiple image layers in real-time. It handles background images from SRAM, up to 20 zombie sprites from BRAM, an aim cursor overlay, and end-game screens, producing a single RGB888 output stream at 74.25MHz.
+
+\paragraph{Architecture Overview}
+The module implements a 6-stage pipeline architecture optimized for memory latency compensation:
+\begin{itemize}
+    \item \textbf{Layer 0}: Candidate Selection \& Address Calculation (Combinational)
+    \item \textbf{Layer 1}: Memory Request \& SRAM Address Output
+    \item \textbf{Layer 2}: Bounds Check \& ID Select \& SRAM Data Latch
+    \item \textbf{Layer 3}: Pixel Index Fetch (BRAM \& SRAM Parse)
+    \item \textbf{Layer 4}: Palette Fetch
+    \item \textbf{Layer 5}: RGB Conversion \& Mixing
+\end{itemize}
+
+\paragraph{Input Registration}
+All inputs are registered in the first stage to improve timing closure and reduce combinational path delays. This includes pixel coordinates (h\_count, v\_count), zombie positions and valid flags, aim position, game state signals, and control signals.
+
+\paragraph{Layer 0: Candidate Selection and Address Calculation}
+This combinational stage performs several critical calculations in parallel:
+
+\textbf{Background Address Calculation}: The module calculates SRAM addresses for background images based on the current pixel position. For the start screen, it uses a 4-bit per pixel format (4 pixels per 16-bit SRAM word), while the game uses 8-bit per pixel format (2 pixels per word). The base address switches between START\_BG\_ADDR (start screen) and 0 (game playing) based on the i\_started signal.
+
+\textbf{Aim Cursor Calculation}: The aim cursor is a 200×200 pixel overlay centered at the aim position. The module converts center coordinates to top-left corner coordinates using signed arithmetic to handle off-screen positions, then calculates the local pixel address within the aim sprite.
+
+\textbf{End Game Images}: When win or lose signals are active, the module calculates addresses for end-game images (survived, died, retry) stored in SRAM at predefined addresses. These images are positioned at fixed screen coordinates.
+
+\textbf{Zombie Candidate Selection}: The module scans all MAX\_ZOMBIES (20) zombies and selects up to 4 candidates that overlap the current pixel position. For each candidate, it:
+\begin{itemize}
+    \item Determines sprite size based on Y position (0.5x to 1.0x scaling for depth perception)
+    \item Calculates local coordinates within the sprite
+    \item Stores the zombie index, local coordinates, size selector, and valid flag
+\end{itemize}
+
+\textbf{Kill Target Detection}: When the trigger is pressed (i\_killing), the module captures the aim center position. This position is later checked during rendering to detect zombie hits.
+
+\paragraph{Layer 1: Memory Request and SRAM Address Output}
+This stage initiates memory requests for all required data:
+
+\textbf{Bounds BRAM Requests}: For each of the 4 zombie candidates, the module requests transparency bounds data from BRAM. Since zombies can be at 6 different scales (0.5x to 1.0x), the module maintains separate bounds BRAM instances for each scale. Dual-port BRAMs are used to fetch bounds for 2 candidates simultaneously, requiring 2 BRAM instances per scale (total 12 BRAM instances).
+
+\textbf{Aim BRAM Request}: The aim cursor pixel data is requested from a dedicated BRAM instance.
+
+\textbf{SRAM Address Output}: The calculated background or end-game image address is output to the SRAM interface. The module handles byte selection (LB\_N, UB\_N) based on whether the image uses 4-bit or 8-bit pixel format.
+
+\paragraph{Layer 2: Bounds Check and Priority Selection}
+This stage performs bounds checking and selects which sprite to render:
+
+\textbf{Bounds Checking}: For each zombie candidate, the module checks if the current Y coordinate falls within the non-transparent region using the bounds data retrieved in Layer 1. The bounds data format is [15:8] = Max Y, [7:0] = Min Y for each X coordinate.
+
+\textbf{Priority Selection}: Among all opaque zombies (those passing bounds check), the module selects the one with the lowest Y coordinate (backmost zombie) for rendering. This ensures proper depth ordering.
+
+\textbf{Zombie Pixel Address Calculation}: For the selected zombie, the module calculates the pixel address within the sprite BRAM based on local coordinates and the sprite width (which varies with scale).
+
+\textbf{Kill Detection}: If the current pixel position matches the captured kill target position and a zombie is present, a kill signal is generated. This triggers the zombie's death animation (grayscale flashing effect).
+
+\textbf{SRAM Data Latch}: The SRAM data from Layer 1 (2-cycle latency) is latched for parsing in the next stage.
+
+\paragraph{Layer 3: Pixel Index Fetch}
+This stage retrieves pixel indices from memory:
+
+\textbf{Zombie Pixel Fetch}: The selected zombie's pixel index is requested from the shared zombie sprite BRAM. The address and size selector are output to the top-level module, which routes the request to the appropriate BRAM instance (0.5x to 1.0x).
+
+\textbf{SRAM Pixel Parsing}: The background pixel index is extracted from the latched SRAM data. For 8-bit mode, the module selects the appropriate byte based on the address LSB. For 4-bit mode (start screen), it extracts one of 4 nibbles from the 16-bit word.
+
+\textbf{Aim Pixel Fetch}: The aim cursor pixel data (2-bit) is retrieved from the aim BRAM.
+
+\paragraph{Layer 4: Palette Fetch}
+This stage converts pixel indices to RGB565 colors:
+
+\textbf{Palette Lookup}: Each pixel index (8-bit for background/zombies, 2-bit for aim) is used to address the corresponding palette BRAM. The module maintains separate palettes for:
+\begin{itemize}
+    \item Background (start screen and game)
+    \item Zombies (shared across all scales)
+    \item End-game images (survived, died, retry)
+    \item Aim cursor
+\end{itemize}
+
+\textbf{Transparency Handling}: If a zombie pixel index is 0x00 (transparent), the palette lookup is skipped and the background color is used instead.
+
+\paragraph{Layer 5: RGB Conversion and Mixing}
+This final stage produces the RGB888 output:
+
+\textbf{RGB565 to RGB888 Conversion}: Palette colors are stored in RGB565 format (16 bits). The module converts to RGB888 (24 bits) using bit replication:
+\begin{itemize}
+    \item Red: 5 bits → 8 bits: \{rgb565[15:11], rgb565[15:13]\}
+    \item Green: 6 bits → 8 bits: \{rgb565[10:5], rgb565[10:9]\}
+    \item Blue: 5 bits → 8 bits: \{rgb565[4:0], rgb565[4:2]\}
+\end{itemize}
+
+\textbf{Layer Compositing}: The module composites layers in priority order:
+\begin{enumerate}
+    \item End-game images (highest priority when active)
+    \item Aim cursor (if within aim bounds and pixel is opaque)
+    \item Zombies (if within sprite bounds and pixel is opaque)
+    \item Background (lowest priority, always present)
+\end{enumerate}
+
+\textbf{Visual Effects}:
+\begin{itemize}
+    \item \textbf{Hit Flash}: When a zombie hits the player (i\_zombie\_hit), the entire screen flashes red for 0.2 seconds by increasing red channel intensity.
+    \item \textbf{Dying Zombie Effect}: When a zombie is killed, it enters a flashing state for 0.5 seconds, alternating between grayscale and background every 0.05 seconds. Grayscale conversion uses the formula: gray = (R + G + B) / 3.
+    \item \textbf{Kill Detection Output}: When a zombie is hit, the module outputs the zombie index (o\_kill\_idx) and a kill enable signal (o\_kill\_en) to the game logic.
+\end{itemize}
+
+\paragraph{Sprite Scaling System}
+The module implements dynamic sprite scaling based on Y position to create depth perception:
+\begin{itemize}
+    \item Y < 345: 0.5x scale (51×75 pixels)
+    \item Y < 420: 0.6x scale (61×90 pixels)
+    \item Y < 495: 0.7x scale (70×103 pixels)
+    \item Y < 570: 0.8x scale (80×118 pixels)
+    \item Y < 645: 0.9x scale (90×132 pixels)
+    \item Y ≥ 645: 1.0x scale (102×149 pixels)
+\end{itemize}
+
+Each scale has its own sprite BRAM and bounds BRAM instances, selected dynamically based on the zombie's Y position.
+
+\paragraph{Memory Interface Management}
+The module efficiently manages multiple memory interfaces:
+\begin{itemize}
+    \item \textbf{SRAM}: 2-cycle read latency, 16-bit data width, used for large background and end-game images
+    \item \textbf{BRAM (Sprites)}: 1-cycle read latency, 8-bit data width, used for frequently accessed zombie sprites
+    \item \textbf{BRAM (Palettes)}: 1-cycle read latency, 16-bit data width, used for color lookup tables
+    \item \textbf{BRAM (Bounds)}: 1-cycle read latency, 16-bit data width, used for transparency bounds
+\end{itemize}
+
+The pipeline stages are carefully designed to account for these different latencies, ensuring all data arrives at the correct stage for compositing.
+
+\subsection{Game Logic Modules}
+\subsubsection{Start Game Detector}
+The Start Game Detector module detects when the game should begin by checking if the aim cursor is within a predefined start box area and the trigger button is pressed simultaneously. It outputs a latched "started" signal that remains high until reset, and includes clock domain synchronization for button inputs and an enable signal for conditional activation.
+
+\subsubsection{Random Position Generator}
+% TODO: Introduce Random Position Generator module
+
+\subsection{Audio Modules}
+\subsubsection{Audio Control}
+% TODO: Introduce Audio Control module
+
+\subsubsection{AudPlayer}
+% TODO: Introduce AudPlayer module
+
+\subsection{Input Control Modules}
+\subsubsection{UART Receiver}
+% TODO: Introduce UART Receiver module
+
+\subsubsection{IMU Parser}
+% TODO: Introduce IMU Parser module
+
+\subsubsection{Velocity Integrator}
+% TODO: Introduce Velocity Integrator module
+
+\subsubsection{Position Controller}
+% TODO: Introduce Position Controller module
+
+
+% ============================================
+% References
+% ============================================
+\begin{thebibliography}{99}
+% TODO: Add references
+% \bibitem{ref1} Author, Title, Journal/Conference, Year
+\end{thebibliography}
+
+% ============================================
+% Appendices
+% ============================================
+\appendix
+
+\section{Source Code Structure}
+% TODO: Add source code structure
+
+\section{Additional Figures}
+% TODO: Add additional figures if needed
+
+\section{Additional Tables}
+% TODO: Add additional tables if needed
+
+\end{document}
+
