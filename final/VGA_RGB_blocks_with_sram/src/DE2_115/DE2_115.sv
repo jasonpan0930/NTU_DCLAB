@@ -414,7 +414,7 @@ VGA_Image_Overlay_Combined #(
 	.i_zombie_size_y(zombie_size_y),
 	.i_aim_x(aim_x),                   // Aim X position
 	.i_aim_y(aim_y),                   // Aim Y position
-	.i_started(game_started),                // Game started signal (0 = start screen, 1 = game playing)
+	.i_started(game_started || SW[0]),                // Game started signal (0 = start screen, 1 = game playing)
 	.o_zombie_addr(zombie_addr_overlay),     // BRAM address when not busy building transparency
 	.o_zombie_size_sel(zombie_size_sel_overlay), // Size selector: 0=0.5x, 1=0.6x, 2=0.7x, 3=0.8x, 4=0.9x, 5=1.0x
 	.i_zombie_pixel(zombie_bram_q),          // Shared BRAM pixel data (routed)
@@ -435,8 +435,8 @@ VGA_Image_Overlay_Combined #(
 	.o_kill_en(kill_en),
 	.o_died_started(zombie_died_started),  // Pulse when zombie starts dying (becomes gray)
 
-	.i_win_signal(win_signal),
-	.i_lose_signal(lose_signal),
+	.i_win_signal(win_signal || SW[1]),
+	.i_lose_signal(lose_signal || SW[2]),
 	.i_zombie_hit(zombie_hit)  // Hit signal for red flash effect
 );
 
@@ -615,24 +615,24 @@ Position_Controller #(
     wire signed [31:0] gx_cal, gy_cal, gz_cal;
     wire calibrated;
 
-		velocity_integrator u_integrator (
-		     .clk(clk),
-		    .reset_n(rst_n),
-		    .en(parser_data_ready), // Update when new data arrives
-		    .ax(ax),
-		    .ay(ay),
-		    .az(az),
-		    .gx(gx),
-		    .gy(gy),
-		    .gz(gz),
-		    .vx(vx),
-		    .vy(vy),
-		    .vz(vz),
-		    .gx_out(gx_cal),
-		    .gy_out(gy_cal),
-		    .gz_out(gz_cal),
-		    .calibrated(calibrated)
-		);
+	velocity_integrator u_integrator (
+			.clk(clk),
+		.reset_n(rst_n),
+		.en(parser_data_ready), // Update when new data arrives
+		.ax(ax),
+		.ay(ay),
+		.az(az),
+		.gx(gx),
+		.gy(gy),
+		.gz(gz),
+		.vx(vx),
+		.vy(vy),
+		.vz(vz),
+		.gx_out(gx_cal),
+		.gy_out(gy_cal),
+		.gz_out(gz_cal),
+		.calibrated(calibrated)
+	);
 
 	// =========================================================
 	// LED 狀態顯示

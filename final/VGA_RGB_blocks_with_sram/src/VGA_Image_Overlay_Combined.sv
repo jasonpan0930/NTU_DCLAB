@@ -98,6 +98,68 @@ module VGA_Image_Overlay_Combined #(
     localparam ZOMBIE_SIZE_THRESHOLD_09X = 645;  // Y < 645: 0.9x
                                                     // Y >= 645: 1.0x
     
+    // ============================================================
+    //  Input Flip-Flops for Timing Improvement
+    // ============================================================
+    logic [10:0] h_count_r;
+    logic [9:0]  v_count_r;
+    logic        active_video_r;
+    logic [10:0] zombie_x_r [0:MAX_ZOMBIES-1];
+    logic [9:0]  zombie_y_r [0:MAX_ZOMBIES-1];
+    logic        zombie_valid_r [0:MAX_ZOMBIES-1];
+    logic [10:0] zombie_size_x_r;
+    logic [9:0]  zombie_size_y_r;
+    logic [10:0] aim_x_r;
+    logic [9:0]  aim_y_r;
+    logic        started_r;
+    logic        win_signal_r;
+    logic        lose_signal_r;
+    logic        zombie_hit_r;
+    logic        killing_r;
+    logic [7:0]  zombie_pixel_r;
+    
+    always_ff @(posedge i_clk) begin
+        if (~i_rst_n) begin
+            h_count_r <= 11'd0;
+            v_count_r <= 10'd0;
+            active_video_r <= 1'b0;
+            for (int i = 0; i < MAX_ZOMBIES; i++) begin
+                zombie_x_r[i] <= 11'd0;
+                zombie_y_r[i] <= 10'd0;
+                zombie_valid_r[i] <= 1'b0;
+            end
+            zombie_size_x_r <= 11'd0;
+            zombie_size_y_r <= 10'd0;
+            aim_x_r <= 11'd0;
+            aim_y_r <= 10'd0;
+            started_r <= 1'b0;
+            win_signal_r <= 1'b0;
+            lose_signal_r <= 1'b0;
+            zombie_hit_r <= 1'b0;
+            killing_r <= 1'b0;
+            zombie_pixel_r <= 8'd0;
+        end else begin
+            h_count_r <= i_h_count;
+            v_count_r <= i_v_count;
+            active_video_r <= i_active_video;
+            for (int i = 0; i < MAX_ZOMBIES; i++) begin
+                zombie_x_r[i] <= i_zombie_x[i];
+                zombie_y_r[i] <= i_zombie_y[i];
+                zombie_valid_r[i] <= i_zombie_valid[i];
+            end
+            zombie_size_x_r <= i_zombie_size_x;
+            zombie_size_y_r <= i_zombie_size_y;
+            aim_x_r <= i_aim_x;
+            aim_y_r <= i_aim_y;
+            started_r <= i_started;
+            win_signal_r <= i_win_signal;
+            lose_signal_r <= i_lose_signal;
+            zombie_hit_r <= i_zombie_hit;
+            killing_r <= i_killing;
+            zombie_pixel_r <= i_zombie_pixel;
+        end
+    end
+    
     // End game image positions (centered on screen 1280x720)
     localparam SURVIVED_POS_X = 320;  // (1280 - 640) / 2
     localparam SURVIVED_POS_Y = 80;   // Top-middle
@@ -122,10 +184,10 @@ module VGA_Image_Overlay_Combined #(
             hit_flash_timer <= 24'd0;
             hit_prev <= 1'b0;
         end else begin
-            hit_prev <= i_zombie_hit;
+            hit_prev <= zombie_hit_r;
             
             // Detect rising edge of zombie_hit signal
-            if (i_zombie_hit && !hit_prev) begin
+            if (zombie_hit_r && !hit_prev) begin
                 // Start flashing
                 hit_flashing <= 1'b1;
                 hit_flash_timer <= 24'd1;  // Start counting
@@ -157,14 +219,14 @@ module VGA_Image_Overlay_Combined #(
             kill_target_y <= 0;
             kill_target_valid <= 0;
         end else begin
-            if (i_killing) begin
+            if (killing_r) begin
                 // Capture aim center position when killing signal goes high
-                kill_target_x <= i_aim_x;
-                kill_target_y <= i_aim_y;
+                kill_target_x <= aim_x_r;
+                kill_target_y <= aim_y_r;
                 kill_target_valid <= 1'b1;
             end else if (kill_target_valid && 
-                         (i_h_count == kill_target_x) && 
-                         (i_v_count == kill_target_y)) begin
+                         (h_count_r == kill_target_x) && 
+                         (v_count_r == kill_target_y)) begin
                 // Clear valid flag after we've processed this position
                 kill_target_valid <= 1'b0;
             end
@@ -182,29 +244,29 @@ module VGA_Image_Overlay_Combined #(
     logic [20:0] bg_addr_s0;                    // Final SRAM byte address
     logic [1:0] bg_pixel_offset_s0;             // Pixel offset within SRAM word (for 4-bit mode)
     
-    assign bg_base_addr_s0 = i_started ? 21'd0 : START_BG_ADDR;
-    assign bg_pixel_offset_from_base_s0 = (i_v_count * BG_WIDTH) + i_h_count;
+    assign bg_base_addr_s0 = started_r ? 21'd0 : START_BG_ADDR;
+    assign bg_pixel_offset_from_base_s0 = (v_count_r * BG_WIDTH) + h_count_r;
     
     // For start screen (4-bit): 4 pixels per SRAM word (16 bits / 4 bits = 4 pixels)
     // For game (8-bit): 2 pixels per SRAM word (16 bits / 8 bits = 2 pixels)
     assign bg_pixel_offset_s0 = bg_pixel_offset_from_base_s0[1:0];  // Which of 4 pixels (for 4-bit mode)
-    assign bg_addr_s0 = i_started ? 
+    assign bg_addr_s0 = started_r ? 
                         (bg_base_addr_s0 + bg_pixel_offset_from_base_s0) :           // Game: base + offset
                         (bg_base_addr_s0 + {bg_pixel_offset_from_base_s0[20:2], 1'b0}); // Start: base + (offset/4)
     
     // --- 0.1.5 Kill Target Detection ---
     logic at_kill_target_s0;
     assign at_kill_target_s0 = kill_target_valid && 
-                                (i_h_count == kill_target_x) && 
-                                (i_v_count == kill_target_y);
+                                (h_count_r == kill_target_x) && 
+                                (v_count_r == kill_target_y);
 
     // --- 0.2 Aim Calc ---
     // Aim is always visible (both in start screen and game playing modes)
     // Convert center coordinates to top-left corner (use signed arithmetic)
     logic signed [11:0] aim_top_left_x_signed;
     logic signed [10:0] aim_top_left_y_signed;
-    assign aim_top_left_x_signed = $signed({1'b0, i_aim_x}) - 12'sd100; // Center - (AIM_SIZE_X/2)
-    assign aim_top_left_y_signed = $signed({1'b0, i_aim_y}) - 11'sd100; // Center - (AIM_SIZE_Y/2)
+    assign aim_top_left_x_signed = $signed({1'b0, aim_x_r}) - 12'sd100; // Center - (AIM_SIZE_X/2)
+    assign aim_top_left_y_signed = $signed({1'b0, aim_y_r}) - 11'sd100; // Center - (AIM_SIZE_Y/2)
     
     logic in_aim_s0;
     logic [7:0] aim_lx_s0, aim_ly_s0;
@@ -213,15 +275,15 @@ module VGA_Image_Overlay_Combined #(
     // Signed comparison for boundaries that may be negative
     logic signed [11:0] h_count_signed, h_count_plus_aim_signed;
     logic signed [10:0] v_count_signed, v_count_plus_aim_signed;
-    assign h_count_signed = $signed({1'b0, i_h_count});
-    assign v_count_signed = $signed({1'b0, i_v_count});
+    assign h_count_signed = $signed({1'b0, h_count_r});
+    assign v_count_signed = $signed({1'b0, v_count_r});
     assign h_count_plus_aim_signed = aim_top_left_x_signed + 12'sd200;
     assign v_count_plus_aim_signed = aim_top_left_y_signed + 11'sd200;
 
     assign in_aim_s0 = (h_count_signed >= aim_top_left_x_signed) && (h_count_signed < h_count_plus_aim_signed) &&
                        (v_count_signed >= aim_top_left_y_signed) && (v_count_signed < v_count_plus_aim_signed);
-    assign aim_lx_s0 = i_h_count - aim_top_left_x_signed[10:0];
-    assign aim_ly_s0 = i_v_count - aim_top_left_y_signed[9:0];
+    assign aim_lx_s0 = h_count_r - aim_top_left_x_signed[10:0];
+    assign aim_ly_s0 = v_count_r - aim_top_left_y_signed[9:0];
     // Optimize: 200*y + x
     assign aim_addr_s0 = in_aim_s0 ? ((aim_ly_s0 << 7) + (aim_ly_s0 << 6) + (aim_ly_s0 << 3) + aim_lx_s0) : 16'd0;
 
@@ -234,25 +296,25 @@ module VGA_Image_Overlay_Combined #(
     logic [1:0] end_img_type_s0;  // 0=none, 1=survived, 2=died, 3=retry
     
     // Check if we're in survived image area (only when win signal is active)
-    assign in_survived_s0 = i_win_signal &&
-                            (i_h_count >= SURVIVED_POS_X) && (i_h_count < (SURVIVED_POS_X + SURVIVED_WIDTH)) &&
-                            (i_v_count >= SURVIVED_POS_Y) && (i_v_count < (SURVIVED_POS_Y + SURVIVED_HEIGHT));
-    assign survived_lx_s0 = i_h_count - SURVIVED_POS_X;
-    assign survived_ly_s0 = i_v_count - SURVIVED_POS_Y;
+    assign in_survived_s0 = win_signal_r &&
+                            (h_count_r >= SURVIVED_POS_X) && (h_count_r < (SURVIVED_POS_X + SURVIVED_WIDTH)) &&
+                            (v_count_r >= SURVIVED_POS_Y) && (v_count_r < (SURVIVED_POS_Y + SURVIVED_HEIGHT));
+    assign survived_lx_s0 = h_count_r - SURVIVED_POS_X;
+    assign survived_ly_s0 = v_count_r - SURVIVED_POS_Y;
     
     // Check if we're in died image area (only when lose signal is active)
-    assign in_died_s0 = i_lose_signal &&
-                        (i_h_count >= DIED_POS_X) && (i_h_count < (DIED_POS_X + DIED_WIDTH)) &&
-                        (i_v_count >= DIED_POS_Y) && (i_v_count < (DIED_POS_Y + DIED_HEIGHT));
-    assign died_lx_s0 = i_h_count - DIED_POS_X;
-    assign died_ly_s0 = i_v_count - DIED_POS_Y;
+    assign in_died_s0 = lose_signal_r &&
+                        (h_count_r >= DIED_POS_X) && (h_count_r < (DIED_POS_X + DIED_WIDTH)) &&
+                        (v_count_r >= DIED_POS_Y) && (v_count_r < (DIED_POS_Y + DIED_HEIGHT));
+    assign died_lx_s0 = h_count_r - DIED_POS_X;
+    assign died_ly_s0 = v_count_r - DIED_POS_Y;
     
     // Check if we're in retry image area (when either win or lose signal is active)
-    assign in_retry_s0 = (i_win_signal || i_lose_signal) &&
-                         (i_h_count >= RETRY_POS_X) && (i_h_count < (RETRY_POS_X + RETRY_WIDTH)) &&
-                         (i_v_count >= RETRY_POS_Y) && (i_v_count < (RETRY_POS_Y + RETRY_HEIGHT));
-    assign retry_lx_s0 = i_h_count - RETRY_POS_X;
-    assign retry_ly_s0 = i_v_count - RETRY_POS_Y;
+    assign in_retry_s0 = (win_signal_r || lose_signal_r) &&
+                         (h_count_r >= RETRY_POS_X) && (h_count_r < (RETRY_POS_X + RETRY_WIDTH)) &&
+                         (v_count_r >= RETRY_POS_Y) && (v_count_r < (RETRY_POS_Y + RETRY_HEIGHT));
+    assign retry_lx_s0 = h_count_r - RETRY_POS_X;
+    assign retry_ly_s0 = v_count_r - RETRY_POS_Y;
     
     // Calculate end game SRAM address (8-bit per pixel, 2 pixels per 16-bit word)
     // Priority: retry > survived > died (retry is on top visually)
@@ -303,23 +365,23 @@ module VGA_Image_Overlay_Combined #(
             logic [9:0]  zombie_height;
 
             // Determine zombie size based on Y position (Y range: 270-720)
-            if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_05X) begin
+            if (zombie_y_r[z] < ZOMBIE_SIZE_THRESHOLD_05X) begin
                 size_sel = 3'd0;  // 0.5x
                 zombie_width = ZOMBIE_05X_WIDTH;
                 zombie_height = ZOMBIE_05X_HEIGHT;
-            end else if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_06X) begin
+            end else if (zombie_y_r[z] < ZOMBIE_SIZE_THRESHOLD_06X) begin
                 size_sel = 3'd1;  // 0.6x
                 zombie_width = ZOMBIE_06X_WIDTH;
                 zombie_height = ZOMBIE_06X_HEIGHT;
-            end else if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_07X) begin
+            end else if (zombie_y_r[z] < ZOMBIE_SIZE_THRESHOLD_07X) begin
                 size_sel = 3'd2;  // 0.7x
                 zombie_width = ZOMBIE_07X_WIDTH;
                 zombie_height = ZOMBIE_07X_HEIGHT;
-            end else if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_08X) begin
+            end else if (zombie_y_r[z] < ZOMBIE_SIZE_THRESHOLD_08X) begin
                 size_sel = 3'd3;  // 0.8x
                 zombie_width = ZOMBIE_08X_WIDTH;
                 zombie_height = ZOMBIE_08X_HEIGHT;
-            end else if (i_zombie_y[z] < ZOMBIE_SIZE_THRESHOLD_09X) begin
+            end else if (zombie_y_r[z] < ZOMBIE_SIZE_THRESHOLD_09X) begin
                 size_sel = 3'd4;  // 0.9x
                 zombie_width = ZOMBIE_09X_WIDTH;
                 zombie_height = ZOMBIE_09X_HEIGHT;
@@ -329,13 +391,13 @@ module VGA_Image_Overlay_Combined #(
                 zombie_height = ZOMBIE_1X_HEIGHT;
             end
 
-            cur_x = i_h_count - i_zombie_x[z];
-            cur_y = i_v_count - i_zombie_y[z];
+            cur_x = h_count_r - zombie_x_r[z];
+            cur_y = v_count_r - zombie_y_r[z];
 
             // Only check for zombie hit if game has started
-            if (i_started && i_zombie_valid[z] && 
-                (i_h_count >= i_zombie_x[z]) && (i_h_count < (i_zombie_x[z] + zombie_width)) &&
-                (i_v_count >= i_zombie_y[z]) && (i_v_count < (i_zombie_y[z] + zombie_height))) 
+            if (started_r && zombie_valid_r[z] && 
+                (h_count_r >= zombie_x_r[z]) && (h_count_r < (zombie_x_r[z] + zombie_width)) &&
+                (v_count_r >= zombie_y_r[z]) && (v_count_r < (zombie_y_r[z] + zombie_height))) 
                 hit = 1'b1;
             else 
                 hit = 1'b0;
@@ -389,9 +451,9 @@ module VGA_Image_Overlay_Combined #(
             bg_pixel_offset_s1 <= bg_pixel_offset_s0;
             aim_addr_s1     <= aim_addr_s0;
             in_aim_s1       <= in_aim_s0;
-            active_video_s1 <= i_active_video;
+            active_video_s1 <= active_video_r;
             at_kill_target_s1 <= at_kill_target_s0;
-            started_s1      <= i_started;  // Pipeline started signal
+            started_s1      <= started_r;  // Pipeline started signal
             // End game
             end_img_addr_s1 <= end_img_addr_s0;
             end_img_active_s1 <= end_img_active_s0;
@@ -774,7 +836,7 @@ module VGA_Image_Overlay_Combined #(
         end
     end
     
-    assign o_kill_en = kill_en_reg && !i_win_signal && !i_lose_signal;
+    assign o_kill_en = kill_en_reg && !win_signal_r && !lose_signal_r;
     assign o_kill_idx = kill_idx_reg;
     assign o_died_started = died_started_pulse;
 
@@ -912,7 +974,7 @@ module VGA_Image_Overlay_Combined #(
             in_aim_s4       <= in_aim_s3;
             use_zombie_s4   <= use_zombie_s3;
             active_video_s4 <= active_video_s3;
-			zombie_pixel_index_s4 <= i_zombie_pixel;
+			zombie_pixel_index_s4 <= zombie_pixel_r;
 			bg_pixel_index_s4 <= bg_pixel_index_s3;
 			started_s4 <= started_s3;  // Pipeline started signal for palette selection
 			zombie_id_s4 <= zombie_id_s3;  // Pass zombie ID through pipeline
